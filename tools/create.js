@@ -59,7 +59,7 @@ var app = {
             app._xml += '    <jscomp compilationLevel="simple" warning="quiet" debug="false" output="./' + name + '/dist/' + p + '.js">\n';
             app._xml += '      <sources dir="/">\n';
             _t[p].forEach(function (_file) {
-                app._xml += '        <file name="' + path.join(app._dir, '../', _file) + '" />\n';
+                app._xml += '        <file name="' + path.join(app._dir, '../../cocos2d-js/frameworks/cocos2d-html5', _file) + '" />\n';
             });
             app._xml += '      </sources>\n';
             app._xml += '    </jscomp>\n';
@@ -67,7 +67,7 @@ var app = {
             app._xml += '    <jscomp compilationLevel="whitespace" warning="quiet" debug="true" output="./' + name + '/src/' + p + '.js">\n';
             app._xml += '      <sources dir="/">\n';
             _t[p].forEach(function (_file) {
-                app._xml += '        <file name="' + path.join(app._dir, '../', _file) + '" />\n';
+                app._xml += '        <file name="' + path.join(app._dir, '../../cocos2d-js/frameworks/cocos2d-html5', _file) + '" />\n';
             });
             app._xml += '      </sources>\n';
             app._xml += '    </jscomp>\n';
@@ -110,7 +110,9 @@ var app = {
 
         //提取依赖关系
         var _moduleConfig = app._readJson(path.join(app._dir, './moduleConfig.json')).module;
+
         _module.info.forEach(function (_info, i) {
+            console.log(_info)
             var _a = _moduleConfig[_info.name]
             if (_a) {
                 _a = _a.filter(function (_t) {
@@ -135,72 +137,73 @@ var app = {
         "webgl",
         "debugger",
         "actions",
+        "labels",
         "audio",
         "menus",
-        "kazmath",
-        "shaders",
-        "render-texture",
-        "labels",
-        "motion-streak",
-        "node-grid",
+        "transitions",
+        "ccui",
         "shape-nodes",
         "clipping-nodes",
-        "effects",
-        "actions3d",
-        "progress-timer",
-        "transitions",
-        "compression",
         "particle",
-        "text-input",
+        "progress-timer",
+        "actions3d",
         "tilemap",
         "parallax",
+        "render-texture",
+        "text-input",
         "gui",
-        "ccbreader",
         "editbox",
-        "ccui",
         "cocostudio",
-        "pluginx",
-        "physics",
-        "socketio",
+        "ccbreader",
         "box2d",
-        "chipmunk"
+        "chipmunk",
+        "socketio",
+        "pluginx",
+        "motion-streak",
+
+        "kazmath",
+        "shaders",
+        "node-grid",
+        "effects",
+        "compression",
+        "physics"
     ],
     _info: {
-        "core-extensions": "Engine core modules, includes Director, Node, Scene, Layer, Sprite, LabelTTF, EventManger, Scheduler and Texture2D. The default render is canvas.",
+        "core-extensions": "Cocos2d Core extensions",
         "core-webgl": "Cocos2d WebGL support",
         "webgl": "Cocos2d WebGL renderer",
-        "core": 'Cocos2d engine core',
-        "debugger": 'Debugging node',
+        "core": 'Engine core modules, includes Director, Node, Scene, Layer, Sprite, LabelTTF, EventManger, Scheduler and Texture2D. The default render is canvas.',
+        "debugger": 'Log system and debug informations',
         "kazmath": 'Math lib for webgl',
         "shaders": 'Shaders',
-        "render-texture": 'render-texture for cache',
-        "labels": 'Labels',
-        "motion-streak": 'Motion-streak effect',
+        "render-texture": 'RenderTexture node for custom rendering',
+        "labels": 'Label nodes including LabelBMFont, LabelAtlas',
+        "motion-streak": 'MotionStreak which can manage a ribbon based on its motion',
         "node-grid": 'Base node of effects',
-        "shape-nodes": 'Base node of Drownode',
-        "clipping-nodes": 'Clipping nodes',
+        "shape-nodes": 'DrawNode can be used to render lines, polygons, curves, etc',
+        "clipping-nodes": 'ClippingNode can clip hosted nodes with shape or texture as stencil',
         "effects": 'Some effects',
-        "actions": 'Useful actions',
-        "actions3d": 'Some 3D actions of webgl mode',
-        "progress-timer": 'Progress timer',
-        "transitions": 'Scene transitions',
+        "actions": 'Configurable actions for animating nodes with position, scale, etc',
+        "actions3d": 'Effects that can be applied to nodes, like page turn, shake, wave, etc',
+        "progress-timer": 'ProgressTimer node which can transform a node into a progression bar',
+        "transitions": 'Scene transition effects',
         "compression": 'Compression of tilemap and particle',
-        "particle": 'Particle effects',
-        "text-input": 'Text input',
-        "menus": 'Menus',
-        "tilemap": 'TileMap',
-        "parallax": 'Parallax layers',
-        "audio": 'Audio',
-        "gui": 'GUI',
-        "ccbreader": 'The reader of CocosBuilder',
-        "editbox": 'Edit Box',
-        "ccui": 'Cocos UI widget',
-        "cocostudio": 'The reader of CocoStudio',
-        "pluginx": 'Plugin-X',
+        "particle": 'ParticleSystem node and built in particle effects',
+        "text-input": 'Nodes for simple text inputing',
+        "menus": 'Menu and MenuItem nodes for creating game menu',
+        "tilemap": 'TMX file parser for creating tile map layers',
+        "parallax": 'Parallax effect which can be applied to layers',
+        "audio": 'Audio system',
+        "gui": 'Another GUI extension with a set of useful widgets',
+        "ccbreader": 'CocosBuilder editor support',
+        "editbox": 'Edit Box for more complex text inputing',
+        "ccui": 'Cocos UI widgets with layout support',
+        "cocostudio": 'CocoStudio editor support',
+        "pluginx": 'Social network API plugins',
         "physics": 'Physics node for Box2d and Chipmunk',
-        "socketio": 'ScoketIO',
-        "box2d": 'Box2d physics lib',
-        "chipmunk": 'Chipmunk physics lib'
+        "socketio": 'ScoketIO library support',
+        "box2d": 'Built in box2d physics engine support',
+        "chipmunk": 'Built in Chipmunk physics engine support'
     }
 };
 

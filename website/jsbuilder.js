@@ -1,4 +1,4 @@
-var defaultVersion = 'v3.0-alpha2';
+var defaultVersion = 'v3.0-beta';
 
 var pageSet = {};
 
@@ -285,7 +285,7 @@ pageSet.init();
 var Load = function (_a) {
     var _com = /checked/.test(document.getElementById("Compressor").className);
 
-    var _s = 'generate/?ver=' + defaultVersion + '&com=' + _com + '&file=';
+    var _s = 'download_.js?ver=' + defaultVersion + '&com=' + _com + '&file=';
 
     _sort.forEach(function(name){
         for(var i=0;i<module.info.length;i++){

@@ -46,7 +46,6 @@
     color: #0098d2;
 }
 .content-body .version .more{
-    display: none;
     width: 136px;
     height:32px;
     background: url("img/ChooseVersion.png") no-repeat;
@@ -64,6 +63,7 @@
     padding: 0 10px;
 }
 .content-body .version .more ul{
+    display: none;
     border:1px solid #eaeaea;
     background-color: #FAFAFA;
 }

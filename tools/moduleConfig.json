@@ -58,7 +58,8 @@
             "cocos2d/core/textures/TexturesWebGL.js",
             "cocos2d/core/layers/CCLayerWebGL.js",
             "cocos2d/core/sprites/SpritesWebGL.js",
-            "cocos2d/core/labelttf/LabelTTFWebGL.js"
+            "cocos2d/core/labelttf/LabelTTFWebGL.js",
+            "cocos2d/core/CCDirectorWebGL.js"
         ],
         "core-extensions": [
             "core",
