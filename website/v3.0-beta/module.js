@@ -32,7 +32,8 @@ var module = {"info": [
     {"name": "node-grid", "size": "1KB", "checked": 0, "rule": ["core", "core-webgl"], "info": "Base node of effects"},
     {"name": "effects", "size": "12KB", "checked": 0, "rule": ["core", "core-webgl", "node-grid"], "info": "Some effects"},
     {"name": "compression", "size": "31KB", "checked": 0, "rule": ["core"], "info": "Compression of tilemap and particle"},
-    {"name": "physics", "size": "5KB", "checked": 0, "rule": ["core", "shape-nodes"], "info": "Physics node for Box2d and Chipmunk"}
+    {"name": "physics", "size": "5KB", "checked": 0, "rule": ["core", "shape-nodes"], "info": "Physics node for Box2d and Chipmunk"},
+    {"name": "spine", "size": "39KB", "checked": 0, "rule": ["core"], "info": "The spine support library"}
 ]};
 
 var hiddenList = {
@@ -80,5 +81,6 @@ var _sort = [
     "physics",
     "socketio",
     "box2d",
-    "chipmunk"
+    "chipmunk",
+    "spine"
 ];

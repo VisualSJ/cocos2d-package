@@ -4601,7 +4601,7 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({createWidget
     var touchScaleChangeAble = options["touchScaleEnable"];
     label.setTouchScaleChangeEnabled(touchScaleChangeAble);
     var text = options["text"];
-    label.setText(text);
+    label.setString(text);
     if (options["fontSize"] !== undefined)label.setFontSize(options["fontSize"]);
     if (options["fontName"] !== undefined)label.setFontName(options["fontName"]);
     if (options["areaWidth"] !== undefined && options["areaHeight"] !== undefined) {
@@ -4717,7 +4717,7 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({createWidget
     }, setPropsForTextAreaFromJsonDictionary: function (widget, options) {
         this.setPropsForWidgetFromJsonDictionary(widget, options);
         var textArea = widget;
-        textArea.setText(options["text"]);
+        textArea.setString(options["text"]);
         if (options["fontSize"] !== undefined)textArea.setFontSize(options["fontSize"]);
         var cr = options["colorR"];
         var cg = options["colorG"];
@@ -4748,7 +4748,7 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({createWidget
         this.setPropsForWidgetFromJsonDictionary(widget, options);
         var textField = widget;
         if (options["placeHolder"] !== undefined)textField.setPlaceHolder(options["placeHolder"]);
-        textField.setText(options["text"]);
+        textField.setString(options["text"]);
         if (options["fontSize"] !== undefined)textField.setFontSize(options["fontSize"]);
         if (options["fontName"] !== undefined)textField.setFontName(options["fontName"]);
         if (options["touchSizeWidth"] !== undefined && options["touchSizeHeight"] !==
@@ -4788,7 +4788,7 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({createWidget
         var cmf_tp = this._filePath + cmft;
         labelBMFont.setFntFile(cmf_tp);
         var text = options["text"];
-        labelBMFont.setText(text);
+        labelBMFont.setString(text);
         this.setColorPropsForWidgetFromJsonDictionary(widget, options)
     }});
 ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({createWidget: function (jsonDict, fullPath, fileName) {
@@ -5165,7 +5165,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({createWidget
     var touchScaleChangeAble = options["touchScaleEnable"];
     label.setTouchScaleChangeEnabled(touchScaleChangeAble);
     var text = options["text"];
-    label.setText(text);
+    label.setString(text);
     if (options["fontSize"] !== undefined)label.setFontSize(options["fontSize"]);
     if (options["fontName"] !== undefined)label.setFontName(options["fontName"]);
     if (options["areaWidth"] !== undefined && options["areaHeight"] !== undefined) {
@@ -5377,7 +5377,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({createWidget
 }, setPropsForTextAreaFromJsonDictionary: function (widget, options) {
     this.setPropsForWidgetFromJsonDictionary(widget, options);
     var textArea = widget;
-    textArea.setText(options["text"]);
+    textArea.setString(options["text"]);
     if (options["fontSize"] !== undefined)textArea.setFontSize(options["fontSize"]);
     var cr = options["colorR"];
     var cg = options["colorG"];
@@ -5407,7 +5407,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({createWidget
     this.setPropsForWidgetFromJsonDictionary(widget, options);
     var textField = widget;
     if (options["placeHolder"] !== undefined)textField.setPlaceHolder(options["placeHolder"]);
-    textField.setText(options["text"]);
+    textField.setString(options["text"]);
     if (options["fontSize"] !== undefined)textField.setFontSize(options["fontSize"]);
     if (options["fontName"] !==
         undefined)textField.setFontName(options["fontName"]);
@@ -5495,7 +5495,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({createWidget
     }
     cmftDic = null;
     var text = options["text"];
-    labelBMFont.setText(text);
+    labelBMFont.setString(text);
     this.setColorPropsForWidgetFromJsonDictionary(widget, options)
 }});
 ccs.sceneReader = {_baseBath: "", _listener: null, _selector: null, _node: null, createNodeWithSceneFile: function (pszFileName) {

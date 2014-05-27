@@ -434,8 +434,16 @@ cc.EditBox = cc.ControlButton.extend({_domInputSprite: null, _delegate: null, _e
         this._edTxt.style.fontSize = this._edFontSize + "px"
     }
 }, setText: function (text) {
-    if (text !=
-        null)if (text == "") {
+    cc.log("Please use the setString");
+    if (text != null)if (text == "") {
+        this._edTxt.value = this._placeholderText;
+        this._edTxt.style.color = cc.colorToHex(this._placeholderColor)
+    } else {
+        this._edTxt.value = text;
+        this._edTxt.style.color = cc.colorToHex(this._textColor)
+    }
+}, setString: function (text) {
+    if (text != null)if (text == "") {
         this._edTxt.value = this._placeholderText;
         this._edTxt.style.color = cc.colorToHex(this._placeholderColor)
     } else {
@@ -452,58 +460,61 @@ cc.EditBox = cc.ControlButton.extend({_domInputSprite: null, _delegate: null, _e
     }
 }, getMaxLength: function () {
     return this._maxLength
-},
-    setPlaceHolder: function (text) {
-        if (text != null) {
-            var oldPlaceholderText = this._placeholderText;
-            this._placeholderText = text;
-            if (this._edTxt.value == oldPlaceholderText) {
-                this._edTxt.value = text;
-                this._edTxt.style.color = cc.colorToHex(this._placeholderColor);
-                this._setPlaceholderFontToEditText()
-            }
-        }
-    }, setPlaceholderFont: function (fontName, fontSize) {
-        this._placeholderFontName = fontName;
-        this._placeholderFontSize = fontSize;
-        this._setPlaceholderFontToEditText()
-    }, _setPlaceholderFont: function (fontStyle) {
-        var res = cc.LabelTTF._fontStyleRE.exec(fontStyle);
-        if (res) {
-            this._placeholderFontName = res[2];
-            this._placeholderFontSize = parseInt(res[1]);
+}, setPlaceHolder: function (text) {
+    if (text != null) {
+        var oldPlaceholderText = this._placeholderText;
+        this._placeholderText = text;
+        if (this._edTxt.value == oldPlaceholderText) {
+            this._edTxt.value = text;
+            this._edTxt.style.color = cc.colorToHex(this._placeholderColor);
             this._setPlaceholderFontToEditText()
         }
-    }, setPlaceholderFontName: function (fontName) {
-        this._placeholderFontName = fontName;
+    }
+}, setPlaceholderFont: function (fontName, fontSize) {
+    this._placeholderFontName = fontName;
+    this._placeholderFontSize = fontSize;
+    this._setPlaceholderFontToEditText()
+}, _setPlaceholderFont: function (fontStyle) {
+    var res = cc.LabelTTF._fontStyleRE.exec(fontStyle);
+    if (res) {
+        this._placeholderFontName = res[2];
+        this._placeholderFontSize = parseInt(res[1]);
         this._setPlaceholderFontToEditText()
-    }, setPlaceholderFontSize: function (fontSize) {
+    }
+}, setPlaceholderFontName: function (fontName) {
+    this._placeholderFontName = fontName;
+    this._setPlaceholderFontToEditText()
+},
+    setPlaceholderFontSize: function (fontSize) {
         this._placeholderFontSize = fontSize;
         this._setPlaceholderFontToEditText()
     }, _setPlaceholderFontToEditText: function () {
         if (this._edTxt.value == this._placeholderText) {
             this._edTxt.style.fontFamily = this._placeholderFontName;
-            this._edTxt.style.fontSize =
-                this._placeholderFontSize + "px"
+            this._edTxt.style.fontSize = this._placeholderFontSize + "px"
         }
     }, setPlaceholderFontColor: function (color) {
         this._placeholderColor = color;
         if (this._edTxt.value == this._placeholderText)this._edTxt.style.color = cc.colorToHex(color)
     }, setInputFlag: function (inputFlag) {
-        this._editBoxInputFlag = inputFlag;
+        this._editBoxInputFlag =
+            inputFlag;
         if (inputFlag == cc.EDITBOX_INPUT_FLAG_PASSWORD)this._edTxt.type = "password"; else this._edTxt.type = "text"
     }, getText: function () {
+        cc.log("Please use the getString");
+        return this._edTxt.value
+    }, getString: function () {
         return this._edTxt.value
     }, initWithSizeAndBackgroundSprite: function (size, normal9SpriteBg) {
         if (this.initWithBackgroundSprite(normal9SpriteBg)) {
-            this._domInputSprite.x =
-                3;
+            this._domInputSprite.x = 3;
             this._domInputSprite.y = 3;
             this.setZoomOnTouchDown(false);
             this.setPreferredSize(size);
             this.x = 0;
             this.y = 0;
-            this._addTargetWithActionForControlEvent(this, this.touchDownAction, cc.CONTROL_EVENT_TOUCH_UP_INSIDE);
+            this._addTargetWithActionForControlEvent(this,
+                this.touchDownAction, cc.CONTROL_EVENT_TOUCH_UP_INSIDE);
             return true
         }
         return false
@@ -516,8 +527,7 @@ cc.EditBox = cc.ControlButton.extend({_domInputSprite: null, _delegate: null, _e
     }, setReturnType: function (returnType) {
         this._keyboardReturnType = returnType
     }, keyboardWillShow: function (info) {
-        var rectTracked =
-            cc.EditBox.getRect(this);
+        var rectTracked = cc.EditBox.getRect(this);
         rectTracked.y -= 4;
         if (!rectTracked.intersectsRect(info.end)) {
             cc.log("needn't to adjust view layout.");
@@ -532,8 +542,7 @@ cc.EditBox = cc.ControlButton.extend({_domInputSprite: null, _delegate: null, _e
         this._edWidth = size.width;
         this.dom.style.width = this._edWidth.toString() + "px";
         this._edHeight = size.height;
-        this.dom.style.height =
-            this._edHeight.toString() + "px";
+        this.dom.style.height = this._edHeight.toString() + "px";
         this.dom.style.backgroundColor = cc.colorToHex(bgColor)
     }});
 var _p = cc.EditBox.prototype;
@@ -546,7 +555,7 @@ cc.defineGetterSetter(_p, "fontSize", null, _p.setFontSize);
 _p.fontColor;
 cc.defineGetterSetter(_p, "fontColor", null, _p.setFontColor);
 _p.string;
-cc.defineGetterSetter(_p, "string", _p.getText, _p.setText);
+cc.defineGetterSetter(_p, "string", _p.getString, _p.setString);
 _p.maxLength;
 cc.defineGetterSetter(_p, "maxLength", _p.getMaxLength, _p.setMaxLength);
 _p.placeHolder;

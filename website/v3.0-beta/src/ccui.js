@@ -3348,9 +3348,16 @@ ccui.Text = ccui.Widget.extend({touchScaleEnabled: false, _normalScaleValueX: 0,
     cc.Node.prototype.addChild.call(this,
         this._labelRenderer, ccui.Text.RENDERER_ZORDER, -1)
 }, setText: function (text) {
+    cc.log("Please use the setString");
+    this._labelRenderer.setString(text);
+    this.labelScaleChangedWithSize()
+}, setString: function (text) {
     this._labelRenderer.setString(text);
     this.labelScaleChangedWithSize()
 }, getStringValue: function () {
+    cc.log("Please use the getString");
+    return this._labelRenderer.getString()
+}, getString: function () {
     return this._labelRenderer.getString()
 }, getStringLength: function () {
     var str = this._labelRenderer.getString();
@@ -3362,8 +3369,7 @@ ccui.Text = ccui.Widget.extend({touchScaleEnabled: false, _normalScaleValueX: 0,
 }, getFontSize: function () {
     return this._fontSize
 }, setFontName: function (name) {
-    this._fontName =
-        name;
+    this._fontName = name;
     this._labelRenderer.setFontName(name);
     this.labelScaleChangedWithSize()
 }, getFontName: function () {
@@ -3396,8 +3402,7 @@ ccui.Text = ccui.Widget.extend({touchScaleEnabled: false, _normalScaleValueX: 0,
 }, _getBoundingHeight: function () {
     return this._textAreaSize.height
 }, setTextHorizontalAlignment: function (alignment) {
-    this._textHorizontalAlignment =
-        alignment;
+    this._textHorizontalAlignment = alignment;
     this._labelRenderer.setHorizontalAlignment(alignment);
     this.labelScaleChangedWithSize()
 }, getTextHorizontalAlignment: function () {
@@ -3411,35 +3416,34 @@ ccui.Text = ccui.Widget.extend({touchScaleEnabled: false, _normalScaleValueX: 0,
 }, getTouchScaleChangeAble: function () {
     return this.isTouchScaleChangeEnabled()
 }, setTouchScaleChangeEnabled: function (enable) {
-    this.touchScaleEnabled =
-        enable
+    this.touchScaleEnabled = enable
 }, isTouchScaleChangeEnabled: function () {
     return this.touchScaleEnabled
 }, onPressStateChangedToNormal: function () {
     if (!this.touchScaleEnabled)return;
     this._labelRenderer.setScaleX(this._normalScaleValueX);
     this._labelRenderer.setScaleY(this._normalScaleValueY)
-}, onPressStateChangedToPressed: function () {
-    if (!this.touchScaleEnabled)return;
-    this._labelRenderer.setScaleX(this._normalScaleValueX + this._onSelectedScaleOffset);
-    this._labelRenderer.setScaleY(this._normalScaleValueY + this._onSelectedScaleOffset)
 },
-    onPressStateChangedToDisabled: function () {
+    onPressStateChangedToPressed: function () {
+        if (!this.touchScaleEnabled)return;
+        this._labelRenderer.setScaleX(this._normalScaleValueX + this._onSelectedScaleOffset);
+        this._labelRenderer.setScaleY(this._normalScaleValueY + this._onSelectedScaleOffset)
+    }, onPressStateChangedToDisabled: function () {
     }, updateFlippedX: function () {
         this._labelRenderer.setFlippedX(this._flippedX)
     }, updateFlippedY: function () {
         this._labelRenderer.setFlippedY(this._flippedY)
     }, setAnchorPoint: function (point, y) {
         if (y === undefined) {
-            ccui.Widget.prototype.setAnchorPoint.call(this, point);
+            ccui.Widget.prototype.setAnchorPoint.call(this,
+                point);
             this._labelRenderer.setAnchorPoint(point)
         } else {
             ccui.Widget.prototype.setAnchorPoint.call(this, point, y);
             this._labelRenderer.setAnchorPoint(point, y)
         }
     }, _setAnchorX: function (value) {
-        ccui.Widget.prototype._setAnchorX.call(this,
-            value);
+        ccui.Widget.prototype._setAnchorX.call(this, value);
         this._labelRenderer._setAnchorX(value)
     }, _setAnchorY: function (value) {
         ccui.Widget.prototype._setAnchorY.call(this, value);
@@ -3449,14 +3453,14 @@ ccui.Text = ccui.Widget.extend({touchScaleEnabled: false, _normalScaleValueX: 0,
         this.labelScaleChangedWithSize()
     }, getContentSize: function () {
         return this._labelRenderer.getContentSize()
-    }, _getWidth: function () {
+    },
+    _getWidth: function () {
         return this._labelRenderer._getWidth()
     }, _getHeight: function () {
         return this._labelRenderer._getHeight()
     }, getVirtualRenderer: function () {
         return this._labelRenderer
-    },
-    labelScaleChangedWithSize: function () {
+    }, labelScaleChangedWithSize: function () {
         if (this._ignoreSize) {
             this._labelRenderer.setScale(1);
             var renderSize = this._labelRenderer.getContentSize();
@@ -3482,12 +3486,13 @@ ccui.Text = ccui.Widget.extend({touchScaleEnabled: false, _normalScaleValueX: 0,
         this.updateOpacityToRenderer(this._labelRenderer)
     }, getDescription: function () {
         return"Label"
-    }, createCloneInstance: function () {
+    },
+    createCloneInstance: function () {
         return ccui.Text.create()
     }, copySpecialProperties: function (uiLabel) {
         this.setFontName(uiLabel._fontName);
         this.setFontSize(uiLabel._labelRenderer.getFontSize());
-        this.setText(uiLabel.getStringValue());
+        this.setString(uiLabel.getString());
         this.setTouchScaleChangeEnabled(uiLabel.touchScaleEnabled);
         this.setTextAreaSize(uiLabel._size);
         this.setTextHorizontalAlignment(uiLabel._textHorizontalAlignment);
@@ -3499,7 +3504,7 @@ cc.defineGetterSetter(_p, "boundingWidth", _p._getBoundingWidth, _p._setBounding
 _p.boundingHeight;
 cc.defineGetterSetter(_p, "boundingHeight", _p._getBoundingHeight, _p._setBoundingHeight);
 _p.string;
-cc.defineGetterSetter(_p, "string", _p.getStringValue, _p.setText);
+cc.defineGetterSetter(_p, "string", _p.getString, _p.setString);
 _p.stringLength;
 cc.defineGetterSetter(_p, "stringLength", _p.getStringLength);
 _p.font;
@@ -3542,6 +3547,9 @@ ccui.TextAtlas = ccui.Widget.extend({_labelAtlasRenderer: null, _stringValue: ""
     this.labelAtlasScaleChangedWithSize()
 },
     getStringValue: function () {
+        cc.log("Please use the getString");
+        return this._labelAtlasRenderer.getString()
+    }, getString: function () {
         return this._labelAtlasRenderer.getString()
     }, setAnchorPoint: function (point, y) {
         if (y === undefined) {
@@ -3552,11 +3560,11 @@ ccui.TextAtlas = ccui.Widget.extend({_labelAtlasRenderer: null, _stringValue: ""
             this._labelAtlasRenderer.setAnchorPoint(point, y)
         }
     }, _setAnchorX: function (value) {
-        ccui.Widget.prototype._setAnchorX.call(this, value);
+        ccui.Widget.prototype._setAnchorX.call(this,
+            value);
         this._labelAtlasRenderer._setAnchorX(value)
     }, _setAnchorY: function (value) {
-        ccui.Widget.prototype._setAnchorY.call(this,
-            value);
+        ccui.Widget.prototype._setAnchorY.call(this, value);
         this._labelAtlasRenderer._setAnchorY(value)
     }, onSizeChanged: function () {
         ccui.Widget.prototype.onSizeChanged.call(this);
@@ -3569,7 +3577,8 @@ ccui.TextAtlas = ccui.Widget.extend({_labelAtlasRenderer: null, _stringValue: ""
         return this._labelAtlasRenderer._getHeight()
     }, getVirtualRenderer: function () {
         return this._labelAtlasRenderer
-    }, labelAtlasScaleChangedWithSize: function () {
+    },
+    labelAtlasScaleChangedWithSize: function () {
         if (this._ignoreSize) {
             this._labelAtlasRenderer.setScale(1);
             var atlasRenderSize = this._labelAtlasRenderer.getContentSize();
@@ -3588,8 +3597,7 @@ ccui.TextAtlas = ccui.Widget.extend({_labelAtlasRenderer: null, _stringValue: ""
         }
     }, updateTextureColor: function () {
         this.updateColorToRenderer(this._labelAtlasRenderer)
-    },
-    updateTextureOpacity: function () {
+    }, updateTextureOpacity: function () {
         this.updateOpacityToRenderer(this._labelAtlasRenderer)
     }, getDescription: function () {
         return"LabelAtlas"
@@ -3600,7 +3608,7 @@ ccui.TextAtlas = ccui.Widget.extend({_labelAtlasRenderer: null, _stringValue: ""
     }});
 var _p = ccui.TextAtlas.prototype;
 _p.string;
-cc.defineGetterSetter(_p, "string", _p.getStringValue, _p.setStringValue);
+cc.defineGetterSetter(_p, "string", _p.getString, _p.setStringValue);
 _p = null;
 ccui.TextAtlas.create = function () {
     return new ccui.TextAtlas
@@ -3618,21 +3626,26 @@ ccui.TextBMFont = ccui.Widget.extend({_labelBMFontRenderer: null, _fileHasInit: 
     this.updateAnchorPoint();
     this.labelBMFontScaleChangedWithSize();
     this._fileHasInit = true;
-    this.setText(this._stringValue);
+    this.setString(this._stringValue);
     if (!this._labelBMFontRenderer.textureLoaded())this._labelBMFontRenderer.addLoadedEventListener(function () {
         this.labelBMFontScaleChangedWithSize()
     }, this)
 }, setText: function (value) {
+    cc.log("Please use the setString");
     if (!value)return;
     this._stringValue = value;
     this._labelBMFontRenderer.setString(value);
     this.labelBMFontScaleChangedWithSize()
-}, getStringValue: function () {
+}, setString: function (value) {
+    if (!value)return;
+    this._stringValue = value;
+    this._labelBMFontRenderer.setString(value);
+    this.labelBMFontScaleChangedWithSize()
+}, getString: function () {
     return this._stringValue
 }, setAnchorPoint: function (point, y) {
     if (y === undefined) {
-        ccui.Widget.prototype.setAnchorPoint.call(this,
-            point);
+        ccui.Widget.prototype.setAnchorPoint.call(this, point);
         this._labelBMFontRenderer.setAnchorPoint(point)
     } else {
         ccui.Widget.prototype.setAnchorPoint.call(this, point, y);
@@ -3642,46 +3655,45 @@ ccui.TextBMFont = ccui.Widget.extend({_labelBMFontRenderer: null, _fileHasInit: 
     ccui.Widget.prototype._setAnchorX.call(this, value);
     this._labelBMFontRenderer._setAnchorX(value)
 }, _setAnchorY: function (value) {
-    ccui.Widget.prototype._setAnchorY.call(this, value);
+    ccui.Widget.prototype._setAnchorY.call(this,
+        value);
     this._labelBMFontRenderer._setAnchorY(value)
 }, onSizeChanged: function () {
     ccui.Widget.prototype.onSizeChanged.call(this);
     this.labelBMFontScaleChangedWithSize()
-},
-    getContentSize: function () {
-        return this._labelBMFontRenderer.getContentSize()
-    }, _getWidth: function () {
-        return this._labelBMFontRenderer._getWidth()
-    }, _getHeight: function () {
-        return this._labelBMFontRenderer._getHeight()
-    }, getVirtualRenderer: function () {
-        return this._labelBMFontRenderer
-    }, labelBMFontScaleChangedWithSize: function () {
-        if (this._ignoreSize) {
+}, getContentSize: function () {
+    return this._labelBMFontRenderer.getContentSize()
+}, _getWidth: function () {
+    return this._labelBMFontRenderer._getWidth()
+}, _getHeight: function () {
+    return this._labelBMFontRenderer._getHeight()
+}, getVirtualRenderer: function () {
+    return this._labelBMFontRenderer
+}, labelBMFontScaleChangedWithSize: function () {
+    if (this._ignoreSize) {
+        this._labelBMFontRenderer.setScale(1);
+        var rendererSize = this._labelBMFontRenderer.getContentSize();
+        this._size.width = rendererSize.width;
+        this._size.height = rendererSize.height
+    } else {
+        var textureSize = this._labelBMFontRenderer.getContentSize();
+        if (textureSize.width <= 0 || textureSize.height <= 0) {
             this._labelBMFontRenderer.setScale(1);
-            var rendererSize = this._labelBMFontRenderer.getContentSize();
-            this._size.width = rendererSize.width;
-            this._size.height = rendererSize.height
-        } else {
-            var textureSize =
-                this._labelBMFontRenderer.getContentSize();
-            if (textureSize.width <= 0 || textureSize.height <= 0) {
-                this._labelBMFontRenderer.setScale(1);
-                return
-            }
-            var scaleX = this._size.width / textureSize.width;
-            var scaleY = this._size.height / textureSize.height;
-            this._labelBMFontRenderer.setScaleX(scaleX);
-            this._labelBMFontRenderer.setScaleY(scaleY)
+            return
         }
-    }, updateTextureColor: function () {
-        this.updateColorToRenderer(this._labelBMFontRenderer)
-    }, updateTextureOpacity: function () {
+        var scaleX = this._size.width / textureSize.width;
+        var scaleY = this._size.height / textureSize.height;
+        this._labelBMFontRenderer.setScaleX(scaleX);
+        this._labelBMFontRenderer.setScaleY(scaleY)
+    }
+}, updateTextureColor: function () {
+    this.updateColorToRenderer(this._labelBMFontRenderer)
+},
+    updateTextureOpacity: function () {
         this.updateOpacityToRenderer(this._labelBMFontRenderer)
     }, getDescription: function () {
         return"LabelBMFont"
-    },
-    createCloneInstance: function () {
+    }, createCloneInstance: function () {
         return ccui.TextBMFont.create()
     }, copySpecialProperties: function (labelBMFont) {
         this.setFntFile(labelBMFont._fntFileName);
@@ -3689,7 +3701,7 @@ ccui.TextBMFont = ccui.Widget.extend({_labelBMFontRenderer: null, _fileHasInit: 
     }});
 var _p = ccui.TextBMFont.prototype;
 _p.string;
-cc.defineGetterSetter(_p, "string", _p.getStringValue, _p.setStringValue);
+cc.defineGetterSetter(_p, "string", _p.getString, _p.setStringValue);
 _p = null;
 ccui.TextBMFont.create = function () {
     return new ccui.TextBMFont
@@ -3820,10 +3832,20 @@ ccui.TextField = ccui.Widget.extend({_textFieldRender: null, _touchWidth: 0, _to
 }, getTouchSize: function () {
     return cc.size(this._touchWidth, this._touchHeight)
 }, setText: function (text) {
+    cc.log("Please use the setString");
     if (!text)return;
     text = String(text);
-    if (this.isMaxLengthEnabled())text =
-        text.substr(0, this.getMaxLength());
+    if (this.isMaxLengthEnabled())text = text.substr(0, this.getMaxLength());
+    if (this.isPasswordEnabled()) {
+        this._textFieldRender.setPasswordText(text);
+        this._textFieldRender.insertText(text, text.length)
+    } else this._textFieldRender.setString(text);
+    this._textFieldRender.setString(text);
+    this.textfieldRendererScaleChangedWithSize()
+}, setString: function (text) {
+    if (!text)return;
+    text = String(text);
+    if (this.isMaxLengthEnabled())text = text.substr(0, this.getMaxLength());
     if (this.isPasswordEnabled()) {
         this._textFieldRender.setPasswordText(text);
         this._textFieldRender.insertText(text, text.length)
@@ -3840,20 +3862,24 @@ ccui.TextField = ccui.Widget.extend({_textFieldRender: null, _touchWidth: 0, _to
     this.textfieldRendererScaleChangedWithSize()
 }, _getFont: function () {
     return this._textFieldRender._getFont()
-}, setFontSize: function (size) {
-    this._textFieldRender.setFontSize(size);
-    this.textfieldRendererScaleChangedWithSize()
-}, getFontSize: function () {
-    return this._textFieldRender.getFontSize()
-}, setFontName: function (name) {
-    this._textFieldRender.setFontName(name);
-    this.textfieldRendererScaleChangedWithSize()
-}, getFontName: function () {
-    return this._textFieldRender.getFontName()
-}, didNotSelectSelf: function () {
-    this._textFieldRender.detachWithIME()
 },
-    getStringValue: function () {
+    setFontSize: function (size) {
+        this._textFieldRender.setFontSize(size);
+        this.textfieldRendererScaleChangedWithSize()
+    }, getFontSize: function () {
+        return this._textFieldRender.getFontSize()
+    }, setFontName: function (name) {
+        this._textFieldRender.setFontName(name);
+        this.textfieldRendererScaleChangedWithSize()
+    }, getFontName: function () {
+        return this._textFieldRender.getFontName()
+    }, didNotSelectSelf: function () {
+        this._textFieldRender.detachWithIME()
+    }, getStringValue: function () {
+        cc.log("Please use the getString");
+        return this._textFieldRender.getString()
+    },
+    getString: function () {
         return this._textFieldRender.getString()
     }, onTouchBegan: function (touchPoint) {
         var pass = ccui.Widget.prototype.onTouchBegan.call(this, touchPoint);
@@ -3987,8 +4013,8 @@ ccui.TextField = ccui.Widget.extend({_textFieldRender: null, _touchWidth: 0, _to
     }, createCloneInstance: function () {
         return ccui.TextField.create()
     }, copySpecialProperties: function (textField) {
-        this.setText(textField._textFieldRender.getString());
-        this.setPlaceHolder(textField.getStringValue());
+        this.setString(textField._textFieldRender.getString());
+        this.setPlaceHolder(textField.getString());
         this.setFontSize(textField._textFieldRender.getFontSize());
         this.setFontName(textField._textFieldRender.getFontName());
         this.setMaxLengthEnabled(textField.isMaxLengthEnabled());
@@ -4002,7 +4028,7 @@ ccui.TextField = ccui.Widget.extend({_textFieldRender: null, _touchWidth: 0, _to
     }});
 var _p = ccui.TextField.prototype;
 _p.string;
-cc.defineGetterSetter(_p, "string", _p.getStringValue, _p.setText);
+cc.defineGetterSetter(_p, "string", _p.getString, _p.setText);
 _p.placeHolder;
 cc.defineGetterSetter(_p, "placeHolder", _p.getPlaceHolder, _p.setPlaceHolder);
 _p.font;
