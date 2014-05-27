@@ -76,7 +76,7 @@
     display: block;
     color: #7b7b7b;
 }
-.content-body .version .more ul .e6{
+.content-body .version .more ul .e6, .content-body .version .more ul li:hover{
     background-color: #e6e6e6;
 }
 
