@@ -475,6 +475,13 @@
             "box2d",
             "chipmunk",
             "socketio"
+        ],
+        "spine": [
+            "core",
+
+            "extensions/spine/CCSkeleton.js",
+            "extensions/spine/Spine.js",
+            "extensions/spine/CCSkeletonAnimation.js"
         ]
     },
     "bootFile": "CCBoot.js"
