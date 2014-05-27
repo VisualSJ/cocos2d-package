@@ -1215,7 +1215,7 @@ cc.loader.register(["font", "eot", "ttf", "woff", "svg"], cc._fontLoader);
 cc._binaryLoader = {load: function (realUrl, url, res, cb) {
     cc.loader.loadBinary(realUrl, cb)
 }};
-cc.ENGINE_VERSION = "Cocos2d-html5-v3.0 beta";
+window["CocosEngine"] = cc.ENGINE_VERSION = "Cocos2d-html5-v3.0 beta";
 cc.FIX_ARTIFACTS_BY_STRECHING_TEXEL = 0;
 cc.DIRECTOR_STATS_POSITION = cc.p(0, 0);
 cc.DIRECTOR_FPS_INTERVAL = 0.5;
