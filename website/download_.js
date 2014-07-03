@@ -24,6 +24,7 @@ module.exports = function (app) {
         app.send(_result);
 
     } catch (err) {
+        console.log(err);
         app.send('param is error');
     }
 };
