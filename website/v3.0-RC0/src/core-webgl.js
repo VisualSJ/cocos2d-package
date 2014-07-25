@@ -1,404 +1,384 @@
 var cc = cc || {};
 cc._tmp = cc._tmp || {};
 cc._tmp.WebGLColor = function () {
-    cc.color = function (r, g, b, a, arrayBuffer, offset) {
-        if (r === undefined)return new cc.Color(0, 0, 0, 255, arrayBuffer, offset);
-        if (typeof r === "string") {
-            var color = cc.hexToColor(r);
-            return new cc.Color(color.r, color.g, color.b, color.a)
-        }
-        if (typeof r === "object")return new cc.Color(r.r, r.g, r.b, r.a, r.arrayBuffer, r.offset);
-        return new cc.Color(r, g, b, a, arrayBuffer, offset)
+    cc.color = function (a, c, b, d, e, f) {
+        return void 0 === a ? new cc.Color(0, 0, 0, 255, e, f) : "string" === typeof a ? (a = cc.hexToColor(a), new cc.Color(a.r, a.g, a.b, a.a)) : "object" === typeof a ? new cc.Color(a.r, a.g, a.b, a.a, a.arrayBuffer, a.offset) : new cc.Color(a, c, b, d, e, f)
     };
-    cc.Color = function (r, g, b, a, arrayBuffer, offset) {
-        this._arrayBuffer = arrayBuffer || new ArrayBuffer(cc.Color.BYTES_PER_ELEMENT);
-        this._offset =
-            offset || 0;
-        var locArrayBuffer = this._arrayBuffer, locOffset = this._offset, locElementLen = Uint8Array.BYTES_PER_ELEMENT;
-        this._rU8 = new Uint8Array(locArrayBuffer, locOffset, 1);
-        this._gU8 = new Uint8Array(locArrayBuffer, locOffset + locElementLen, 1);
-        this._bU8 = new Uint8Array(locArrayBuffer, locOffset + locElementLen * 2, 1);
-        this._aU8 = new Uint8Array(locArrayBuffer, locOffset + locElementLen * 3, 1);
-        this._rU8[0] = r || 0;
-        this._gU8[0] = g || 0;
+    cc.Color = function (a, c, b, d, e, f) {
+        this._arrayBuffer = e || new ArrayBuffer(cc.Color.BYTES_PER_ELEMENT);
+        this._offset = f || 0;
+        e = this._arrayBuffer;
+        f = this._offset;
+        var k = Uint8Array.BYTES_PER_ELEMENT;
+        this._rU8 = new Uint8Array(e, f, 1);
+        this._gU8 =
+            new Uint8Array(e, f + k, 1);
+        this._bU8 = new Uint8Array(e, f + 2 * k, 1);
+        this._aU8 = new Uint8Array(e, f + 3 * k, 1);
+        this._rU8[0] = a || 0;
+        this._gU8[0] = c || 0;
         this._bU8[0] = b || 0;
-        this._aU8[0] = a || 255;
-        if (a === undefined)this.a_undefined = true
+        this._aU8[0] = d || 255;
+        void 0 === d && (this.a_undefined = !0)
     };
-    cc.Color.BYTES_PER_ELEMENT =
-        4;
-    var _p = cc.Color.prototype;
-    _p._getR = function () {
+    cc.Color.BYTES_PER_ELEMENT = 4;
+    var b = cc.Color.prototype;
+    b._getR = function () {
         return this._rU8[0]
     };
-    _p._setR = function (value) {
-        this._rU8[0] = value < 0 ? 0 : value
+    b._setR = function (a) {
+        this._rU8[0] = 0 > a ? 0 : a
     };
-    _p._getG = function () {
+    b._getG = function () {
         return this._gU8[0]
     };
-    _p._setG = function (value) {
-        this._gU8[0] = value < 0 ? 0 : value
+    b._setG = function (a) {
+        this._gU8[0] = 0 > a ? 0 : a
     };
-    _p._getB = function () {
+    b._getB = function () {
         return this._bU8[0]
     };
-    _p._setB = function (value) {
-        this._bU8[0] = value < 0 ? 0 : value
+    b._setB = function (a) {
+        this._bU8[0] = 0 > a ? 0 :
+            a
     };
-    _p._getA = function () {
+    b._getA = function () {
         return this._aU8[0]
     };
-    _p._setA = function (value) {
-        this._aU8[0] = value < 0 ? 0 : value
+    b._setA = function (a) {
+        this._aU8[0] = 0 > a ? 0 : a
     };
-    _p.r;
-    cc.defineGetterSetter(_p, "r", _p._getR, _p._setR);
-    _p.g;
-    cc.defineGetterSetter(_p, "g", _p._getG,
-        _p._setG);
-    _p.b;
-    cc.defineGetterSetter(_p, "b", _p._getB, _p._setB);
-    _p.a;
-    cc.defineGetterSetter(_p, "a", _p._getA, _p._setA);
-    cc.Vertex2F = function (x, y, arrayBuffer, offset) {
-        this._arrayBuffer = arrayBuffer || new ArrayBuffer(cc.Vertex2F.BYTES_PER_ELEMENT);
-        this._offset = offset || 0;
+    cc.defineGetterSetter(b, "r", b._getR, b._setR);
+    cc.defineGetterSetter(b, "g", b._getG, b._setG);
+    cc.defineGetterSetter(b, "b", b._getB, b._setB);
+    cc.defineGetterSetter(b, "a", b._getA, b._setA);
+    cc.Vertex2F = function (a, c, b, d) {
+        this._arrayBuffer = b || new ArrayBuffer(cc.Vertex2F.BYTES_PER_ELEMENT);
+        this._offset = d || 0;
         this._xF32 = new Float32Array(this._arrayBuffer, this._offset, 1);
-        this._yF32 = new Float32Array(this._arrayBuffer, this._offset + 4, 1);
-        this._xF32[0] = x || 0;
-        this._yF32[0] = y || 0
+        this._yF32 = new Float32Array(this._arrayBuffer, this._offset +
+            4, 1);
+        this._xF32[0] = a || 0;
+        this._yF32[0] = c || 0
     };
     cc.Vertex2F.BYTES_PER_ELEMENT = 8;
-    Object.defineProperties(cc.Vertex2F.prototype,
-        {x: {get: function () {
-            return this._xF32[0]
-        }, set: function (xValue) {
-            this._xF32[0] = xValue
-        }, enumerable: true}, y: {get: function () {
-            return this._yF32[0]
-        }, set: function (yValue) {
-            this._yF32[0] = yValue
-        }, enumerable: true}});
-    cc.Vertex3F = function (x, y, z, arrayBuffer, offset) {
-        this._arrayBuffer = arrayBuffer || new ArrayBuffer(cc.Vertex3F.BYTES_PER_ELEMENT);
-        this._offset = offset || 0;
-        var locArrayBuffer = this._arrayBuffer, locOffset = this._offset;
-        this._xF32 = new Float32Array(locArrayBuffer, locOffset, 1);
-        this._xF32[0] = x || 0;
-        this._yF32 = new Float32Array(locArrayBuffer,
-                locOffset + Float32Array.BYTES_PER_ELEMENT, 1);
-        this._yF32[0] = y || 0;
-        this._zF32 = new Float32Array(locArrayBuffer, locOffset + Float32Array.BYTES_PER_ELEMENT * 2, 1);
-        this._zF32[0] = z || 0
+    Object.defineProperties(cc.Vertex2F.prototype, {x: {get: function () {
+        return this._xF32[0]
+    }, set: function (a) {
+        this._xF32[0] = a
+    }, enumerable: !0}, y: {get: function () {
+        return this._yF32[0]
+    }, set: function (a) {
+        this._yF32[0] = a
+    }, enumerable: !0}});
+    cc.Vertex3F = function (a, c, b, d, e) {
+        this._arrayBuffer = d || new ArrayBuffer(cc.Vertex3F.BYTES_PER_ELEMENT);
+        this._offset = e || 0;
+        d = this._arrayBuffer;
+        e = this._offset;
+        this._xF32 = new Float32Array(d, e, 1);
+        this._xF32[0] =
+            a || 0;
+        this._yF32 = new Float32Array(d, e + Float32Array.BYTES_PER_ELEMENT, 1);
+        this._yF32[0] = c || 0;
+        this._zF32 = new Float32Array(d, e + 2 * Float32Array.BYTES_PER_ELEMENT, 1);
+        this._zF32[0] = b || 0
     };
     cc.Vertex3F.BYTES_PER_ELEMENT = 12;
     Object.defineProperties(cc.Vertex3F.prototype, {x: {get: function () {
         return this._xF32[0]
-    }, set: function (xValue) {
-        this._xF32[0] = xValue
-    }, enumerable: true}, y: {get: function () {
+    }, set: function (a) {
+        this._xF32[0] = a
+    }, enumerable: !0}, y: {get: function () {
         return this._yF32[0]
-    }, set: function (yValue) {
-        this._yF32[0] = yValue
-    }, enumerable: true}, z: {get: function () {
+    }, set: function (a) {
+        this._yF32[0] = a
+    }, enumerable: !0}, z: {get: function () {
         return this._zF32[0]
-    }, set: function (zValue) {
+    }, set: function (a) {
         this._zF32[0] =
-            zValue
-    }, enumerable: true}});
-    cc.Tex2F = function (u, v, arrayBuffer, offset) {
-        this._arrayBuffer = arrayBuffer || new ArrayBuffer(cc.Tex2F.BYTES_PER_ELEMENT);
-        this._offset = offset || 0;
+            a
+    }, enumerable: !0}});
+    cc.Tex2F = function (a, c, b, d) {
+        this._arrayBuffer = b || new ArrayBuffer(cc.Tex2F.BYTES_PER_ELEMENT);
+        this._offset = d || 0;
         this._uF32 = new Float32Array(this._arrayBuffer, this._offset, 1);
         this._vF32 = new Float32Array(this._arrayBuffer, this._offset + 4, 1);
-        this._uF32[0] = u || 0;
-        this._vF32[0] = v || 0
+        this._uF32[0] = a || 0;
+        this._vF32[0] = c || 0
     };
     cc.Tex2F.BYTES_PER_ELEMENT = 8;
     Object.defineProperties(cc.Tex2F.prototype, {u: {get: function () {
         return this._uF32[0]
-    }, set: function (xValue) {
-        this._uF32[0] = xValue
-    }, enumerable: true},
-        v: {get: function () {
-            return this._vF32[0]
-        }, set: function (yValue) {
-            this._vF32[0] = yValue
-        }, enumerable: true}});
-    cc.Quad2 = function (tl, tr, bl, br, arrayBuffer, offset) {
-        this._arrayBuffer = arrayBuffer || new ArrayBuffer(cc.Quad2.BYTES_PER_ELEMENT);
-        this._offset = offset || 0;
-        var locArrayBuffer = this._arrayBuffer, locElementLen = cc.Vertex2F.BYTES_PER_ELEMENT;
-        this._tl = tl ? new cc.Vertex2F(tl.x, tl.y, locArrayBuffer, 0) : new cc.Vertex2F(0, 0, locArrayBuffer, 0);
-        this._tr = tr ? new cc.Vertex2F(tr.x, tr.y, locArrayBuffer, locElementLen) : new cc.Vertex2F(0,
-            0, locArrayBuffer, locElementLen);
-        this._bl = bl ? new cc.Vertex2F(bl.x, bl.y, locArrayBuffer, locElementLen * 2) : new cc.Vertex2F(0, 0, locArrayBuffer, locElementLen * 2);
-        this._br = br ? new cc.Vertex2F(br.x, br.y, locArrayBuffer, locElementLen * 3) : new cc.Vertex2F(0, 0, locArrayBuffer, locElementLen * 3)
+    }, set: function (a) {
+        this._uF32[0] = a
+    }, enumerable: !0}, v: {get: function () {
+        return this._vF32[0]
+    }, set: function (a) {
+        this._vF32[0] =
+            a
+    }, enumerable: !0}});
+    cc.Quad2 = function (a, c, b, d, e, f) {
+        this._arrayBuffer = e || new ArrayBuffer(cc.Quad2.BYTES_PER_ELEMENT);
+        this._offset = f || 0;
+        e = this._arrayBuffer;
+        f = cc.Vertex2F.BYTES_PER_ELEMENT;
+        this._tl = a ? new cc.Vertex2F(a.x, a.y, e, 0) : new cc.Vertex2F(0, 0, e, 0);
+        this._tr = c ? new cc.Vertex2F(c.x, c.y, e, f) : new cc.Vertex2F(0, 0, e, f);
+        this._bl = b ? new cc.Vertex2F(b.x, b.y, e, 2 * f) : new cc.Vertex2F(0, 0, e, 2 * f);
+        this._br = d ? new cc.Vertex2F(d.x, d.y, e, 3 * f) : new cc.Vertex2F(0, 0, e, 3 * f)
     };
     cc.Quad2.BYTES_PER_ELEMENT = 32;
-    cc.Quad3 = function (bl1, br1, tl1, tr1) {
-        this.bl = bl1 || new cc.Vertex3F(0, 0, 0);
-        this.br = br1 || new cc.Vertex3F(0, 0, 0);
-        this.tl = tl1 || new cc.Vertex3F(0, 0, 0);
-        this.tr = tr1 || new cc.Vertex3F(0, 0, 0)
+    cc.Quad3 = function (a, c, b, d) {
+        this.bl = a || new cc.Vertex3F(0, 0, 0);
+        this.br = c || new cc.Vertex3F(0, 0, 0);
+        this.tl = b || new cc.Vertex3F(0, 0, 0);
+        this.tr = d || new cc.Vertex3F(0, 0, 0)
     };
-    Object.defineProperties(cc.Quad2.prototype,
-        {tl: {get: function () {
-            return this._tl
-        }, set: function (tlValue) {
-            this._tl.x = tlValue.x;
-            this._tl.y = tlValue.y
-        }, enumerable: true}, tr: {get: function () {
-            return this._tr
-        }, set: function (trValue) {
-            this._tr.x = trValue.x;
-            this._tr.y = trValue.y
-        }, enumerable: true}, bl: {get: function () {
-            return this._bl
-        }, set: function (blValue) {
-            this._bl.x = blValue.x;
-            this._bl.y = blValue.y
-        }, enumerable: true}, br: {get: function () {
-            return this._br
-        }, set: function (brValue) {
-            this._br.x = brValue.x;
-            this._br.y = brValue.y
-        }, enumerable: true}});
-    cc.V3F_C4B_T2F = function (vertices, colors, texCoords, arrayBuffer, offset) {
-        this._arrayBuffer = arrayBuffer || new ArrayBuffer(cc.V3F_C4B_T2F.BYTES_PER_ELEMENT);
-        this._offset = offset || 0;
-        var locArrayBuffer = this._arrayBuffer, locOffset = this._offset, locElementLen = cc.Vertex3F.BYTES_PER_ELEMENT;
-        this._vertices = vertices ? new cc.Vertex3F(vertices.x, vertices.y, vertices.z, locArrayBuffer, locOffset) : new cc.Vertex3F(0, 0, 0, locArrayBuffer, locOffset);
-        this._colors = colors ? cc.color(colors.r, colors.g, colors.b, colors.a, locArrayBuffer, locOffset + locElementLen) : cc.color(0,
-            0, 0, 0, locArrayBuffer, locOffset + locElementLen);
-        this._texCoords = texCoords ? new cc.Tex2F(texCoords.u, texCoords.v, locArrayBuffer, locOffset + locElementLen + cc.Color.BYTES_PER_ELEMENT) : new cc.Tex2F(0, 0, locArrayBuffer, locOffset + locElementLen + cc.Color.BYTES_PER_ELEMENT)
+    Object.defineProperties(cc.Quad2.prototype, {tl: {get: function () {
+        return this._tl
+    }, set: function (a) {
+        this._tl.x = a.x;
+        this._tl.y = a.y
+    }, enumerable: !0}, tr: {get: function () {
+        return this._tr
+    }, set: function (a) {
+        this._tr.x = a.x;
+        this._tr.y = a.y
+    }, enumerable: !0}, bl: {get: function () {
+        return this._bl
+    }, set: function (a) {
+        this._bl.x = a.x;
+        this._bl.y = a.y
+    }, enumerable: !0}, br: {get: function () {
+        return this._br
+    },
+        set: function (a) {
+            this._br.x = a.x;
+            this._br.y = a.y
+        }, enumerable: !0}});
+    cc.V3F_C4B_T2F = function (a, c, b, d, e) {
+        this._arrayBuffer = d || new ArrayBuffer(cc.V3F_C4B_T2F.BYTES_PER_ELEMENT);
+        this._offset = e || 0;
+        d = this._arrayBuffer;
+        e = this._offset;
+        var f = cc.Vertex3F.BYTES_PER_ELEMENT;
+        this._vertices = a ? new cc.Vertex3F(a.x, a.y, a.z, d, e) : new cc.Vertex3F(0, 0, 0, d, e);
+        this._colors = c ? cc.color(c.r, c.g, c.b, c.a, d, e + f) : cc.color(0, 0, 0, 0, d, e + f);
+        this._texCoords = b ? new cc.Tex2F(b.u, b.v, d, e + f + cc.Color.BYTES_PER_ELEMENT) : new cc.Tex2F(0, 0, d, e +
+            f + cc.Color.BYTES_PER_ELEMENT)
     };
     cc.V3F_C4B_T2F.BYTES_PER_ELEMENT = 24;
     Object.defineProperties(cc.V3F_C4B_T2F.prototype, {vertices: {get: function () {
         return this._vertices
-    }, set: function (verticesValue) {
-        var locVertices = this._vertices;
-        locVertices.x = verticesValue.x;
-        locVertices.y = verticesValue.y;
-        locVertices.z = verticesValue.z
-    }, enumerable: true}, colors: {get: function () {
+    }, set: function (a) {
+        var c = this._vertices;
+        c.x = a.x;
+        c.y = a.y;
+        c.z = a.z
+    }, enumerable: !0}, colors: {get: function () {
         return this._colors
-    }, set: function (colorValue) {
-        var locColors = this._colors;
-        locColors.r = colorValue.r;
-        locColors.g = colorValue.g;
-        locColors.b = colorValue.b;
-        locColors.a = colorValue.a
-    }, enumerable: true}, texCoords: {get: function () {
+    }, set: function (a) {
+        var c = this._colors;
+        c.r = a.r;
+        c.g = a.g;
+        c.b = a.b;
+        c.a = a.a
+    }, enumerable: !0}, texCoords: {get: function () {
         return this._texCoords
-    }, set: function (texValue) {
-        this._texCoords.u = texValue.u;
-        this._texCoords.v = texValue.v
-    }, enumerable: true}});
-    cc.V3F_C4B_T2F_Quad = function (tl, bl, tr, br, arrayBuffer, offset) {
-        this._arrayBuffer = arrayBuffer ||
-            new ArrayBuffer(cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT);
-        this._offset = offset || 0;
-        var locArrayBuffer = this._arrayBuffer, locOffset = this._offset, locElementLen = cc.V3F_C4B_T2F.BYTES_PER_ELEMENT;
-        this._tl = tl ? new cc.V3F_C4B_T2F(tl.vertices, tl.colors, tl.texCoords, locArrayBuffer, locOffset) : new cc.V3F_C4B_T2F(null, null, null, locArrayBuffer, locOffset);
-        this._bl = bl ? new cc.V3F_C4B_T2F(bl.vertices, bl.colors, bl.texCoords, locArrayBuffer, locOffset + locElementLen) : new cc.V3F_C4B_T2F(null, null, null, locArrayBuffer, locOffset +
-            locElementLen);
-        this._tr = tr ? new cc.V3F_C4B_T2F(tr.vertices, tr.colors, tr.texCoords, locArrayBuffer, locOffset + locElementLen * 2) : new cc.V3F_C4B_T2F(null, null, null, locArrayBuffer, locOffset + locElementLen * 2);
-        this._br = br ? new cc.V3F_C4B_T2F(br.vertices, br.colors, br.texCoords, locArrayBuffer, locOffset + locElementLen * 3) : new cc.V3F_C4B_T2F(null, null, null, locArrayBuffer, locOffset + locElementLen * 3)
-    };
+    }, set: function (a) {
+        this._texCoords.u = a.u;
+        this._texCoords.v = a.v
+    }, enumerable: !0}});
+    cc.V3F_C4B_T2F_Quad =
+        function (a, c, b, d, e, f) {
+            this._arrayBuffer = e || new ArrayBuffer(cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT);
+            this._offset = f || 0;
+            e = this._arrayBuffer;
+            f = this._offset;
+            var k = cc.V3F_C4B_T2F.BYTES_PER_ELEMENT;
+            this._tl = a ? new cc.V3F_C4B_T2F(a.vertices, a.colors, a.texCoords, e, f) : new cc.V3F_C4B_T2F(null, null, null, e, f);
+            this._bl = c ? new cc.V3F_C4B_T2F(c.vertices, c.colors, c.texCoords, e, f + k) : new cc.V3F_C4B_T2F(null, null, null, e, f + k);
+            this._tr = b ? new cc.V3F_C4B_T2F(b.vertices, b.colors, b.texCoords, e, f + 2 * k) : new cc.V3F_C4B_T2F(null,
+                null, null, e, f + 2 * k);
+            this._br = d ? new cc.V3F_C4B_T2F(d.vertices, d.colors, d.texCoords, e, f + 3 * k) : new cc.V3F_C4B_T2F(null, null, null, e, f + 3 * k)
+        };
     cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT = 96;
     Object.defineProperties(cc.V3F_C4B_T2F_Quad.prototype, {tl: {get: function () {
         return this._tl
-    },
-        set: function (tlValue) {
-            var locTl = this._tl;
-            locTl.vertices = tlValue.vertices;
-            locTl.colors = tlValue.colors;
-            locTl.texCoords = tlValue.texCoords
-        }, enumerable: true}, bl: {get: function () {
+    }, set: function (a) {
+        var c = this._tl;
+        c.vertices = a.vertices;
+        c.colors = a.colors;
+        c.texCoords = a.texCoords
+    }, enumerable: !0}, bl: {get: function () {
         return this._bl
-    }, set: function (blValue) {
-        var locBl = this._bl;
-        locBl.vertices = blValue.vertices;
-        locBl.colors = blValue.colors;
-        locBl.texCoords = blValue.texCoords
-    }, enumerable: true}, tr: {get: function () {
-        return this._tr
-    }, set: function (trValue) {
-        var locTr = this._tr;
-        locTr.vertices = trValue.vertices;
-        locTr.colors = trValue.colors;
-        locTr.texCoords = trValue.texCoords
+    }, set: function (a) {
+        var c = this._bl;
+        c.vertices = a.vertices;
+        c.colors = a.colors;
+        c.texCoords = a.texCoords
     },
-        enumerable: true}, br: {get: function () {
+        enumerable: !0}, tr: {get: function () {
+        return this._tr
+    }, set: function (a) {
+        var c = this._tr;
+        c.vertices = a.vertices;
+        c.colors = a.colors;
+        c.texCoords = a.texCoords
+    }, enumerable: !0}, br: {get: function () {
         return this._br
-    }, set: function (brValue) {
-        var locBr = this._br;
-        locBr.vertices = brValue.vertices;
-        locBr.colors = brValue.colors;
-        locBr.texCoords = brValue.texCoords
-    }, enumerable: true}, arrayBuffer: {get: function () {
+    }, set: function (a) {
+        var c = this._br;
+        c.vertices = a.vertices;
+        c.colors = a.colors;
+        c.texCoords = a.texCoords
+    }, enumerable: !0}, arrayBuffer: {get: function () {
         return this._arrayBuffer
-    }, enumerable: true}});
+    }, enumerable: !0}});
     cc.V3F_C4B_T2F_QuadZero = function () {
         return new cc.V3F_C4B_T2F_Quad
     };
-    cc.V3F_C4B_T2F_QuadCopy = function (sourceQuad) {
-        if (!sourceQuad)return cc.V3F_C4B_T2F_QuadZero();
-        var srcTL = sourceQuad.tl, srcBL = sourceQuad.bl, srcTR = sourceQuad.tr,
-            srcBR = sourceQuad.br;
-        return{tl: {vertices: {x: srcTL.vertices.x, y: srcTL.vertices.y, z: srcTL.vertices.z}, colors: {r: srcTL.colors.r, g: srcTL.colors.g, b: srcTL.colors.b, a: srcTL.colors.a}, texCoords: {u: srcTL.texCoords.u, v: srcTL.texCoords.v}}, bl: {vertices: {x: srcBL.vertices.x, y: srcBL.vertices.y, z: srcBL.vertices.z}, colors: {r: srcBL.colors.r, g: srcBL.colors.g, b: srcBL.colors.b, a: srcBL.colors.a}, texCoords: {u: srcBL.texCoords.u, v: srcBL.texCoords.v}}, tr: {vertices: {x: srcTR.vertices.x, y: srcTR.vertices.y, z: srcTR.vertices.z},
-            colors: {r: srcTR.colors.r, g: srcTR.colors.g, b: srcTR.colors.b, a: srcTR.colors.a}, texCoords: {u: srcTR.texCoords.u, v: srcTR.texCoords.v}}, br: {vertices: {x: srcBR.vertices.x, y: srcBR.vertices.y, z: srcBR.vertices.z}, colors: {r: srcBR.colors.r, g: srcBR.colors.g, b: srcBR.colors.b, a: srcBR.colors.a}, texCoords: {u: srcBR.texCoords.u, v: srcBR.texCoords.v}}}
+    cc.V3F_C4B_T2F_QuadCopy = function (a) {
+        if (!a)return cc.V3F_C4B_T2F_QuadZero();
+        var c = a.tl, b = a.bl, d = a.tr;
+        a = a.br;
+        return{tl: {vertices: {x: c.vertices.x, y: c.vertices.y, z: c.vertices.z}, colors: {r: c.colors.r, g: c.colors.g, b: c.colors.b, a: c.colors.a}, texCoords: {u: c.texCoords.u, v: c.texCoords.v}}, bl: {vertices: {x: b.vertices.x, y: b.vertices.y, z: b.vertices.z}, colors: {r: b.colors.r, g: b.colors.g, b: b.colors.b, a: b.colors.a}, texCoords: {u: b.texCoords.u, v: b.texCoords.v}}, tr: {vertices: {x: d.vertices.x, y: d.vertices.y, z: d.vertices.z}, colors: {r: d.colors.r, g: d.colors.g, b: d.colors.b, a: d.colors.a}, texCoords: {u: d.texCoords.u,
+            v: d.texCoords.v}}, br: {vertices: {x: a.vertices.x, y: a.vertices.y, z: a.vertices.z}, colors: {r: a.colors.r, g: a.colors.g, b: a.colors.b, a: a.colors.a}, texCoords: {u: a.texCoords.u, v: a.texCoords.v}}}
     };
-    cc.V3F_C4B_T2F_QuadsCopy = function (sourceQuads) {
-        if (!sourceQuads)return[];
-        var retArr = [];
-        for (var i = 0; i < sourceQuads.length; i++)retArr.push(cc.V3F_C4B_T2F_QuadCopy(sourceQuads[i]));
-        return retArr
+    cc.V3F_C4B_T2F_QuadsCopy = function (a) {
+        if (!a)return[];
+        for (var c = [], b = 0; b < a.length; b++)c.push(cc.V3F_C4B_T2F_QuadCopy(a[b]));
+        return c
     };
-    cc.V2F_C4B_T2F = function (vertices, colors, texCoords, arrayBuffer, offset) {
-        this._arrayBuffer = arrayBuffer || new ArrayBuffer(cc.V2F_C4B_T2F.BYTES_PER_ELEMENT);
-        this._offset = offset || 0;
-        var locArrayBuffer = this._arrayBuffer, locOffset = this._offset, locElementLen = cc.Vertex2F.BYTES_PER_ELEMENT;
-        this._vertices = vertices ? new cc.Vertex2F(vertices.x, vertices.y, locArrayBuffer, locOffset) : new cc.Vertex2F(0, 0, locArrayBuffer, locOffset);
-        this._colors = colors ? cc.color(colors.r, colors.g, colors.b, colors.a, locArrayBuffer,
-                locOffset + locElementLen) : cc.color(0, 0, 0, 0, locArrayBuffer, locOffset + locElementLen);
-        this._texCoords = texCoords ? new cc.Tex2F(texCoords.u, texCoords.v, locArrayBuffer, locOffset + locElementLen + cc.Color.BYTES_PER_ELEMENT) : new cc.Tex2F(0, 0, locArrayBuffer, locOffset + locElementLen + cc.Color.BYTES_PER_ELEMENT)
+    cc.V2F_C4B_T2F = function (a, c, b, d, e) {
+        this._arrayBuffer = d || new ArrayBuffer(cc.V2F_C4B_T2F.BYTES_PER_ELEMENT);
+        this._offset = e || 0;
+        d = this._arrayBuffer;
+        e = this._offset;
+        var f = cc.Vertex2F.BYTES_PER_ELEMENT;
+        this._vertices = a ? new cc.Vertex2F(a.x, a.y, d, e) : new cc.Vertex2F(0, 0, d, e);
+        this._colors = c ? cc.color(c.r, c.g, c.b, c.a, d, e + f) : cc.color(0, 0, 0, 0, d, e + f);
+        this._texCoords = b ? new cc.Tex2F(b.u, b.v, d, e + f + cc.Color.BYTES_PER_ELEMENT) : new cc.Tex2F(0, 0, d, e + f + cc.Color.BYTES_PER_ELEMENT)
     };
     cc.V2F_C4B_T2F.BYTES_PER_ELEMENT = 20;
     Object.defineProperties(cc.V2F_C4B_T2F.prototype, {vertices: {get: function () {
         return this._vertices
-    }, set: function (verticesValue) {
-        this._vertices.x = verticesValue.x;
-        this._vertices.y =
-            verticesValue.y
-    }, enumerable: true}, colors: {get: function () {
+    }, set: function (a) {
+        this._vertices.x = a.x;
+        this._vertices.y = a.y
+    }, enumerable: !0}, colors: {get: function () {
         return this._colors
-    }, set: function (colorValue) {
-        var locColors = this._colors;
-        locColors.r = colorValue.r;
-        locColors.g = colorValue.g;
-        locColors.b = colorValue.b;
-        locColors.a = colorValue.a
-    }, enumerable: true}, texCoords: {get: function () {
+    },
+        set: function (a) {
+            var c = this._colors;
+            c.r = a.r;
+            c.g = a.g;
+            c.b = a.b;
+            c.a = a.a
+        }, enumerable: !0}, texCoords: {get: function () {
         return this._texCoords
-    }, set: function (texValue) {
-        this._texCoords.u = texValue.u;
-        this._texCoords.v = texValue.v
-    }, enumerable: true}});
-    cc.V2F_C4B_T2F_Triangle = function (a, b, c, arrayBuffer, offset) {
-        this._arrayBuffer = arrayBuffer || new ArrayBuffer(cc.V2F_C4B_T2F_Triangle.BYTES_PER_ELEMENT);
-        this._offset = offset || 0;
-        var locArrayBuffer = this._arrayBuffer, locOffset = this._offset, locElementLen = cc.V2F_C4B_T2F.BYTES_PER_ELEMENT;
-        this._a = a ? new cc.V2F_C4B_T2F(a.vertices, a.colors, a.texCoords, locArrayBuffer, locOffset) : new cc.V2F_C4B_T2F(null, null, null, locArrayBuffer, locOffset);
-        this._b = b ? new cc.V2F_C4B_T2F(b.vertices, b.colors, b.texCoords, locArrayBuffer, locOffset + locElementLen) : new cc.V2F_C4B_T2F(null, null, null, locArrayBuffer, locOffset + locElementLen);
-        this._c = c ? new cc.V2F_C4B_T2F(c.vertices, c.colors,
-            c.texCoords, locArrayBuffer, locOffset + locElementLen * 2) : new cc.V2F_C4B_T2F(null, null, null, locArrayBuffer, locOffset + locElementLen * 2)
+    }, set: function (a) {
+        this._texCoords.u = a.u;
+        this._texCoords.v = a.v
+    }, enumerable: !0}});
+    cc.V2F_C4B_T2F_Triangle = function (a, c, b, d, e) {
+        this._arrayBuffer = d || new ArrayBuffer(cc.V2F_C4B_T2F_Triangle.BYTES_PER_ELEMENT);
+        this._offset = e || 0;
+        d = this._arrayBuffer;
+        e = this._offset;
+        var f = cc.V2F_C4B_T2F.BYTES_PER_ELEMENT;
+        this._a = a ? new cc.V2F_C4B_T2F(a.vertices, a.colors, a.texCoords, d, e) : new cc.V2F_C4B_T2F(null,
+            null, null, d, e);
+        this._b = c ? new cc.V2F_C4B_T2F(c.vertices, c.colors, c.texCoords, d, e + f) : new cc.V2F_C4B_T2F(null, null, null, d, e + f);
+        this._c = b ? new cc.V2F_C4B_T2F(b.vertices, b.colors, b.texCoords, d, e + 2 * f) : new cc.V2F_C4B_T2F(null, null, null, d, e + 2 * f)
     };
     cc.V2F_C4B_T2F_Triangle.BYTES_PER_ELEMENT = 60;
     Object.defineProperties(cc.V2F_C4B_T2F_Triangle.prototype, {a: {get: function () {
         return this._a
-    }, set: function (aValue) {
-        var locA = this._a;
-        locA.vertices = aValue.vertices;
-        locA.colors = aValue.colors;
-        locA.texCoords = aValue.texCoords
-    }, enumerable: true}, b: {get: function () {
+    }, set: function (a) {
+        var c = this._a;
+        c.vertices = a.vertices;
+        c.colors = a.colors;
+        c.texCoords = a.texCoords
+    }, enumerable: !0}, b: {get: function () {
         return this._b
-    }, set: function (bValue) {
-        var locB = this._b;
-        locB.vertices = bValue.vertices;
-        locB.colors = bValue.colors;
-        locB.texCoords = bValue.texCoords
-    }, enumerable: true}, c: {get: function () {
+    },
+        set: function (a) {
+            var c = this._b;
+            c.vertices = a.vertices;
+            c.colors = a.colors;
+            c.texCoords = a.texCoords
+        }, enumerable: !0}, c: {get: function () {
         return this._c
-    }, set: function (cValue) {
-        var locC = this._c;
-        locC.vertices = cValue.vertices;
-        locC.colors = cValue.colors;
-        locC.texCoords = cValue.texCoords
-    }, enumerable: true}})
+    }, set: function (a) {
+        var c = this._c;
+        c.vertices = a.vertices;
+        c.colors = a.colors;
+        c.texCoords = a.texCoords
+    }, enumerable: !0}})
 };
 cc._tmp.WebGLCCNode = function () {
-    var _p = cc.Node.prototype;
-    _p._transform4x4 = null;
-    _p._stackMatrix = null;
-    _p._glServerState = null;
-    _p._camera = null;
-    _p.ctor = function () {
-        var _t = this;
-        _t._initNode();
-        var mat4 = new cc.kmMat4;
-        mat4.mat[2] = mat4.mat[3] = mat4.mat[6] = mat4.mat[7] = mat4.mat[8] = mat4.mat[9] = mat4.mat[11] = mat4.mat[14] = 0;
-        mat4.mat[10] = mat4.mat[15] = 1;
-        _t._transform4x4 = mat4;
-        _t._glServerState = 0;
-        _t._stackMatrix = new cc.kmMat4
+    var b = cc.Node.prototype;
+    b._transform4x4 = null;
+    b._stackMatrix = null;
+    b._glServerState = null;
+    b._camera = null;
+    b.ctor = function () {
+        this._initNode();
+        var a = new cc.kmMat4;
+        a.mat[2] = a.mat[3] = a.mat[6] = a.mat[7] = a.mat[8] = a.mat[9] = a.mat[11] = a.mat[14] = 0;
+        a.mat[10] = a.mat[15] = 1;
+        this._transform4x4 = a;
+        this._glServerState = 0;
+        this._stackMatrix = new cc.kmMat4
     };
-    _p.setNodeDirty = function () {
-        this._transformDirty === false && (this._transformDirty = this._inverseDirty =
-            true)
+    b.setNodeDirty = function () {
+        !1 === this._transformDirty && (this._transformDirty = this._inverseDirty = !0)
     };
-    _p.visit = function () {
-        var _t = this;
-        if (!_t._visible)return;
-        var context = cc._renderContext, i, currentStack = cc.current_stack;
-        currentStack.stack.push(currentStack.top);
-        cc.kmMat4Assign(_t._stackMatrix, currentStack.top);
-        currentStack.top = _t._stackMatrix;
-        var locGrid = _t.grid;
-        if (locGrid && locGrid._active)locGrid.beforeDraw();
-        _t.transform();
-        var locChildren = _t._children;
-        if (locChildren && locChildren.length > 0) {
-            var childLen = locChildren.length;
-            _t.sortAllChildren();
-            for (i = 0; i < childLen; i++)if (locChildren[i] && locChildren[i]._localZOrder <
-                0)locChildren[i].visit(); else break;
-            _t.draw(context);
-            for (; i < childLen; i++)if (locChildren[i])locChildren[i].visit()
-        } else _t.draw(context);
-        _t.arrivalOrder = 0;
-        if (locGrid && locGrid._active)locGrid.afterDraw(_t);
-        currentStack.top = currentStack.stack.pop()
-    };
-    _p.transform = function () {
-        var _t = this;
-        var t4x4 = _t._transform4x4, topMat4 = cc.current_stack.top;
-        var trans = _t.nodeToParentTransform();
-        var t4x4Mat = t4x4.mat;
-        t4x4Mat[0] = trans.a;
-        t4x4Mat[4] = trans.c;
-        t4x4Mat[12] = trans.tx;
-        t4x4Mat[1] = trans.b;
-        t4x4Mat[5] = trans.d;
-        t4x4Mat[13] =
-            trans.ty;
-        t4x4Mat[14] = _t._vertexZ;
-        cc.kmMat4Multiply(topMat4, topMat4, t4x4);
-        if (_t._camera != null && !(_t.grid != null && _t.grid.isActive())) {
-            var apx = _t._anchorPointInPoints.x, apy = _t._anchorPointInPoints.y;
-            var translate = apx !== 0 || apy !== 0;
-            if (translate) {
-                if (!cc.SPRITEBATCHNODE_RENDER_SUBPIXEL) {
-                    apx = 0 | apx;
-                    apy = 0 | apy
-                }
-                cc.kmGLTranslatef(apx, apy, 0);
-                _t._camera.locate();
-                cc.kmGLTranslatef(-apx, -apy, 0)
-            } else _t._camera.locate()
+    b.visit = function () {
+        if (this._visible) {
+            var a =
+                cc._renderContext, c, b = cc.current_stack;
+            b.stack.push(b.top);
+            cc.kmMat4Assign(this._stackMatrix, b.top);
+            b.top = this._stackMatrix;
+            var d = this.grid;
+            d && d._active && d.beforeDraw();
+            this.transform();
+            var e = this._children;
+            if (e && 0 < e.length) {
+                var f = e.length;
+                this.sortAllChildren();
+                for (c = 0; c < f; c++)if (e[c] && 0 > e[c]._localZOrder)e[c].visit(); else break;
+                for (this.draw(a); c < f; c++)e[c] && e[c].visit()
+            } else this.draw(a);
+            this.arrivalOrder = 0;
+            d && d._active && d.afterDraw(this);
+            b.top = b.stack.pop()
         }
     };
-    _p.nodeToParentTransform = _p._nodeToParentTransformForWebGL
+    b.transform = function () {
+        var a = this._transform4x4,
+            c = cc.current_stack.top, b = this.nodeToParentTransform(), d = a.mat;
+        d[0] = b.a;
+        d[4] = b.c;
+        d[12] = b.tx;
+        d[1] = b.b;
+        d[5] = b.d;
+        d[13] = b.ty;
+        d[14] = this._vertexZ;
+        cc.kmMat4Multiply(c, c, a);
+        null != this._camera && !(null != this.grid && this.grid.isActive()) && (a = this._anchorPointInPoints.x, c = this._anchorPointInPoints.y, 0 !== a || 0 !== c ? (cc.SPRITEBATCHNODE_RENDER_SUBPIXEL || (a |= 0, c |= 0), cc.kmGLTranslatef(a, c, 0), this._camera.locate(), cc.kmGLTranslatef(-a, -c, 0)) : this._camera.locate())
+    };
+    b.nodeToParentTransform = b._nodeToParentTransformForWebGL
 };
 cc._tmp.WebGLTexture2D = function () {
-    cc.Texture2D = cc.Class.extend({_pVRHaveAlphaPremultiplied: true, _pixelFormat: null, _pixelsWide: 0, _pixelsHigh: 0, _name: "", _contentSize: null, maxS: 0, maxT: 0, _hasPremultipliedAlpha: false, _hasMipmaps: false, shaderProgram: null, _isLoaded: false, _htmlElementObj: null, _webTextureObj: null, url: null, _loadedEventListeners: null, ctor: function () {
+    cc.Texture2D = cc.Class.extend({_pVRHaveAlphaPremultiplied: !0, _pixelFormat: null, _pixelsWide: 0, _pixelsHigh: 0, _name: "", _contentSize: null, maxS: 0, maxT: 0, _hasPremultipliedAlpha: !1, _hasMipmaps: !1, shaderProgram: null, _isLoaded: !1, _htmlElementObj: null, _webTextureObj: null, url: null, _loadedEventListeners: null, ctor: function () {
         this._contentSize = cc.size(0, 0);
         this._pixelFormat = cc.Texture2D.defaultPixelFormat
     }, releaseTexture: function () {
-        if (this._webTextureObj)cc._renderContext.deleteTexture(this._webTextureObj);
+        this._webTextureObj && cc._renderContext.deleteTexture(this._webTextureObj);
         cc.loader.release(this.url)
     }, getPixelFormat: function () {
         return this._pixelFormat
@@ -419,1124 +399,818 @@ cc._tmp.WebGLTexture2D = function () {
             return this._contentSize
         }, getMaxS: function () {
             return this.maxS
-        }, setMaxS: function (maxS) {
-            this.maxS = maxS
+        }, setMaxS: function (b) {
+            this.maxS = b
         }, getMaxT: function () {
             return this.maxT
-        }, setMaxT: function (maxT) {
-            this.maxT = maxT
+        }, setMaxT: function (b) {
+            this.maxT = b
         }, getShaderProgram: function () {
             return this.shaderProgram
-        }, setShaderProgram: function (shaderProgram) {
-            this.shaderProgram = shaderProgram
+        }, setShaderProgram: function (b) {
+            this.shaderProgram = b
         }, hasPremultipliedAlpha: function () {
             return this._hasPremultipliedAlpha
         }, hasMipmaps: function () {
             return this._hasMipmaps
         }, description: function () {
-            var _t = this;
-            return"\x3ccc.Texture2D | Name \x3d " +
-                _t._name + " | Dimensions \x3d " + _t._pixelsWide + " x " + _t._pixelsHigh + " | Coordinates \x3d (" + _t.maxS + ", " + _t.maxT + ")\x3e"
-        }, releaseData: function (data) {
-            data = null
-        }, keepData: function (data, length) {
-            return data
-        }, initWithData: function (data, pixelFormat, pixelsWide, pixelsHigh, contentSize) {
-            var self = this, tex2d = cc.Texture2D;
-            var gl = cc._renderContext;
-            var format = gl.RGBA, type = gl.UNSIGNED_BYTE;
-            var bitsPerPixel = cc.Texture2D._B[pixelFormat];
-            var bytesPerRow = pixelsWide * bitsPerPixel / 8;
-            if (bytesPerRow % 8 === 0)gl.pixelStorei(gl.UNPACK_ALIGNMENT,
-                8); else if (bytesPerRow % 4 === 0)gl.pixelStorei(gl.UNPACK_ALIGNMENT, 4); else if (bytesPerRow % 2 === 0)gl.pixelStorei(gl.UNPACK_ALIGNMENT, 2); else gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
-            self._webTextureObj = gl.createTexture();
-            cc.glBindTexture2D(self);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-            switch (pixelFormat) {
-                case tex2d.PIXEL_FORMAT_RGBA8888:
-                    format =
-                        gl.RGBA;
+            return"\x3ccc.Texture2D | Name \x3d " + this._name + " | Dimensions \x3d " +
+                this._pixelsWide + " x " + this._pixelsHigh + " | Coordinates \x3d (" + this.maxS + ", " + this.maxT + ")\x3e"
+        }, releaseData: function (b) {
+        }, keepData: function (b, a) {
+            return b
+        }, initWithData: function (b, a, c, g, d) {
+            var e = cc.Texture2D, f = cc._renderContext, k = f.RGBA, l = f.UNSIGNED_BYTE, h = c * cc.Texture2D._B[a] / 8;
+            0 === h % 8 ? f.pixelStorei(f.UNPACK_ALIGNMENT, 8) : 0 === h % 4 ? f.pixelStorei(f.UNPACK_ALIGNMENT, 4) : 0 === h % 2 ? f.pixelStorei(f.UNPACK_ALIGNMENT, 2) : f.pixelStorei(f.UNPACK_ALIGNMENT, 1);
+            this._webTextureObj = f.createTexture();
+            cc.glBindTexture2D(this);
+            f.texParameteri(f.TEXTURE_2D, f.TEXTURE_MIN_FILTER, f.LINEAR);
+            f.texParameteri(f.TEXTURE_2D, f.TEXTURE_MAG_FILTER, f.LINEAR);
+            f.texParameteri(f.TEXTURE_2D, f.TEXTURE_WRAP_S, f.CLAMP_TO_EDGE);
+            f.texParameteri(f.TEXTURE_2D, f.TEXTURE_WRAP_T, f.CLAMP_TO_EDGE);
+            switch (a) {
+                case e.PIXEL_FORMAT_RGBA8888:
+                    k = f.RGBA;
                     break;
-                case tex2d.PIXEL_FORMAT_RGB888:
-                    format = gl.RGB;
+                case e.PIXEL_FORMAT_RGB888:
+                    k = f.RGB;
                     break;
-                case tex2d.PIXEL_FORMAT_RGBA4444:
-                    type = gl.UNSIGNED_SHORT_4_4_4_4;
+                case e.PIXEL_FORMAT_RGBA4444:
+                    l = f.UNSIGNED_SHORT_4_4_4_4;
                     break;
-                case tex2d.PIXEL_FORMAT_RGB5A1:
-                    type = gl.UNSIGNED_SHORT_5_5_5_1;
+                case e.PIXEL_FORMAT_RGB5A1:
+                    l = f.UNSIGNED_SHORT_5_5_5_1;
                     break;
-                case tex2d.PIXEL_FORMAT_RGB565:
-                    type = gl.UNSIGNED_SHORT_5_6_5;
+                case e.PIXEL_FORMAT_RGB565:
+                    l = f.UNSIGNED_SHORT_5_6_5;
                     break;
-                case tex2d.PIXEL_FORMAT_AI88:
-                    format = gl.LUMINANCE_ALPHA;
+                case e.PIXEL_FORMAT_AI88:
+                    k = f.LUMINANCE_ALPHA;
                     break;
-                case tex2d.PIXEL_FORMAT_A8:
-                    format = gl.ALPHA;
+                case e.PIXEL_FORMAT_A8:
+                    k = f.ALPHA;
                     break;
-                case tex2d.PIXEL_FORMAT_I8:
-                    format = gl.LUMINANCE;
+                case e.PIXEL_FORMAT_I8:
+                    k = f.LUMINANCE;
                     break;
                 default:
                     cc.assert(0, cc._LogInfos.Texture2D_initWithData)
             }
-            gl.texImage2D(gl.TEXTURE_2D,
-                0, format, pixelsWide, pixelsHigh, 0, format, type, data);
-            self._contentSize.width = contentSize.width;
-            self._contentSize.height = contentSize.height;
-            self._pixelsWide = pixelsWide;
-            self._pixelsHigh = pixelsHigh;
-            self._pixelFormat = pixelFormat;
-            self.maxS = contentSize.width / pixelsWide;
-            self.maxT = contentSize.height / pixelsHigh;
-            self._hasPremultipliedAlpha = false;
-            self._hasMipmaps = false;
-            self.shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURE);
-            self._isLoaded = true;
-            return true
-        }, drawAtPoint: function (point) {
-            var self =
-                this;
-            var coordinates = [0, self.maxT, self.maxS, self.maxT, 0, 0, self.maxS, 0];
-            var width = self._pixelsWide * self.maxS, height = self._pixelsHigh * self.maxT;
-            var vertices = [point.x, point.y, 0, width + point.x, point.y, 0, point.x, height + point.y, 0, width + point.x, height + point.y, 0];
+            f.texImage2D(f.TEXTURE_2D, 0, k, c, g, 0, k, l, b);
+            this._contentSize.width = d.width;
+            this._contentSize.height = d.height;
+            this._pixelsWide = c;
+            this._pixelsHigh = g;
+            this._pixelFormat = a;
+            this.maxS = d.width / c;
+            this.maxT = d.height / g;
+            this._hasMipmaps = this._hasPremultipliedAlpha = !1;
+            this.shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURE);
+            return this._isLoaded = !0
+        }, drawAtPoint: function (b) {
+            var a = [0, this.maxT, this.maxS, this.maxT, 0, 0, this.maxS, 0], c = this._pixelsWide * this.maxS, g = this._pixelsHigh * this.maxT;
+            b = [b.x, b.y, 0, c + b.x, b.y, 0, b.x, g + b.y, 0, c + b.x, g + b.y, 0];
             cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_TEX_COORDS);
-            self._shaderProgram.use();
-            self._shaderProgram.setUniformsForBuiltins();
-            cc.glBindTexture2D(self);
-            var gl = cc._renderContext;
-            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION,
-                2, gl.FLOAT, false, 0, vertices);
-            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 0, coordinates);
-            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
-        }, drawInRect: function (rect) {
-            var self = this;
-            var coordinates = [0, self.maxT, self.maxS, self.maxT, 0, 0, self.maxS, 0];
-            var vertices = [rect.x, rect.y, rect.x + rect.width, rect.y, rect.x, rect.y + rect.height, rect.x + rect.width, rect.y + rect.height];
+            this._shaderProgram.use();
+            this._shaderProgram.setUniformsForBuiltins();
+            cc.glBindTexture2D(this);
+            c = cc._renderContext;
+            c.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, c.FLOAT, !1, 0, b);
+            c.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS,
+                2, c.FLOAT, !1, 0, a);
+            c.drawArrays(c.TRIANGLE_STRIP, 0, 4)
+        }, drawInRect: function (b) {
+            var a = [0, this.maxT, this.maxS, this.maxT, 0, 0, this.maxS, 0];
+            b = [b.x, b.y, b.x + b.width, b.y, b.x, b.y + b.height, b.x + b.width, b.y + b.height];
             cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_TEX_COORDS);
-            self._shaderProgram.use();
-            self._shaderProgram.setUniformsForBuiltins();
-            cc.glBindTexture2D(self);
-            var gl = cc._renderContext;
-            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, gl.FLOAT, false, 0, vertices);
-            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 0, coordinates);
-            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
-        }, initWithImage: function (uiImage) {
-            if (uiImage == null) {
-                cc.log(cc._LogInfos.Texture2D_initWithImage);
-                return false
-            }
-            var imageWidth = uiImage.getWidth();
-            var imageHeight = uiImage.getHeight();
-            var maxTextureSize = cc.configuration.getMaxTextureSize();
-            if (imageWidth > maxTextureSize ||
-                imageHeight > maxTextureSize) {
-                cc.log(cc._LogInfos.Texture2D_initWithImage_2, imageWidth, imageHeight, maxTextureSize, maxTextureSize);
-                return false
-            }
-            this._isLoaded = true;
-            return this._initPremultipliedATextureWithImage(uiImage, imageWidth, imageHeight)
-        }, initWithElement: function (element) {
-            if (!element)return;
-            this._webTextureObj = cc._renderContext.createTexture();
-            this._htmlElementObj = element
+            this._shaderProgram.use();
+            this._shaderProgram.setUniformsForBuiltins();
+            cc.glBindTexture2D(this);
+            var c = cc._renderContext;
+            c.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, c.FLOAT, !1, 0, b);
+            c.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS,
+                2, c.FLOAT, !1, 0, a);
+            c.drawArrays(c.TRIANGLE_STRIP, 0, 4)
+        }, initWithImage: function (b) {
+            if (null == b)return cc.log(cc._LogInfos.Texture2D_initWithImage), !1;
+            var a = b.getWidth(), c = b.getHeight(), g = cc.configuration.getMaxTextureSize();
+            if (a > g || c > g)return cc.log(cc._LogInfos.Texture2D_initWithImage_2, a, c, g, g), !1;
+            this._isLoaded = !0;
+            return this._initPremultipliedATextureWithImage(b, a, c)
+        }, initWithElement: function (b) {
+            b && (this._webTextureObj = cc._renderContext.createTexture(), this._htmlElementObj = b)
         }, getHtmlElementObj: function () {
             return this._htmlElementObj
-        }, isLoaded: function () {
+        },
+        isLoaded: function () {
             return this._isLoaded
         }, handleLoadedTexture: function () {
-            var self =
-                this;
-            if (!cc._rendererInitialized)return;
-            if (!self._htmlElementObj) {
-                var img = cc.loader.getRes(self.url);
-                if (!img)return;
-                self.initWithElement(img)
+            if (cc._rendererInitialized) {
+                if (!this._htmlElementObj) {
+                    var b = cc.loader.getRes(this.url);
+                    if (!b)return;
+                    this.initWithElement(b)
+                }
+                this._htmlElementObj.width && this._htmlElementObj.height && (this._isLoaded = !0, b = cc._renderContext, cc.glBindTexture2D(this), b.pixelStorei(b.UNPACK_ALIGNMENT, 4), b.texImage2D(b.TEXTURE_2D, 0, b.RGBA, b.RGBA, b.UNSIGNED_BYTE, this._htmlElementObj), b.texParameteri(b.TEXTURE_2D, b.TEXTURE_MIN_FILTER, b.LINEAR), b.texParameteri(b.TEXTURE_2D,
+                    b.TEXTURE_MAG_FILTER, b.LINEAR), b.texParameteri(b.TEXTURE_2D, b.TEXTURE_WRAP_S, b.CLAMP_TO_EDGE), b.texParameteri(b.TEXTURE_2D, b.TEXTURE_WRAP_T, b.CLAMP_TO_EDGE), this.shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURE), cc.glBindTexture2D(null), b = this._htmlElementObj.height, this._pixelsWide = this._contentSize.width = this._htmlElementObj.width, this._pixelsHigh = this._contentSize.height = b, this._pixelFormat = cc.Texture2D.PIXEL_FORMAT_RGBA8888, this.maxT = this.maxS = 1, this._hasMipmaps = this._hasPremultipliedAlpha = !1, this._callLoadedEventCallbacks())
             }
-            if (!self._htmlElementObj.width || !self._htmlElementObj.height)return;
-            self._isLoaded = true;
-            var gl = cc._renderContext;
-            cc.glBindTexture2D(self);
-            gl.pixelStorei(gl.UNPACK_ALIGNMENT, 4);
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, self._htmlElementObj);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER,
-                gl.LINEAR);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-            self.shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURE);
-            cc.glBindTexture2D(null);
-            var pixelsWide = self._htmlElementObj.width;
-            var pixelsHigh = self._htmlElementObj.height;
-            self._pixelsWide = self._contentSize.width = pixelsWide;
-            self._pixelsHigh = self._contentSize.height = pixelsHigh;
-            self._pixelFormat = cc.Texture2D.PIXEL_FORMAT_RGBA8888;
-            self.maxS = 1;
-            self.maxT = 1;
-            self._hasPremultipliedAlpha = false;
-            self._hasMipmaps = false;
-            this._callLoadedEventCallbacks()
-        }, initWithString: function (text, fontName, fontSize, dimensions, hAlignment, vAlignment) {
+        }, initWithString: function (b, a, c, g, d, e) {
             cc.log(cc._LogInfos.Texture2D_initWithString);
             return null
-        }, initWithETCFile: function (file) {
+        }, initWithETCFile: function (b) {
             cc.log(cc._LogInfos.Texture2D_initWithETCFile_2);
-            return false
-        }, initWithPVRFile: function (file) {
+            return!1
+        }, initWithPVRFile: function (b) {
             cc.log(cc._LogInfos.Texture2D_initWithPVRFile_2);
-            return false
-        }, initWithPVRTCData: function (data, level, bpp, hasAlpha, length, pixelFormat) {
+            return!1
+        }, initWithPVRTCData: function (b, a, c, g, d, e) {
             cc.log(cc._LogInfos.Texture2D_initWithPVRTCData_2);
-            return false
-        }, setTexParameters: function (texParams) {
-            var _t = this;
-            var gl = cc._renderContext;
-            cc.assert(_t._pixelsWide == cc.NextPOT(_t._pixelsWide) && _t._pixelsHigh == cc.NextPOT(_t._pixelsHigh) || texParams.wrapS == gl.CLAMP_TO_EDGE && texParams.wrapT == gl.CLAMP_TO_EDGE, "WebGLRenderingContext.CLAMP_TO_EDGE should be used in NPOT textures");
-            cc.glBindTexture2D(_t);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, texParams.minFilter);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, texParams.magFilter);
-            gl.texParameteri(gl.TEXTURE_2D,
-                gl.TEXTURE_WRAP_S, texParams.wrapS);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, texParams.wrapT)
+            return!1
+        }, setTexParameters: function (b) {
+            var a = cc._renderContext;
+            cc.assert(this._pixelsWide == cc.NextPOT(this._pixelsWide) &&
+                this._pixelsHigh == cc.NextPOT(this._pixelsHigh) || b.wrapS == a.CLAMP_TO_EDGE && b.wrapT == a.CLAMP_TO_EDGE, "WebGLRenderingContext.CLAMP_TO_EDGE should be used in NPOT textures");
+            cc.glBindTexture2D(this);
+            a.texParameteri(a.TEXTURE_2D, a.TEXTURE_MIN_FILTER, b.minFilter);
+            a.texParameteri(a.TEXTURE_2D, a.TEXTURE_MAG_FILTER, b.magFilter);
+            a.texParameteri(a.TEXTURE_2D, a.TEXTURE_WRAP_S, b.wrapS);
+            a.texParameteri(a.TEXTURE_2D, a.TEXTURE_WRAP_T, b.wrapT)
         }, setAntiAliasTexParameters: function () {
-            var gl = cc._renderContext;
+            var b = cc._renderContext;
             cc.glBindTexture2D(this);
-            if (!this._hasMipmaps)gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); else gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_NEAREST);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
+            this._hasMipmaps ? b.texParameteri(b.TEXTURE_2D, b.TEXTURE_MIN_FILTER, b.LINEAR_MIPMAP_NEAREST) : b.texParameteri(b.TEXTURE_2D, b.TEXTURE_MIN_FILTER, b.LINEAR);
+            b.texParameteri(b.TEXTURE_2D, b.TEXTURE_MAG_FILTER, b.NEAREST)
         }, setAliasTexParameters: function () {
-            var gl = cc._renderContext;
+            var b = cc._renderContext;
             cc.glBindTexture2D(this);
-            if (!this._hasMipmaps)gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST); else gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST_MIPMAP_NEAREST);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
-        }, generateMipmap: function () {
-            var _t = this;
-            cc.assert(_t._pixelsWide == cc.NextPOT(_t._pixelsWide) && _t._pixelsHigh == cc.NextPOT(_t._pixelsHigh), "Mimpap texture only works in POT textures");
-            cc.glBindTexture2D(_t);
+            this._hasMipmaps ? b.texParameteri(b.TEXTURE_2D, b.TEXTURE_MIN_FILTER, b.NEAREST_MIPMAP_NEAREST) : b.texParameteri(b.TEXTURE_2D, b.TEXTURE_MIN_FILTER, b.NEAREST);
+            b.texParameteri(b.TEXTURE_2D, b.TEXTURE_MAG_FILTER, b.NEAREST)
+        },
+        generateMipmap: function () {
+            cc.assert(this._pixelsWide == cc.NextPOT(this._pixelsWide) && this._pixelsHigh == cc.NextPOT(this._pixelsHigh), "Mimpap texture only works in POT textures");
+            cc.glBindTexture2D(this);
             cc._renderContext.generateMipmap(cc._renderContext.TEXTURE_2D);
-            _t._hasMipmaps = true
+            this._hasMipmaps = !0
         }, stringForFormat: function () {
             return cc.Texture2D._M[this._pixelFormat]
-        }, bitsPerPixelForFormat: function (format) {
-            format = format || this._pixelFormat;
-            var value = cc.Texture2D._B[format];
-            if (value != null)return value;
-            cc.log(cc._LogInfos.Texture2D_bitsPerPixelForFormat, format);
+        }, bitsPerPixelForFormat: function (b) {
+            b = b || this._pixelFormat;
+            var a = cc.Texture2D._B[b];
+            if (null != a)return a;
+            cc.log(cc._LogInfos.Texture2D_bitsPerPixelForFormat,
+                b);
             return-1
-        }, _initPremultipliedATextureWithImage: function (uiImage, width, height) {
-            var tex2d = cc.Texture2D;
-            var tempData = uiImage.getData();
-            var inPixel32 = null;
-            var inPixel8 = null;
-            var outPixel16 = null;
-            var hasAlpha = uiImage.hasAlpha();
-            var imageSize = cc.size(uiImage.getWidth(), uiImage.getHeight());
-            var pixelFormat = tex2d.defaultPixelFormat;
-            var bpp = uiImage.getBitsPerComponent();
-            var i;
-            if (!hasAlpha)if (bpp >= 8)pixelFormat = tex2d.PIXEL_FORMAT_RGB888; else {
-                cc.log(cc._LogInfos.Texture2D__initPremultipliedATextureWithImage);
-                pixelFormat = tex2d.PIXEL_FORMAT_RGB565
-            }
-            var length = width * height;
-            if (pixelFormat == tex2d.PIXEL_FORMAT_RGB565)if (hasAlpha) {
-                tempData = new Uint16Array(width * height);
-                inPixel32 = uiImage.getData();
-                for (i = 0; i < length; ++i)tempData[i] = (inPixel32[i] >>
-                    0 & 255) >> 3 << 11 | (inPixel32[i] >> 8 & 255) >> 2 << 5 | (inPixel32[i] >> 16 & 255) >> 3 << 0
+        }, _initPremultipliedATextureWithImage: function (b, a, c) {
+            var g = cc.Texture2D, d = b.getData(), e = null, e = null, f = b.hasAlpha(), k = cc.size(b.getWidth(), b.getHeight()), l = g.defaultPixelFormat, h = b.getBitsPerComponent();
+            f || (8 <= h ? l = g.PIXEL_FORMAT_RGB888 : (cc.log(cc._LogInfos.Texture2D__initPremultipliedATextureWithImage), l = g.PIXEL_FORMAT_RGB565));
+            var m = a * c;
+            if (l == g.PIXEL_FORMAT_RGB565)if (f) {
+                d = new Uint16Array(a * c);
+                e = b.getData();
+                for (h = 0; h < m; ++h)d[h] = (e[h] >> 0 & 255) >> 3 << 11 | (e[h] >> 8 & 255) >> 2 << 5 | (e[h] >> 16 & 255) >> 3 <<
+                    0
             } else {
-                tempData = new Uint16Array(width * height);
-                inPixel8 = uiImage.getData();
-                for (i = 0; i < length; ++i)tempData[i] = (inPixel8[i] & 255) >> 3 << 11 | (inPixel8[i] & 255) >> 2 << 5 | (inPixel8[i] & 255) >> 3 << 0
-            } else if (pixelFormat == tex2d.PIXEL_FORMAT_RGBA4444) {
-                tempData = new Uint16Array(width * height);
-                inPixel32 = uiImage.getData();
-                for (i = 0; i < length; ++i)tempData[i] = (inPixel32[i] >> 0 & 255) >> 4 << 12 | (inPixel32[i] >> 8 & 255) >> 4 << 8 | (inPixel32[i] >> 16 & 255) >> 4 << 4 | (inPixel32[i] >> 24 &
-                    255) >> 4 << 0
-            } else if (pixelFormat == tex2d.PIXEL_FORMAT_RGB5A1) {
-                tempData = new Uint16Array(width * height);
-                inPixel32 = uiImage.getData();
-                for (i = 0; i < length; ++i)tempData[i] = (inPixel32[i] >> 0 & 255) >> 3 << 11 | (inPixel32[i] >> 8 & 255) >> 3 << 6 | (inPixel32[i] >> 16 & 255) >> 3 << 1 | (inPixel32[i] >> 24 & 255) >> 7 << 0
-            } else if (pixelFormat == tex2d.PIXEL_FORMAT_A8) {
-                tempData = new Uint8Array(width * height);
-                inPixel32 = uiImage.getData();
-                for (i = 0; i < length; ++i)tempData[i] = inPixel32 >> 24 & 255
+                d = new Uint16Array(a * c);
+                e = b.getData();
+                for (h = 0; h < m; ++h)d[h] = (e[h] & 255) >> 3 << 11 | (e[h] & 255) >> 2 << 5 | (e[h] & 255) >> 3 << 0
+            } else if (l == g.PIXEL_FORMAT_RGBA4444) {
+                d = new Uint16Array(a * c);
+                e = b.getData();
+                for (h = 0; h < m; ++h)d[h] = (e[h] >> 0 & 255) >> 4 << 12 | (e[h] >> 8 & 255) >> 4 << 8 | (e[h] >> 16 & 255) >> 4 << 4 | (e[h] >> 24 & 255) >> 4 << 0
+            } else if (l == g.PIXEL_FORMAT_RGB5A1) {
+                d = new Uint16Array(a * c);
+                e = b.getData();
+                for (h = 0; h < m; ++h)d[h] = (e[h] >> 0 & 255) >> 3 << 11 | (e[h] >> 8 & 255) >> 3 << 6 | (e[h] >> 16 & 255) >> 3 << 1 | (e[h] >> 24 & 255) >> 7 << 0
+            } else if (l == g.PIXEL_FORMAT_A8) {
+                d =
+                    new Uint8Array(a * c);
+                e = b.getData();
+                for (h = 0; h < m; ++h)d[h] = e >> 24 & 255
             }
-            if (hasAlpha && pixelFormat == tex2d.PIXEL_FORMAT_RGB888) {
-                inPixel32 = uiImage.getData();
-                tempData = new Uint8Array(width * height * 3);
-                for (i = 0; i < length; ++i) {
-                    tempData[i * 3] = inPixel32 >> 0 & 255;
-                    tempData[i * 3 + 1] = inPixel32 >> 8 & 255;
-                    tempData[i * 3 + 2] = inPixel32 >> 16 & 255
-                }
+            if (f && l == g.PIXEL_FORMAT_RGB888) {
+                e = b.getData();
+                d = new Uint8Array(3 * a * c);
+                for (h = 0; h < m; ++h)d[3 * h] = e >> 0 & 255, d[3 * h + 1] = e >> 8 & 255, d[3 * h + 2] = e >> 16 & 255
             }
-            this.initWithData(tempData, pixelFormat, width, height, imageSize);
-            if (tempData != uiImage.getData())tempData = null;
-            this._hasPremultipliedAlpha = uiImage.isPremultipliedAlpha();
-            return true
-        }, addLoadedEventListener: function (callback, target) {
-            if (!this._loadedEventListeners)this._loadedEventListeners = [];
-            this._loadedEventListeners.push({eventCallback: callback,
-                eventTarget: target})
-        }, removeLoadedEventListener: function (target) {
-            if (!this._loadedEventListeners)return;
-            var locListeners = this._loadedEventListeners;
-            for (var i = 0; i < locListeners.length; i++) {
-                var selCallback = locListeners[i];
-                if (selCallback.eventTarget == target)locListeners.splice(i, 1)
-            }
+            this.initWithData(d, l, a, c, k);
+            b.getData();
+            this._hasPremultipliedAlpha = b.isPremultipliedAlpha();
+            return!0
+        }, addLoadedEventListener: function (b, a) {
+            this._loadedEventListeners || (this._loadedEventListeners = []);
+            this._loadedEventListeners.push({eventCallback: b, eventTarget: a})
+        }, removeLoadedEventListener: function (b) {
+            if (this._loadedEventListeners)for (var a =
+                this._loadedEventListeners, c = 0; c < a.length; c++)a[c].eventTarget == b && a.splice(c, 1)
         }, _callLoadedEventCallbacks: function () {
-            if (!this._loadedEventListeners)return;
-            var locListeners = this._loadedEventListeners;
-            for (var i = 0, len = locListeners.length; i < len; i++) {
-                var selCallback = locListeners[i];
-                selCallback.eventCallback.call(selCallback.eventTarget,
-                    this)
+            if (this._loadedEventListeners) {
+                for (var b = this._loadedEventListeners, a = 0, c = b.length; a < c; a++) {
+                    var g = b[a];
+                    g.eventCallback.call(g.eventTarget, this)
+                }
+                b.length = 0
             }
-            locListeners.length = 0
         }})
 };
 cc._tmp.WebGLTextureAtlas = function () {
-    var _p = cc.TextureAtlas.prototype;
-    _p._setupVBO = function () {
-        var _t = this;
-        var gl = cc._renderContext;
-        _t._buffersVBO[0] = gl.createBuffer();
-        _t._buffersVBO[1] = gl.createBuffer();
-        _t._quadsWebBuffer = gl.createBuffer();
-        _t._mapBuffers()
+    var b = cc.TextureAtlas.prototype;
+    b._setupVBO = function () {
+        var a = cc._renderContext;
+        this._buffersVBO[0] = a.createBuffer();
+        this._buffersVBO[1] = a.createBuffer();
+        this._quadsWebBuffer = a.createBuffer();
+        this._mapBuffers()
     };
-    _p._mapBuffers = function () {
-        var _t = this;
-        var gl = cc._renderContext;
-        gl.bindBuffer(gl.ARRAY_BUFFER, _t._quadsWebBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, _t._quadsArrayBuffer, gl.DYNAMIC_DRAW);
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, _t._buffersVBO[1]);
-        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,
-            _t._indices, gl.STATIC_DRAW)
+    b._mapBuffers = function () {
+        var a = cc._renderContext;
+        a.bindBuffer(a.ARRAY_BUFFER, this._quadsWebBuffer);
+        a.bufferData(a.ARRAY_BUFFER, this._quadsArrayBuffer, a.DYNAMIC_DRAW);
+        a.bindBuffer(a.ELEMENT_ARRAY_BUFFER, this._buffersVBO[1]);
+        a.bufferData(a.ELEMENT_ARRAY_BUFFER,
+            this._indices, a.STATIC_DRAW)
     };
-    _p.drawNumberOfQuads = function (n, start) {
-        var _t = this;
-        start = start || 0;
-        if (0 === n || !_t.texture || !_t.texture.isLoaded())return;
-        var gl = cc._renderContext;
-        cc.glBindTexture2D(_t.texture);
-        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
-        gl.bindBuffer(gl.ARRAY_BUFFER, _t._quadsWebBuffer);
-        if (_t.dirty)gl.bufferData(gl.ARRAY_BUFFER, _t._quadsArrayBuffer, gl.DYNAMIC_DRAW);
-        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, 0);
-        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR,
-            4, gl.UNSIGNED_BYTE, true, 24, 12);
-        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 24, 16);
-        if (_t.dirty)_t.dirty = false;
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, _t._buffersVBO[1]);
-        if (cc.TEXTURE_ATLAS_USE_TRIANGLE_STRIP)gl.drawElements(gl.TRIANGLE_STRIP, n * 6, gl.UNSIGNED_SHORT, start * 6 * _t._indices.BYTES_PER_ELEMENT); else gl.drawElements(gl.TRIANGLES, n * 6, gl.UNSIGNED_SHORT, start * 6 * _t._indices.BYTES_PER_ELEMENT);
-        cc.g_NumberOfDraws++
+    b.drawNumberOfQuads = function (a, c) {
+        c = c || 0;
+        if (!(0 === a || !this.texture || !this.texture.isLoaded())) {
+            var b = cc._renderContext;
+            cc.glBindTexture2D(this.texture);
+            cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
+            b.bindBuffer(b.ARRAY_BUFFER, this._quadsWebBuffer);
+            this.dirty && b.bufferData(b.ARRAY_BUFFER, this._quadsArrayBuffer, b.DYNAMIC_DRAW);
+            b.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, b.FLOAT, !1, 24, 0);
+            b.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, b.UNSIGNED_BYTE,
+                !0, 24, 12);
+            b.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, b.FLOAT, !1, 24, 16);
+            this.dirty && (this.dirty = !1);
+            b.bindBuffer(b.ELEMENT_ARRAY_BUFFER, this._buffersVBO[1]);
+            cc.TEXTURE_ATLAS_USE_TRIANGLE_STRIP ? b.drawElements(b.TRIANGLE_STRIP, 6 * a, b.UNSIGNED_SHORT, 6 * c * this._indices.BYTES_PER_ELEMENT) : b.drawElements(b.TRIANGLES, 6 * a, b.UNSIGNED_SHORT, 6 * c * this._indices.BYTES_PER_ELEMENT);
+            cc.g_NumberOfDraws++
+        }
     }
 };
 cc._tmp.WebGLTextureCache = function () {
-    var _p = cc.textureCache;
-    _p.handleLoadedTexture = function (url) {
-        var locTexs = this._textures;
-        if (!cc._rendererInitialized)locTexs = this._loadedTexturesBefore;
-        var tex = locTexs[url];
-        if (!tex) {
-            tex = locTexs[url] = new cc.Texture2D;
-            tex.url = url
-        }
-        tex.handleLoadedTexture()
+    var b = cc.textureCache;
+    b.handleLoadedTexture = function (a) {
+        var c = this._textures;
+        cc._rendererInitialized || (c = this._loadedTexturesBefore);
+        var b = c[a];
+        b || (b = c[a] = new cc.Texture2D, b.url = a);
+        b.handleLoadedTexture()
     };
-    _p.addImage = function (url, cb, target) {
-        cc.assert(url, cc._LogInfos.Texture2D_addImage_2);
-        var locTexs = this._textures;
-        if (!cc._rendererInitialized)locTexs = this._loadedTexturesBefore;
-        var tex = locTexs[url] || locTexs[cc.loader._aliases[url]];
-        if (tex) {
-            cb && cb.call(target);
-            return tex
-        }
-        if (!cc.loader.getRes(url))if (cc.loader._checkIsImageURL(url))cc.loader.load(url, function (err) {
-            cb && cb.call(target)
-        }); else cc.loader.cache[url] = cc.loader.loadImg(url, function (err, img) {
-            if (err)return cb ? cb(err) : err;
-            cc.textureCache.handleLoadedTexture(url);
-            cb && cb(null, img)
-        });
-        tex = locTexs[url] = new cc.Texture2D;
-        tex.url = url;
-        return tex
+    b.addImage = function (a, c, b) {
+        cc.assert(a, cc._LogInfos.Texture2D_addImage_2);
+        var d = this._textures;
+        cc._rendererInitialized || (d = this._loadedTexturesBefore);
+        var e = d[a] || d[cc.loader._aliases[a]];
+        if (e)return c && c.call(b), e;
+        cc.loader.getRes(a) || (cc.loader._checkIsImageURL(a) ?
+            cc.loader.load(a, function (a) {
+                c && c.call(b)
+            }) : cc.loader.cache[a] = cc.loader.loadImg(a, function (b, d) {
+            if (b)return c ? c(b) : b;
+            cc.textureCache.handleLoadedTexture(a);
+            c && c(null, d)
+        }));
+        e = d[a] = new cc.Texture2D;
+        e.url = a;
+        return e
     };
-    delete _p
+    delete b
 };
 cc._tmp.LayerDefineForWebGL = function () {
-    var _p = cc.Layer.prototype;
-    _p.bake = function () {
+    var b = cc.Layer.prototype;
+    b.bake = function () {
     };
-    _p.unbake = function () {
+    b.unbake = function () {
     };
-    _p.visit = cc.Node.prototype.visit
+    b.visit = cc.Node.prototype.visit
 };
 cc._tmp.WebGLLayerColor = function () {
-    var _p = cc.LayerColor.prototype;
-    _p._squareVertices = null;
-    _p._squareColors = null;
-    _p._verticesFloat32Buffer = null;
-    _p._colorsUint8Buffer = null;
-    _p._squareVerticesAB = null;
-    _p._squareColorsAB = null;
-    _p.ctor = function (color, width, height) {
-        var _t = this;
-        _t._squareVerticesAB = new ArrayBuffer(32);
-        _t._squareColorsAB = new ArrayBuffer(16);
-        var locSquareVerticesAB = _t._squareVerticesAB, locSquareColorsAB = _t._squareColorsAB;
-        var locVertex2FLen = cc.Vertex2F.BYTES_PER_ELEMENT, locColorLen = cc.Color.BYTES_PER_ELEMENT;
-        _t._squareVertices = [new cc.Vertex2F(0, 0, locSquareVerticesAB, 0), new cc.Vertex2F(0, 0, locSquareVerticesAB, locVertex2FLen), new cc.Vertex2F(0, 0, locSquareVerticesAB, locVertex2FLen * 2), new cc.Vertex2F(0, 0, locSquareVerticesAB, locVertex2FLen * 3)];
-        _t._squareColors = [cc.color(0, 0, 0, 255, locSquareColorsAB, 0), cc.color(0, 0, 0, 255, locSquareColorsAB, locColorLen), cc.color(0, 0, 0, 255, locSquareColorsAB, locColorLen * 2), cc.color(0, 0, 0, 255, locSquareColorsAB, locColorLen * 3)];
-        _t._verticesFloat32Buffer = cc._renderContext.createBuffer();
-        _t._colorsUint8Buffer = cc._renderContext.createBuffer();
-        cc.LayerRGBA.prototype.ctor.call(_t);
-        _t._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
-        cc.LayerColor.prototype.init.call(_t, color, width, height)
+    var b = cc.LayerColor.prototype;
+    b._squareVertices = null;
+    b._squareColors = null;
+    b._verticesFloat32Buffer = null;
+    b._colorsUint8Buffer = null;
+    b._squareVerticesAB = null;
+    b._squareColorsAB = null;
+    b.ctor = function (a, c, b) {
+        this._squareVerticesAB = new ArrayBuffer(32);
+        this._squareColorsAB = new ArrayBuffer(16);
+        var d = this._squareVerticesAB, e = this._squareColorsAB, f = cc.Vertex2F.BYTES_PER_ELEMENT, k = cc.Color.BYTES_PER_ELEMENT;
+        this._squareVertices = [new cc.Vertex2F(0, 0, d, 0), new cc.Vertex2F(0, 0, d,
+            f), new cc.Vertex2F(0, 0, d, 2 * f), new cc.Vertex2F(0, 0, d, 3 * f)];
+        this._squareColors = [cc.color(0, 0, 0, 255, e, 0), cc.color(0, 0, 0, 255, e, k), cc.color(0, 0, 0, 255, e, 2 * k), cc.color(0, 0, 0, 255, e, 3 * k)];
+        this._verticesFloat32Buffer = cc._renderContext.createBuffer();
+        this._colorsUint8Buffer = cc._renderContext.createBuffer();
+        cc.LayerRGBA.prototype.ctor.call(this);
+        this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
+        cc.LayerColor.prototype.init.call(this, a, c, b)
     };
-    _p.setContentSize = function (size, height) {
-        var locSquareVertices = this._squareVertices;
-        if (height === undefined) {
-            locSquareVertices[1].x = size.width;
-            locSquareVertices[2].y = size.height;
-            locSquareVertices[3].x = size.width;
-            locSquareVertices[3].y = size.height
-        } else {
-            locSquareVertices[1].x = size;
-            locSquareVertices[2].y =
-                height;
-            locSquareVertices[3].x = size;
-            locSquareVertices[3].y = height
-        }
+    b.setContentSize = function (a, c) {
+        var b = this._squareVertices;
+        void 0 === c ? (b[1].x = a.width, b[2].y = a.height, b[3].x = a.width, b[3].y = a.height) : (b[1].x = a, b[2].y = c, b[3].x = a, b[3].y = c);
         this._bindLayerVerticesBufferData();
-        cc.Layer.prototype.setContentSize.call(this, size, height)
+        cc.Layer.prototype.setContentSize.call(this, a, c)
     };
-    _p._setWidth = function (width) {
-        var locSquareVertices = this._squareVertices;
-        locSquareVertices[1].x = width;
-        locSquareVertices[3].x = width;
+    b._setWidth = function (a) {
+        var c = this._squareVertices;
+        c[1].x = a;
+        c[3].x = a;
         this._bindLayerVerticesBufferData();
-        cc.Layer.prototype._setWidth.call(this, width)
+        cc.Layer.prototype._setWidth.call(this, a)
     };
-    _p._setHeight = function (height) {
-        var locSquareVertices = this._squareVertices;
-        locSquareVertices[2].y = height;
-        locSquareVertices[3].y = height;
+    b._setHeight = function (a) {
+        var c = this._squareVertices;
+        c[2].y = a;
+        c[3].y = a;
         this._bindLayerVerticesBufferData();
-        cc.Layer.prototype._setHeight.call(this, height)
+        cc.Layer.prototype._setHeight.call(this, a)
     };
-    _p._updateColor = function () {
-        var locDisplayedColor = this._displayedColor;
-        var locDisplayedOpacity = this._displayedOpacity, locSquareColors = this._squareColors;
-        for (var i = 0; i < 4; i++) {
-            locSquareColors[i].r = locDisplayedColor.r;
-            locSquareColors[i].g = locDisplayedColor.g;
-            locSquareColors[i].b = locDisplayedColor.b;
-            locSquareColors[i].a = locDisplayedOpacity
-        }
-        this._bindLayerColorsBufferData()
-    };
-    _p.draw = function (ctx) {
-        var context = ctx || cc._renderContext;
+    b._updateColor =
+        function () {
+            for (var a = this._displayedColor, c = this._displayedOpacity, b = this._squareColors, d = 0; 4 > d; d++)b[d].r = a.r, b[d].g = a.g, b[d].b = a.b, b[d].a = c;
+            this._bindLayerColorsBufferData()
+        };
+    b.draw = function (a) {
+        a = a || cc._renderContext;
         cc.nodeDrawSetup(this);
         cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_COLOR);
-        context.bindBuffer(context.ARRAY_BUFFER, this._verticesFloat32Buffer);
-        context.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, context.FLOAT, false, 0, 0);
-        context.bindBuffer(context.ARRAY_BUFFER, this._colorsUint8Buffer);
-        context.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, context.UNSIGNED_BYTE, true, 0, 0);
+        a.bindBuffer(a.ARRAY_BUFFER, this._verticesFloat32Buffer);
+        a.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, a.FLOAT, !1, 0, 0);
+        a.bindBuffer(a.ARRAY_BUFFER, this._colorsUint8Buffer);
+        a.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, a.UNSIGNED_BYTE, !0, 0, 0);
         cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
-        context.drawArrays(context.TRIANGLE_STRIP,
-            0, 4)
+        a.drawArrays(a.TRIANGLE_STRIP, 0, 4)
     };
-    _p._bindLayerVerticesBufferData = function () {
-        var glContext = cc._renderContext;
-        glContext.bindBuffer(glContext.ARRAY_BUFFER, this._verticesFloat32Buffer);
-        glContext.bufferData(glContext.ARRAY_BUFFER, this._squareVerticesAB, glContext.STATIC_DRAW)
+    b._bindLayerVerticesBufferData = function () {
+        var a = cc._renderContext;
+        a.bindBuffer(a.ARRAY_BUFFER, this._verticesFloat32Buffer);
+        a.bufferData(a.ARRAY_BUFFER, this._squareVerticesAB, a.STATIC_DRAW)
     };
-    _p._bindLayerColorsBufferData = function () {
-        var glContext = cc._renderContext;
-        glContext.bindBuffer(glContext.ARRAY_BUFFER, this._colorsUint8Buffer);
-        glContext.bufferData(glContext.ARRAY_BUFFER, this._squareColorsAB, glContext.STATIC_DRAW)
+    b._bindLayerColorsBufferData = function () {
+        var a = cc._renderContext;
+        a.bindBuffer(a.ARRAY_BUFFER, this._colorsUint8Buffer);
+        a.bufferData(a.ARRAY_BUFFER, this._squareColorsAB,
+            a.STATIC_DRAW)
     }
 };
 cc._tmp.WebGLLayerGradient = function () {
-    var _p = cc.LayerGradient.prototype;
-    _p.draw = cc.LayerColor.prototype.draw;
-    _p._updateColor = function () {
-        var _t = this;
-        var locAlongVector = _t._alongVector;
-        var h = cc.pLength(locAlongVector);
-        if (h === 0)return;
-        var c = Math.sqrt(2), u = cc.p(locAlongVector.x / h, locAlongVector.y / h);
-        if (_t._compressedInterpolation) {
-            var h2 = 1 / (Math.abs(u.x) + Math.abs(u.y));
-            u = cc.pMult(u, h2 * c)
+    var b = cc.LayerGradient.prototype;
+    b.draw = cc.LayerColor.prototype.draw;
+    b._updateColor = function () {
+        var a = this._alongVector, c = cc.pLength(a);
+        if (0 !== c) {
+            var b = Math.sqrt(2), a = cc.p(a.x / c, a.y / c);
+            this._compressedInterpolation && (c = 1 / (Math.abs(a.x) + Math.abs(a.y)), a = cc.pMult(a, c * b));
+            var d = this._displayedOpacity / 255, c = this._displayedColor, e = this._endColor, c = {r: c.r, g: c.g, b: c.b, a: this._startOpacity * d}, d = {r: e.r, g: e.g, b: e.b, a: this._endOpacity * d}, f = this._squareColors, e = f[0], k = f[1],
+                l = f[2], f = f[3];
+            e.r = d.r + (c.r - d.r) * ((b + a.x + a.y) / (2 * b));
+            e.g = d.g + (c.g - d.g) * ((b + a.x + a.y) / (2 * b));
+            e.b = d.b + (c.b - d.b) * ((b + a.x + a.y) / (2 * b));
+            e.a = d.a + (c.a - d.a) * ((b + a.x + a.y) / (2 * b));
+            k.r = d.r + (c.r - d.r) * ((b - a.x + a.y) / (2 * b));
+            k.g = d.g + (c.g - d.g) * ((b - a.x + a.y) / (2 * b));
+            k.b = d.b + (c.b - d.b) * ((b - a.x + a.y) / (2 * b));
+            k.a = d.a + (c.a - d.a) * ((b - a.x + a.y) / (2 * b));
+            l.r = d.r + (c.r - d.r) * ((b + a.x - a.y) / (2 * b));
+            l.g = d.g + (c.g - d.g) * ((b + a.x - a.y) / (2 * b));
+            l.b = d.b + (c.b - d.b) * ((b + a.x - a.y) / (2 * b));
+            l.a = d.a + (c.a - d.a) * ((b + a.x - a.y) / (2 * b));
+            f.r = d.r + (c.r - d.r) * ((b - a.x - a.y) /
+                (2 * b));
+            f.g = d.g + (c.g - d.g) * ((b - a.x - a.y) / (2 * b));
+            f.b = d.b + (c.b - d.b) * ((b - a.x - a.y) / (2 * b));
+            f.a = d.a + (c.a - d.a) * ((b - a.x - a.y) / (2 * b));
+            this._bindLayerColorsBufferData()
         }
-        var opacityf = _t._displayedOpacity / 255;
-        var locDisplayedColor = _t._displayedColor, locEndColor = _t._endColor;
-        var S = {r: locDisplayedColor.r,
-            g: locDisplayedColor.g, b: locDisplayedColor.b, a: _t._startOpacity * opacityf};
-        var E = {r: locEndColor.r, g: locEndColor.g, b: locEndColor.b, a: _t._endOpacity * opacityf};
-        var locSquareColors = _t._squareColors;
-        var locSquareColor0 = locSquareColors[0], locSquareColor1 = locSquareColors[1], locSquareColor2 = locSquareColors[2], locSquareColor3 = locSquareColors[3];
-        locSquareColor0.r = E.r + (S.r - E.r) * ((c + u.x + u.y) / (2 * c));
-        locSquareColor0.g = E.g + (S.g - E.g) * ((c + u.x + u.y) / (2 * c));
-        locSquareColor0.b = E.b + (S.b - E.b) * ((c + u.x + u.y) / (2 * c));
-        locSquareColor0.a =
-            E.a + (S.a - E.a) * ((c + u.x + u.y) / (2 * c));
-        locSquareColor1.r = E.r + (S.r - E.r) * ((c - u.x + u.y) / (2 * c));
-        locSquareColor1.g = E.g + (S.g - E.g) * ((c - u.x + u.y) / (2 * c));
-        locSquareColor1.b = E.b + (S.b - E.b) * ((c - u.x + u.y) / (2 * c));
-        locSquareColor1.a = E.a + (S.a - E.a) * ((c - u.x + u.y) / (2 * c));
-        locSquareColor2.r = E.r + (S.r - E.r) * ((c + u.x - u.y) / (2 * c));
-        locSquareColor2.g = E.g + (S.g - E.g) * ((c + u.x - u.y) / (2 * c));
-        locSquareColor2.b = E.b + (S.b - E.b) * ((c + u.x - u.y) / (2 * c));
-        locSquareColor2.a = E.a + (S.a - E.a) * ((c + u.x - u.y) / (2 * c));
-        locSquareColor3.r = E.r + (S.r - E.r) * ((c - u.x - u.y) / (2 * c));
-        locSquareColor3.g = E.g + (S.g - E.g) * ((c - u.x - u.y) / (2 * c));
-        locSquareColor3.b = E.b + (S.b - E.b) * ((c - u.x - u.y) / (2 * c));
-        locSquareColor3.a = E.a + (S.a - E.a) * ((c - u.x - u.y) / (2 * c));
-        _t._bindLayerColorsBufferData()
     }
 };
 cc._tmp.WebGLSprite = function () {
-    var _p = cc.Sprite.prototype;
-    _p._spriteFrameLoadedCallback = function (spriteFrame) {
-        this.setNodeDirty(true);
-        this.setTextureRect(spriteFrame.getRect(), spriteFrame.isRotated(), spriteFrame.getOriginalSize());
+    var b = cc.Sprite.prototype;
+    b._spriteFrameLoadedCallback = function (a) {
+        this.setNodeDirty(!0);
+        this.setTextureRect(a.getRect(), a.isRotated(), a.getOriginalSize());
         this._callLoadedEventCallbacks()
     };
-    _p.setOpacityModifyRGB = function (modify) {
-        if (this._opacityModifyRGB !== modify) {
-            this._opacityModifyRGB = modify;
-            this.updateColor()
-        }
+    b.setOpacityModifyRGB = function (a) {
+        this._opacityModifyRGB !== a && (this._opacityModifyRGB = a, this.updateColor())
     };
-    _p.updateDisplayedOpacity = function (parentOpacity) {
-        cc.NodeRGBA.prototype.updateDisplayedOpacity.call(this, parentOpacity);
+    b.updateDisplayedOpacity = function (a) {
+        cc.NodeRGBA.prototype.updateDisplayedOpacity.call(this, a);
         this.updateColor()
     };
-    _p.ctor = function (fileName, rect, rotated) {
-        var self = this;
-        cc.NodeRGBA.prototype.ctor.call(self);
-        self._shouldBeHidden = false;
-        self._offsetPosition = cc.p(0, 0);
-        self._unflippedOffsetPositionFromCenter = cc.p(0, 0);
-        self._blendFunc = {src: cc.BLEND_SRC, dst: cc.BLEND_DST};
-        self._rect = cc.rect(0, 0, 0, 0);
-        self._quad = new cc.V3F_C4B_T2F_Quad;
-        self._quadWebBuffer = cc._renderContext.createBuffer();
-        self._quadDirty = true;
-        self._textureLoaded = true;
-        self._softInit(fileName, rect, rotated)
+    b.ctor = function (a, b, g) {
+        cc.NodeRGBA.prototype.ctor.call(this);
+        this._shouldBeHidden = !1;
+        this._offsetPosition = cc.p(0, 0);
+        this._unflippedOffsetPositionFromCenter = cc.p(0, 0);
+        this._blendFunc = {src: cc.BLEND_SRC, dst: cc.BLEND_DST};
+        this._rect = cc.rect(0, 0, 0, 0);
+        this._quad = new cc.V3F_C4B_T2F_Quad;
+        this._quadWebBuffer = cc._renderContext.createBuffer();
+        this._textureLoaded = this._quadDirty = !0;
+        this._softInit(a, b, g)
     };
-    _p.setBlendFunc = function (src, dst) {
-        var locBlendFunc = this._blendFunc;
-        if (dst === undefined) {
-            locBlendFunc.src = src.src;
-            locBlendFunc.dst = src.dst
-        } else {
-            locBlendFunc.src = src;
-            locBlendFunc.dst = dst
+    b.setBlendFunc = function (a, b) {
+        var g = this._blendFunc;
+        void 0 === b ? (g.src = a.src, g.dst = a.dst) : (g.src = a, g.dst = b)
+    };
+    b.init = function () {
+        if (0 < arguments.length)return this.initWithFile(arguments[0],
+            arguments[1]);
+        cc.NodeRGBA.prototype.init.call(this);
+        this.dirty = this._recursiveDirty = !1;
+        this._opacityModifyRGB = !0;
+        this._blendFunc.src = cc.BLEND_SRC;
+        this._blendFunc.dst = cc.BLEND_DST;
+        this.texture = null;
+        this._textureLoaded = !0;
+        this._flippedX = this._flippedY = !1;
+        this.anchorY = this.anchorX = 0.5;
+        this._offsetPosition.x = 0;
+        this._offsetPosition.y = 0;
+        this._hasChildren = !1;
+        var a = {r: 255, g: 255, b: 255, a: 255};
+        this._quad.bl.colors = a;
+        this._quad.br.colors = a;
+        this._quad.tl.colors = a;
+        this._quad.tr.colors = a;
+        this._quadDirty = !0;
+        this.setTextureRect(cc.rect(0,
+            0, 0, 0), !1, cc.size(0, 0));
+        return!0
+    };
+    b.initWithTexture = function (a, b, g) {
+        cc.assert(0 != arguments.length, cc._LogInfos.Sprite_initWithTexture);
+        g = g || !1;
+        if (!cc.NodeRGBA.prototype.init.call(this))return!1;
+        this._batchNode = null;
+        this.dirty = this._recursiveDirty = !1;
+        this._opacityModifyRGB = !0;
+        this._blendFunc.src = cc.BLEND_SRC;
+        this._blendFunc.dst = cc.BLEND_DST;
+        this._flippedX = this._flippedY = !1;
+        this.anchorY = this.anchorX = 0.5;
+        this._offsetPosition.x = 0;
+        this._offsetPosition.y = 0;
+        this._hasChildren = !1;
+        var d = cc.color(255, 255, 255,
+            255), e = this._quad;
+        e.bl.colors = d;
+        e.br.colors = d;
+        e.tl.colors = d;
+        e.tr.colors = d;
+        this._textureLoaded = d = a.isLoaded();
+        if (!d)return this._rectRotated = g || !1, b && (d = this._rect, d.x = b.x, d.y = b.y, d.width = b.width, d.height = b.height), a.addLoadedEventListener(this._textureLoadedCallback, this), !0;
+        b || (b = cc.rect(0, 0, a.width, a.height));
+        a && (g ? (d = b.x + b.height, e = b.y + b.width) : (d = b.x + b.width, e = b.y + b.height), d > a.width && cc.error(cc._LogInfos.RectWidth, a.url), e > a.height && cc.error(cc._LogInfos.RectHeight, a.url));
+        this.texture = a;
+        this.setTextureRect(b,
+            g);
+        this.batchNode = null;
+        return this._quadDirty = !0
+    };
+    b._textureLoadedCallback = function (a) {
+        if (!this._textureLoaded) {
+            this._textureLoaded = !0;
+            var b = this._rect;
+            b ? cc._rectEqualToZero(b) && (b.width = a.width, b.height = a.height) : b = cc.rect(0, 0, a.width, a.height);
+            this.texture = a;
+            this.setTextureRect(b, this._rectRotated);
+            this.batchNode = this._batchNode;
+            this._quadDirty = !0;
+            this._callLoadedEventCallbacks()
         }
     };
-    _p.init = function () {
-        var _t = this;
-        if (arguments.length > 0)return _t.initWithFile(arguments[0], arguments[1]);
-        cc.NodeRGBA.prototype.init.call(_t);
-        _t.dirty = _t._recursiveDirty = false;
-        _t._opacityModifyRGB = true;
-        _t._blendFunc.src = cc.BLEND_SRC;
-        _t._blendFunc.dst = cc.BLEND_DST;
-        _t.texture = null;
-        _t._textureLoaded = true;
-        _t._flippedX = _t._flippedY = false;
-        _t.anchorX = 0.5;
-        _t.anchorY = 0.5;
-        _t._offsetPosition.x = 0;
-        _t._offsetPosition.y = 0;
-        _t._hasChildren = false;
-        var tempColor = {r: 255, g: 255, b: 255, a: 255};
-        _t._quad.bl.colors = tempColor;
-        _t._quad.br.colors = tempColor;
-        _t._quad.tl.colors = tempColor;
-        _t._quad.tr.colors = tempColor;
-        _t._quadDirty = true;
-        _t.setTextureRect(cc.rect(0, 0, 0, 0), false, cc.size(0, 0));
-        return true
+    b.setTextureRect = function (a, b, g) {
+        this._rectRotated = b || !1;
+        this.setContentSize(g || a);
+        this.setVertexRect(a);
+        this._setTextureCoords(a);
+        a = this._unflippedOffsetPositionFromCenter;
+        this._flippedX && (a.x = -a.x);
+        this._flippedY && (a.y = -a.y);
+        var d = this._rect;
+        this._offsetPosition.x = a.x + (this._contentSize.width - d.width) / 2;
+        this._offsetPosition.y = a.y + (this._contentSize.height - d.height) / 2;
+        if (this._batchNode)this.dirty = !0; else {
+            a = 0 + this._offsetPosition.x;
+            b = 0 + this._offsetPosition.y;
+            g = a + d.width;
+            var d = b + d.height, e = this._quad;
+            e.bl.vertices = {x: a, y: b, z: 0};
+            e.br.vertices = {x: g, y: b, z: 0};
+            e.tl.vertices = {x: a, y: d, z: 0};
+            e.tr.vertices = {x: g, y: d, z: 0};
+            this._quadDirty = !0
+        }
     };
-    _p.initWithTexture = function (texture, rect, rotated) {
-        var _t = this;
-        var argnum = arguments.length;
-        cc.assert(argnum != 0, cc._LogInfos.Sprite_initWithTexture);
-        rotated = rotated || false;
-        if (!cc.NodeRGBA.prototype.init.call(_t))return false;
-        _t._batchNode = null;
-        _t._recursiveDirty = false;
-        _t.dirty = false;
-        _t._opacityModifyRGB = true;
-        _t._blendFunc.src = cc.BLEND_SRC;
-        _t._blendFunc.dst = cc.BLEND_DST;
-        _t._flippedX = _t._flippedY = false;
-        _t.anchorX = 0.5;
-        _t.anchorY = 0.5;
-        _t._offsetPosition.x = 0;
-        _t._offsetPosition.y = 0;
-        _t._hasChildren = false;
-        var tmpColor = cc.color(255, 255, 255, 255);
-        var locQuad = _t._quad;
-        locQuad.bl.colors = tmpColor;
-        locQuad.br.colors = tmpColor;
-        locQuad.tl.colors = tmpColor;
-        locQuad.tr.colors = tmpColor;
-        var locTextureLoaded = texture.isLoaded();
-        _t._textureLoaded =
-            locTextureLoaded;
-        if (!locTextureLoaded) {
-            _t._rectRotated = rotated || false;
-            if (rect) {
-                var locRect = _t._rect;
-                locRect.x = rect.x;
-                locRect.y = rect.y;
-                locRect.width = rect.width;
-                locRect.height = rect.height
+    b.updateTransform = function () {
+        if (this.dirty) {
+            var a = this._quad, b = this._parent;
+            if (!this._visible || b && b != this._batchNode && b._shouldBeHidden)a.br.vertices = {x: 0, y: 0, z: 0}, a.tl.vertices = {x: 0, y: 0, z: 0}, a.tr.vertices = {x: 0, y: 0, z: 0}, a.bl.vertices = {x: 0, y: 0, z: 0}, this._shouldBeHidden = !0; else {
+                this._shouldBeHidden = !1;
+                var g = this._transformToBatch = !b || b == this._batchNode ? this.nodeToParentTransform() : cc.AffineTransformConcat(this.nodeToParentTransform(), b._transformToBatch), d = this._rect, b = this._offsetPosition.x, e =
+                    this._offsetPosition.y, f = b + d.width, k = e + d.height, l = g.tx, h = g.ty, m = g.a, n = g.b, p = g.d, q = -g.c, g = b * m - e * q + l, d = b * n + e * p + h, r = f * m - e * q + l, e = f * n + e * p + h, s = f * m - k * q + l, f = f * n + k * p + h, l = b * m - k * q + l, b = b * n + k * p + h, k = this._vertexZ;
+                cc.SPRITEBATCHNODE_RENDER_SUBPIXEL || (g |= 0, d |= 0, r |= 0, e |= 0, s |= 0, f |= 0, l |= 0, b |= 0);
+                a.bl.vertices = {x: g, y: d, z: k};
+                a.br.vertices = {x: r, y: e, z: k};
+                a.tl.vertices = {x: l, y: b, z: k};
+                a.tr.vertices = {x: s, y: f, z: k}
             }
-            texture.addLoadedEventListener(_t._textureLoadedCallback, _t);
-            return true
+            this.textureAtlas.updateQuad(a, this.atlasIndex);
+            this.dirty = this._recursiveDirty = !1
         }
-        if (!rect)rect = cc.rect(0, 0, texture.width, texture.height);
-        if (texture) {
-            var _x, _y;
-            if (rotated) {
-                _x = rect.x + rect.height;
-                _y = rect.y + rect.width
-            } else {
-                _x = rect.x + rect.width;
-                _y = rect.y + rect.height
-            }
-            if (_x > texture.width)cc.error(cc._LogInfos.RectWidth, texture.url);
-            if (_y > texture.height)cc.error(cc._LogInfos.RectHeight, texture.url)
-        }
-        _t.texture = texture;
-        _t.setTextureRect(rect, rotated);
-        _t.batchNode = null;
-        _t._quadDirty = true;
-        return true
+        this._hasChildren && this._arrayMakeObjectsPerformSelector(this._children,
+            cc.Node.StateCallbackType.updateTransform);
+        cc.SPRITE_DEBUG_DRAW && (a = [cc.p(this._quad.bl.vertices.x, this._quad.bl.vertices.y), cc.p(this._quad.br.vertices.x, this._quad.br.vertices.y), cc.p(this._quad.tr.vertices.x, this._quad.tr.vertices.y), cc.p(this._quad.tl.vertices.x, this._quad.tl.vertices.y)], cc._drawingUtil.drawPoly(a, 4, !0))
     };
-    _p._textureLoadedCallback = function (sender) {
-        var _t = this;
-        if (_t._textureLoaded)return;
-        _t._textureLoaded = true;
-        var locRect = _t._rect;
-        if (!locRect)locRect = cc.rect(0, 0, sender.width, sender.height); else if (cc._rectEqualToZero(locRect)) {
-            locRect.width = sender.width;
-            locRect.height = sender.height
-        }
-        _t.texture = sender;
-        _t.setTextureRect(locRect, _t._rectRotated);
-        _t.batchNode = _t._batchNode;
-        _t._quadDirty = true;
-        _t._callLoadedEventCallbacks()
-    };
-    _p.setTextureRect = function (rect, rotated, untrimmedSize) {
-        var _t = this;
-        _t._rectRotated = rotated || false;
-        _t.setContentSize(untrimmedSize || rect);
-        _t.setVertexRect(rect);
-        _t._setTextureCoords(rect);
-        var relativeOffset = _t._unflippedOffsetPositionFromCenter;
-        if (_t._flippedX)relativeOffset.x = -relativeOffset.x;
-        if (_t._flippedY)relativeOffset.y = -relativeOffset.y;
-        var locRect = _t._rect;
-        _t._offsetPosition.x = relativeOffset.x + (_t._contentSize.width -
-            locRect.width) / 2;
-        _t._offsetPosition.y = relativeOffset.y + (_t._contentSize.height - locRect.height) / 2;
-        if (_t._batchNode)_t.dirty = true; else {
-            var x1 = 0 + _t._offsetPosition.x;
-            var y1 = 0 + _t._offsetPosition.y;
-            var x2 = x1 + locRect.width;
-            var y2 = y1 + locRect.height;
-            var locQuad = _t._quad;
-            locQuad.bl.vertices = {x: x1, y: y1, z: 0};
-            locQuad.br.vertices = {x: x2, y: y1, z: 0};
-            locQuad.tl.vertices = {x: x1, y: y2, z: 0};
-            locQuad.tr.vertices = {x: x2, y: y2, z: 0};
-            _t._quadDirty = true
-        }
-    };
-    _p.updateTransform = function () {
-        var _t = this;
-        if (_t.dirty) {
-            var locQuad = _t._quad,
-                locParent = _t._parent;
-            if (!_t._visible || locParent && locParent != _t._batchNode && locParent._shouldBeHidden) {
-                locQuad.br.vertices = {x: 0, y: 0, z: 0};
-                locQuad.tl.vertices = {x: 0, y: 0, z: 0};
-                locQuad.tr.vertices = {x: 0, y: 0, z: 0};
-                locQuad.bl.vertices = {x: 0, y: 0, z: 0};
-                _t._shouldBeHidden = true
-            } else {
-                _t._shouldBeHidden = false;
-                if (!locParent || locParent == _t._batchNode)_t._transformToBatch = _t.nodeToParentTransform(); else _t._transformToBatch = cc.AffineTransformConcat(_t.nodeToParentTransform(), locParent._transformToBatch);
-                var locTransformToBatch =
-                    _t._transformToBatch;
-                var rect = _t._rect;
-                var x1 = _t._offsetPosition.x;
-                var y1 = _t._offsetPosition.y;
-                var x2 = x1 + rect.width;
-                var y2 = y1 + rect.height;
-                var x = locTransformToBatch.tx;
-                var y = locTransformToBatch.ty;
-                var cr = locTransformToBatch.a;
-                var sr = locTransformToBatch.b;
-                var cr2 = locTransformToBatch.d;
-                var sr2 = -locTransformToBatch.c;
-                var ax = x1 * cr - y1 * sr2 + x;
-                var ay = x1 * sr + y1 * cr2 + y;
-                var bx = x2 * cr - y1 * sr2 + x;
-                var by = x2 * sr + y1 * cr2 + y;
-                var cx = x2 * cr - y2 * sr2 + x;
-                var cy = x2 * sr + y2 * cr2 + y;
-                var dx = x1 * cr - y2 * sr2 + x;
-                var dy = x1 * sr + y2 * cr2 + y;
-                var locVertexZ =
-                    _t._vertexZ;
-                if (!cc.SPRITEBATCHNODE_RENDER_SUBPIXEL) {
-                    ax = 0 | ax;
-                    ay = 0 | ay;
-                    bx = 0 | bx;
-                    by = 0 | by;
-                    cx = 0 | cx;
-                    cy = 0 | cy;
-                    dx = 0 | dx;
-                    dy = 0 | dy
-                }
-                locQuad.bl.vertices = {x: ax, y: ay, z: locVertexZ};
-                locQuad.br.vertices = {x: bx, y: by, z: locVertexZ};
-                locQuad.tl.vertices = {x: dx, y: dy, z: locVertexZ};
-                locQuad.tr.vertices = {x: cx, y: cy, z: locVertexZ}
-            }
-            _t.textureAtlas.updateQuad(locQuad, _t.atlasIndex);
-            _t._recursiveDirty = false;
-            _t.dirty = false
-        }
-        if (_t._hasChildren)_t._arrayMakeObjectsPerformSelector(_t._children, cc.Node.StateCallbackType.updateTransform);
-        if (cc.SPRITE_DEBUG_DRAW) {
-            var vertices =
-                [cc.p(_t._quad.bl.vertices.x, _t._quad.bl.vertices.y), cc.p(_t._quad.br.vertices.x, _t._quad.br.vertices.y), cc.p(_t._quad.tr.vertices.x, _t._quad.tr.vertices.y), cc.p(_t._quad.tl.vertices.x, _t._quad.tl.vertices.y)];
-            cc._drawingUtil.drawPoly(vertices, 4, true)
-        }
-    };
-    _p.addChild = function (child, localZOrder, tag) {
-        var _t = this;
-        cc.assert(child, cc._LogInfos.Sprite_addChild_3);
-        if (localZOrder == null)localZOrder = child._localZOrder;
-        if (tag == null)tag = child.tag;
-        if (_t._batchNode) {
-            if (!(child instanceof cc.Sprite)) {
+    b.addChild = function (a, b, g) {
+        cc.assert(a, cc._LogInfos.Sprite_addChild_3);
+        null == b && (b = a._localZOrder);
+        null == g && (g = a.tag);
+        if (this._batchNode) {
+            if (!(a instanceof cc.Sprite)) {
                 cc.log(cc._LogInfos.Sprite_addChild);
                 return
             }
-            if (child.texture._webTextureObj !== _t.textureAtlas.texture._webTextureObj)cc.log(cc._LogInfos.Sprite_addChild_2);
-            _t._batchNode.appendChild(child);
-            if (!_t._reorderChildDirty)_t._setReorderChildDirtyRecursively()
+            a.texture._webTextureObj !== this.textureAtlas.texture._webTextureObj && cc.log(cc._LogInfos.Sprite_addChild_2);
+            this._batchNode.appendChild(a);
+            this._reorderChildDirty || this._setReorderChildDirtyRecursively()
         }
-        cc.NodeRGBA.prototype.addChild.call(_t, child, localZOrder, tag);
-        _t._hasChildren = true
+        cc.NodeRGBA.prototype.addChild.call(this, a, b, g);
+        this._hasChildren = !0
     };
-    _p.setOpacity = function (opacity) {
-        cc.NodeRGBA.prototype.setOpacity.call(this, opacity);
+    b.setOpacity = function (a) {
+        cc.NodeRGBA.prototype.setOpacity.call(this, a);
         this.updateColor()
     };
-    _p.setColor = function (color3) {
-        cc.NodeRGBA.prototype.setColor.call(this, color3);
+    b.setColor = function (a) {
+        cc.NodeRGBA.prototype.setColor.call(this, a);
         this.updateColor()
     };
-    _p.updateDisplayedColor = function (parentColor) {
-        cc.NodeRGBA.prototype.updateDisplayedColor.call(this, parentColor);
+    b.updateDisplayedColor = function (a) {
+        cc.NodeRGBA.prototype.updateDisplayedColor.call(this,
+            a);
         this.updateColor()
     };
-    _p.setSpriteFrame = function (newFrame) {
-        var _t = this;
-        if (typeof newFrame == "string") {
-            newFrame = cc.spriteFrameCache.getSpriteFrame(newFrame);
-            cc.assert(newFrame, cc._LogInfos.Sprite_setSpriteFrame)
-        }
-        _t.setNodeDirty(true);
-        var frameOffset = newFrame.getOffset();
-        _t._unflippedOffsetPositionFromCenter.x = frameOffset.x;
-        _t._unflippedOffsetPositionFromCenter.y = frameOffset.y;
-        var pNewTexture =
-            newFrame.getTexture();
-        var locTextureLoaded = newFrame.textureLoaded();
-        if (!locTextureLoaded) {
-            _t._textureLoaded = false;
-            newFrame.addLoadedEventListener(function (sender) {
-                _t._textureLoaded = true;
-                var locNewTexture = sender.getTexture();
-                if (locNewTexture != _t._texture)_t.texture = locNewTexture;
-                _t.setTextureRect(sender.getRect(), sender.isRotated(), sender.getOriginalSize());
-                _t._callLoadedEventCallbacks()
-            }, _t)
-        }
-        if (pNewTexture != _t._texture)_t.texture = pNewTexture;
-        _t._rectRotated = newFrame.isRotated();
-        _t.setTextureRect(newFrame.getRect(),
-            _t._rectRotated, newFrame.getOriginalSize())
+    b.setSpriteFrame = function (a) {
+        var b = this;
+        "string" == typeof a && (a = cc.spriteFrameCache.getSpriteFrame(a), cc.assert(a, cc._LogInfos.Sprite_setSpriteFrame));
+        b.setNodeDirty(!0);
+        var g = a.getOffset();
+        b._unflippedOffsetPositionFromCenter.x = g.x;
+        b._unflippedOffsetPositionFromCenter.y = g.y;
+        g = a.getTexture();
+        a.textureLoaded() || (b._textureLoaded = !1, a.addLoadedEventListener(function (a) {
+            b._textureLoaded = !0;
+            var e = a.getTexture();
+            e != b._texture && (b.texture = e);
+            b.setTextureRect(a.getRect(), a.isRotated(),
+                a.getOriginalSize());
+            b._callLoadedEventCallbacks()
+        }, b));
+        g != b._texture && (b.texture = g);
+        b._rectRotated = a.isRotated();
+        b.setTextureRect(a.getRect(), b._rectRotated, a.getOriginalSize())
     };
-    _p.isFrameDisplayed = function (frame) {
-        return cc.rectEqualToRect(frame.getRect(), this._rect) && frame.getTexture().getName() == this._texture.getName() && cc.pointEqualToPoint(frame.getOffset(), this._unflippedOffsetPositionFromCenter)
+    b.isFrameDisplayed = function (a) {
+        return cc.rectEqualToRect(a.getRect(), this._rect) && a.getTexture().getName() == this._texture.getName() && cc.pointEqualToPoint(a.getOffset(), this._unflippedOffsetPositionFromCenter)
     };
-    _p.setBatchNode = function (spriteBatchNode) {
-        var _t = this;
-        _t._batchNode = spriteBatchNode;
-        if (!_t._batchNode) {
-            _t.atlasIndex = cc.Sprite.INDEX_NOT_INITIALIZED;
-            _t.textureAtlas = null;
-            _t._recursiveDirty = false;
-            _t.dirty = false;
-            var x1 = _t._offsetPosition.x;
-            var y1 = _t._offsetPosition.y;
-            var x2 = x1 + _t._rect.width;
-            var y2 = y1 + _t._rect.height;
-            var locQuad = _t._quad;
-            locQuad.bl.vertices = {x: x1, y: y1, z: 0};
-            locQuad.br.vertices = {x: x2, y: y1, z: 0};
-            locQuad.tl.vertices = {x: x1, y: y2, z: 0};
-            locQuad.tr.vertices = {x: x2, y: y2, z: 0};
-            _t._quadDirty = true
-        } else {
-            _t._transformToBatch = cc.AffineTransformIdentity();
-            _t.textureAtlas = _t._batchNode.textureAtlas
+    b.setBatchNode = function (a) {
+        if (this._batchNode = a)this._transformToBatch = cc.AffineTransformIdentity(), this.textureAtlas =
+            this._batchNode.textureAtlas; else {
+            this.atlasIndex = cc.Sprite.INDEX_NOT_INITIALIZED;
+            this.textureAtlas = null;
+            this.dirty = this._recursiveDirty = !1;
+            a = this._offsetPosition.x;
+            var b = this._offsetPosition.y, g = a + this._rect.width, d = b + this._rect.height, e = this._quad;
+            e.bl.vertices = {x: a, y: b, z: 0};
+            e.br.vertices = {x: g, y: b, z: 0};
+            e.tl.vertices = {x: a, y: d, z: 0};
+            e.tr.vertices = {x: g, y: d, z: 0};
+            this._quadDirty = !0
         }
     };
-    _p.setTexture = function (texture) {
-        var _t = this;
-        if (texture && typeof texture === "string") {
-            texture = cc.textureCache.addImage(texture);
-            _t.setTexture(texture);
-            var size = texture.getContentSize();
-            _t.setTextureRect(cc.rect(0, 0, size.width, size.height));
-            return
-        }
-        cc.assert(!texture || texture instanceof cc.Texture2D, cc._LogInfos.Sprite_setTexture_2);
-        if (_t._batchNode && _t._batchNode.texture != texture) {
-            cc.log(cc._LogInfos.Sprite_setTexture);
-            return
-        }
-        if (texture)_t.shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR); else _t.shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_COLOR);
-        if (!_t._batchNode && _t._texture != texture) {
-            _t._texture = texture;
-            _t._updateBlendFunc()
+    b.setTexture = function (a) {
+        a && "string" === typeof a ? (a = cc.textureCache.addImage(a), this.setTexture(a), a = a.getContentSize(),
+            this.setTextureRect(cc.rect(0, 0, a.width, a.height))) : (cc.assert(!a || a instanceof cc.Texture2D, cc._LogInfos.Sprite_setTexture_2), this._batchNode && this._batchNode.texture != a ? cc.log(cc._LogInfos.Sprite_setTexture) : (this.shaderProgram = a ? cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR) : cc.shaderCache.programForKey(cc.SHADER_POSITION_COLOR), !this._batchNode && this._texture != a && (this._texture = a, this._updateBlendFunc())))
+    };
+    b.draw = function () {
+        if (this._textureLoaded) {
+            var a = cc._renderContext, b = this._texture;
+            b ? b._isLoaded && (this._shaderProgram.use(), this._shaderProgram.setUniformForModelViewAndProjectionMatrixWithMat4(), cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst), cc.glBindTexture2DN(0, b), cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX), a.bindBuffer(a.ARRAY_BUFFER, this._quadWebBuffer), this._quadDirty && (a.bufferData(a.ARRAY_BUFFER, this._quad.arrayBuffer, a.DYNAMIC_DRAW), this._quadDirty = !1), a.vertexAttribPointer(0, 3, a.FLOAT, !1, 24, 0), a.vertexAttribPointer(1, 4, a.UNSIGNED_BYTE, !0, 24,
+                12), a.vertexAttribPointer(2, 2, a.FLOAT, !1, 24, 16), a.drawArrays(a.TRIANGLE_STRIP, 0, 4)) : (this._shaderProgram.use(), this._shaderProgram.setUniformForModelViewAndProjectionMatrixWithMat4(), cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst), cc.glBindTexture2D(null), cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_COLOR), a.bindBuffer(a.ARRAY_BUFFER, this._quadWebBuffer), this._quadDirty && (cc._renderContext.bufferData(cc._renderContext.ARRAY_BUFFER, this._quad.arrayBuffer, cc._renderContext.STATIC_DRAW),
+                this._quadDirty = !1), a.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, a.FLOAT, !1, 24, 0), a.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, a.UNSIGNED_BYTE, !0, 24, 12), a.drawArrays(a.TRIANGLE_STRIP, 0, 4));
+            cc.g_NumberOfDraws++;
+            if (0 !== cc.SPRITE_DEBUG_DRAW || this._showNode)1 === cc.SPRITE_DEBUG_DRAW || this._showNode ? (a = this._quad, a = [cc.p(a.tl.vertices.x, a.tl.vertices.y), cc.p(a.bl.vertices.x, a.bl.vertices.y), cc.p(a.br.vertices.x, a.br.vertices.y), cc.p(a.tr.vertices.x, a.tr.vertices.y)], cc._drawingUtil.drawPoly(a, 4,
+                !0)) : 2 === cc.SPRITE_DEBUG_DRAW && (a = this.getTextureRect(), b = this.getOffsetPosition(), a = [cc.p(b.x, b.y), cc.p(b.x + a.width, b.y), cc.p(b.x + a.width, b.y + a.height), cc.p(b.x, b.y + a.height)], cc._drawingUtil.drawPoly(a, 4, !0))
         }
     };
-    _p.draw = function () {
-        var _t = this;
-        if (!_t._textureLoaded)return;
-        var gl = cc._renderContext, locTexture = _t._texture;
-        if (locTexture) {
-            if (locTexture._isLoaded) {
-                _t._shaderProgram.use();
-                _t._shaderProgram.setUniformForModelViewAndProjectionMatrixWithMat4();
-                cc.glBlendFunc(_t._blendFunc.src, _t._blendFunc.dst);
-                cc.glBindTexture2DN(0, locTexture);
-                cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
-                gl.bindBuffer(gl.ARRAY_BUFFER, _t._quadWebBuffer);
-                if (_t._quadDirty) {
-                    gl.bufferData(gl.ARRAY_BUFFER,
-                        _t._quad.arrayBuffer, gl.DYNAMIC_DRAW);
-                    _t._quadDirty = false
-                }
-                gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 24, 0);
-                gl.vertexAttribPointer(1, 4, gl.UNSIGNED_BYTE, true, 24, 12);
-                gl.vertexAttribPointer(2, 2, gl.FLOAT, false, 24, 16);
-                gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
-            }
-        } else {
-            _t._shaderProgram.use();
-            _t._shaderProgram.setUniformForModelViewAndProjectionMatrixWithMat4();
-            cc.glBlendFunc(_t._blendFunc.src, _t._blendFunc.dst);
-            cc.glBindTexture2D(null);
-            cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_COLOR);
-            gl.bindBuffer(gl.ARRAY_BUFFER, _t._quadWebBuffer);
-            if (_t._quadDirty) {
-                cc._renderContext.bufferData(cc._renderContext.ARRAY_BUFFER, _t._quad.arrayBuffer, cc._renderContext.STATIC_DRAW);
-                _t._quadDirty = false
-            }
-            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, 0);
-            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 24, 12);
-            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
-        }
-        cc.g_NumberOfDraws++;
-        if (cc.SPRITE_DEBUG_DRAW === 0 && !_t._showNode)return;
-        if (cc.SPRITE_DEBUG_DRAW === 1 || _t._showNode) {
-            var locQuad =
-                _t._quad;
-            var verticesG1 = [cc.p(locQuad.tl.vertices.x, locQuad.tl.vertices.y), cc.p(locQuad.bl.vertices.x, locQuad.bl.vertices.y), cc.p(locQuad.br.vertices.x, locQuad.br.vertices.y), cc.p(locQuad.tr.vertices.x, locQuad.tr.vertices.y)];
-            cc._drawingUtil.drawPoly(verticesG1, 4, true)
-        } else if (cc.SPRITE_DEBUG_DRAW === 2) {
-            var drawRectG2 = _t.getTextureRect();
-            var offsetPixG2 = _t.getOffsetPosition();
-            var verticesG2 = [cc.p(offsetPixG2.x, offsetPixG2.y), cc.p(offsetPixG2.x + drawRectG2.width, offsetPixG2.y), cc.p(offsetPixG2.x + drawRectG2.width,
-                    offsetPixG2.y + drawRectG2.height), cc.p(offsetPixG2.x, offsetPixG2.y + drawRectG2.height)];
-            cc._drawingUtil.drawPoly(verticesG2, 4, true)
-        }
-    };
-    delete _p
+    delete b
 };
 cc._tmp.WebGLLabelTTF = function () {
-    var _p = cc.LabelTTF.prototype;
-    _p.setColor = cc.Sprite.prototype.setColor;
-    _p._setColorsString = function () {
-        this._needUpdateTexture = true;
-        var locStrokeColor = this._strokeColor, locFontFillColor = this._textFillColor;
+    var b = cc.LabelTTF.prototype;
+    b.setColor = cc.Sprite.prototype.setColor;
+    b._setColorsString = function () {
+        this._needUpdateTexture = !0;
+        var a = this._strokeColor, b = this._textFillColor;
         this._shadowColorStr = "rgba(128,128,128," + this._shadowOpacity + ")";
-        this._fillColorStr = "rgba(" + (0 | locFontFillColor.r) + "," + (0 | locFontFillColor.g) + "," + (0 | locFontFillColor.b) + ", 1)";
-        this._strokeColorStr = "rgba(" + (0 | locStrokeColor.r) + "," + (0 | locStrokeColor.g) + "," + (0 | locStrokeColor.b) +
-            ", 1)"
+        this._fillColorStr = "rgba(" + (0 | b.r) + "," + (0 | b.g) + "," + (0 | b.b) + ", 1)";
+        this._strokeColorStr = "rgba(" + (0 | a.r) + "," + (0 | a.g) + "," + (0 | a.b) + ", 1)"
     };
-    _p.updateDisplayedColor = cc.Sprite.prototype.updateDisplayedColor;
-    _p.setOpacity = cc.Sprite.prototype.setOpacity;
-    _p.updateDisplayedOpacity = cc.Sprite.prototype.updateDisplayedOpacity;
-    _p.initWithStringAndTextDefinition = function (text, textDefinition) {
-        if (!cc.Sprite.prototype.init.call(this))return false;
+    b.updateDisplayedColor = cc.Sprite.prototype.updateDisplayedColor;
+    b.setOpacity = cc.Sprite.prototype.setOpacity;
+    b.updateDisplayedOpacity = cc.Sprite.prototype.updateDisplayedOpacity;
+    b.initWithStringAndTextDefinition = function (a, b) {
+        if (!cc.Sprite.prototype.init.call(this))return!1;
         this.shaderProgram = cc.shaderCache.programForKey(cc.LabelTTF._SHADER_PROGRAM);
-        this._updateWithTextDefinition(textDefinition, false);
-        this.string = text;
-        return true
+        this._updateWithTextDefinition(b, !1);
+        this.string = a;
+        return!0
     };
-    _p.setFontFillColor = function (tintColor) {
-        var locTextFillColor =
-            this._textFillColor;
-        if (locTextFillColor.r != tintColor.r || locTextFillColor.g != tintColor.g || locTextFillColor.b != tintColor.b) {
-            locTextFillColor.r = tintColor.r;
-            locTextFillColor.g = tintColor.g;
-            locTextFillColor.b = tintColor.b;
-            this._setColorsString();
-            this._needUpdateTexture = true
-        }
+    b.setFontFillColor = function (a) {
+        var b = this._textFillColor;
+        if (b.r != a.r || b.g != a.g || b.b != a.b)b.r = a.r, b.g = a.g, b.b = a.b, this._setColorsString(), this._needUpdateTexture = !0
     };
-    _p.draw = function (ctx) {
-        if (!this._string || this._string == "")return;
-        var gl = ctx || cc._renderContext, locTexture = this._texture;
-        if (locTexture && locTexture._isLoaded) {
-            this._shaderProgram.use();
-            this._shaderProgram.setUniformForModelViewAndProjectionMatrixWithMat4();
-            cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
-            cc.glBindTexture2D(locTexture);
-            cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
-            gl.bindBuffer(gl.ARRAY_BUFFER, this._quadWebBuffer);
-            if (this._quadDirty) {
-                gl.bufferData(gl.ARRAY_BUFFER, this._quad.arrayBuffer, gl.STATIC_DRAW);
-                this._quadDirty = false
+    b.draw = function (a) {
+        if (this._string &&
+            "" != this._string) {
+            a = a || cc._renderContext;
+            var b = this._texture;
+            b && b._isLoaded && (this._shaderProgram.use(), this._shaderProgram.setUniformForModelViewAndProjectionMatrixWithMat4(), cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst), cc.glBindTexture2D(b), cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX), a.bindBuffer(a.ARRAY_BUFFER, this._quadWebBuffer), this._quadDirty && (a.bufferData(a.ARRAY_BUFFER, this._quad.arrayBuffer, a.STATIC_DRAW), this._quadDirty = !1), a.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION,
+                3, a.FLOAT, !1, 24, 0), a.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, a.FLOAT, !1, 24, 16), a.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, a.UNSIGNED_BYTE, !0, 24, 12), a.drawArrays(a.TRIANGLE_STRIP, 0, 4));
+            if (1 === cc.SPRITE_DEBUG_DRAW)a = this._quad, a = [cc.p(a.tl.vertices.x, a.tl.vertices.y), cc.p(a.bl.vertices.x, a.bl.vertices.y), cc.p(a.br.vertices.x, a.br.vertices.y), cc.p(a.tr.vertices.x, a.tr.vertices.y)], cc._drawingUtil.drawPoly(a, 4, !0); else if (2 === cc.SPRITE_DEBUG_DRAW) {
+                a = this.getTextureRect()._size;
+                var b = this.offsetX,
+                    g = this.offsetY;
+                a = [cc.p(b, g), cc.p(b + a.width, g), cc.p(b + a.width, g + a.height), cc.p(b, g + a.height)];
+                cc._drawingUtil.drawPoly(a, 4, !0)
             }
-            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, 0);
-            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 24, 16);
-            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR,
-                4, gl.UNSIGNED_BYTE, true, 24, 12);
-            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
+            cc.g_NumberOfDraws++
         }
-        if (cc.SPRITE_DEBUG_DRAW === 1) {
-            var locQuad = this._quad;
-            var verticesG1 = [cc.p(locQuad.tl.vertices.x, locQuad.tl.vertices.y), cc.p(locQuad.bl.vertices.x, locQuad.bl.vertices.y), cc.p(locQuad.br.vertices.x, locQuad.br.vertices.y), cc.p(locQuad.tr.vertices.x, locQuad.tr.vertices.y)];
-            cc._drawingUtil.drawPoly(verticesG1, 4, true)
-        } else if (cc.SPRITE_DEBUG_DRAW === 2) {
-            var drawSizeG2 = this.getTextureRect()._size;
-            var offsetPixG2X = this.offsetX, offsetPixG2Y =
-                this.offsetY;
-            var verticesG2 = [cc.p(offsetPixG2X, offsetPixG2Y), cc.p(offsetPixG2X + drawSizeG2.width, offsetPixG2Y), cc.p(offsetPixG2X + drawSizeG2.width, offsetPixG2Y + drawSizeG2.height), cc.p(offsetPixG2X, offsetPixG2Y + drawSizeG2.height)];
-            cc._drawingUtil.drawPoly(verticesG2, 4, true)
-        }
-        cc.g_NumberOfDraws++
     };
-    _p.setTextureRect = cc.Sprite.prototype.setTextureRect
+    b.setTextureRect = cc.Sprite.prototype.setTextureRect
 };
 cc._tmp.DirectorWebGL = function () {
     cc.DirectorDelegate = cc.Class.extend({updateProjection: function () {
     }});
-    var _p = cc.Director.prototype;
-    _p.setProjection = function (projection) {
-        var _t = this;
-        var size = _t._winSizeInPoints;
-        _t.setViewport();
-        var view = _t._openGLView, ox = view._viewPortRect.x / view._scaleX, oy = view._viewPortRect.y / view._scaleY;
-        switch (projection) {
+    var b = cc.Director.prototype;
+    b.setProjection = function (a) {
+        var b = this._winSizeInPoints;
+        this.setViewport();
+        switch (a) {
             case cc.Director.PROJECTION_2D:
                 cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
                 cc.kmGLLoadIdentity();
-                var orthoMatrix = new cc.kmMat4;
-                cc.kmMat4OrthographicProjection(orthoMatrix,
-                    0, size.width, 0, size.height, -1024, 1024);
-                cc.kmGLMultMatrix(orthoMatrix);
+                var g = new cc.kmMat4;
+                cc.kmMat4OrthographicProjection(g, 0, b.width, 0, b.height, -1024, 1024);
+                cc.kmGLMultMatrix(g);
                 cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
                 cc.kmGLLoadIdentity();
                 break;
             case cc.Director.PROJECTION_3D:
-                var zeye = _t.getZEye();
-                var matrixPerspective = new cc.kmMat4, matrixLookup = new cc.kmMat4;
+                var d =
+                    this.getZEye(), e = new cc.kmMat4, g = new cc.kmMat4;
                 cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
                 cc.kmGLLoadIdentity();
-                cc.kmMat4PerspectiveProjection(matrixPerspective, 60, size.width / size.height, 0.1, zeye * 2);
-                cc.kmGLMultMatrix(matrixPerspective);
+                cc.kmMat4PerspectiveProjection(e, 60, b.width / b.height, 0.1, 2 * d);
+                cc.kmGLMultMatrix(e);
                 cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
                 cc.kmGLLoadIdentity();
-                var eye =
-                    cc.kmVec3Fill(null, -ox + size.width / 2, -oy + size.height / 2, zeye);
-                var center = cc.kmVec3Fill(null, -ox + size.width / 2, -oy + size.height / 2, 0);
-                var up = cc.kmVec3Fill(null, 0, 1, 0);
-                cc.kmMat4LookAt(matrixLookup, eye, center, up);
-                cc.kmGLMultMatrix(matrixLookup);
+                d = cc.kmVec3Fill(null, b.width / 2, b.height / 2, d);
+                b = cc.kmVec3Fill(null, b.width / 2, b.height / 2, 0);
+                e = cc.kmVec3Fill(null, 0, 1, 0);
+                cc.kmMat4LookAt(g, d, b, e);
+                cc.kmGLMultMatrix(g);
                 break;
             case cc.Director.PROJECTION_CUSTOM:
-                if (_t._projectionDelegate)_t._projectionDelegate.updateProjection();
+                this._projectionDelegate && this._projectionDelegate.updateProjection();
                 break;
             default:
-                cc.log(cc._LogInfos.Director_setProjection);
-                break
+                cc.log(cc._LogInfos.Director_setProjection)
         }
-        _t._projection = projection;
-        cc.eventManager.dispatchEvent(_t._eventProjectionChanged);
+        this._projection = a;
+        cc.eventManager.dispatchEvent(this._eventProjectionChanged);
         cc.setProjectionMatrixDirty()
     };
-    _p.setDepthTest = function (on) {
-        var loc_gl = cc._renderContext;
-        if (on) {
-            loc_gl.clearDepth(1);
-            loc_gl.enable(loc_gl.DEPTH_TEST);
-            loc_gl.depthFunc(loc_gl.LEQUAL)
-        } else loc_gl.disable(loc_gl.DEPTH_TEST)
+    b.setDepthTest = function (a) {
+        var b = cc._renderContext;
+        a ? (b.clearDepth(1), b.enable(b.DEPTH_TEST), b.depthFunc(b.LEQUAL)) : b.disable(b.DEPTH_TEST)
     };
-    _p.setOpenGLView = function (openGLView) {
-        var _t = this;
-        _t._winSizeInPoints.width = cc._canvas.width;
-        _t._winSizeInPoints.height = cc._canvas.height;
-        _t._openGLView = openGLView || cc.view;
-        var conf = cc.configuration;
-        conf.gatherGPUInfo();
-        conf.dumpInfo();
-        _t._createStatsLabel();
-        _t.setGLDefaultValues();
-        if (cc.eventManager)cc.eventManager.setEnabled(true)
+    b.setOpenGLView = function (a) {
+        this._winSizeInPoints.width = cc._canvas.width;
+        this._winSizeInPoints.height = cc._canvas.height;
+        this._openGLView = a || cc.view;
+        a = cc.configuration;
+        a.gatherGPUInfo();
+        a.dumpInfo();
+        this._createStatsLabel();
+        this.setGLDefaultValues();
+        cc.eventManager && cc.eventManager.setEnabled(!0)
     };
-    _p._clear = function () {
-        var gl = cc._renderContext;
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
+    b._clear = function () {
+        var a = cc._renderContext;
+        a.clear(a.COLOR_BUFFER_BIT | a.DEPTH_BUFFER_BIT)
     };
-    _p._beforeVisitScene = function () {
+    b._beforeVisitScene = function () {
         cc.kmGLPushMatrix()
     };
-    _p._afterVisitScene = function () {
+    b._afterVisitScene = function () {
         cc.kmGLPopMatrix()
     };
-    _p._createStatsLabel = function () {
-        var _t = this;
-        if (!cc.LabelAtlas) {
-            _t._createStatsLabelForCanvas();
-            return
-        }
-        if (cc.Director._fpsImageLoaded == null || cc.Director._fpsImageLoaded == false)return;
-        var texture = new cc.Texture2D;
-        texture.initWithElement(cc.Director._fpsImage);
-        texture.handleLoadedTexture();
-        var factor = cc.view.getDesignResolutionSize().height /
-            320;
-        if (factor === 0)factor = _t._winSizeInPoints.height / 320;
-        var tmpLabel = new cc.LabelAtlas;
-        tmpLabel._setIgnoreContentScaleFactor(true);
-        tmpLabel.initWithString("00.0", texture, 12, 32, ".");
-        tmpLabel.scale = factor;
-        _t._FPSLabel = tmpLabel;
-        tmpLabel = new cc.LabelAtlas;
-        tmpLabel._setIgnoreContentScaleFactor(true);
-        tmpLabel.initWithString("0.000", texture, 12, 32, ".");
-        tmpLabel.scale = factor;
-        _t._SPFLabel = tmpLabel;
-        tmpLabel = new cc.LabelAtlas;
-        tmpLabel._setIgnoreContentScaleFactor(true);
-        tmpLabel.initWithString("000", texture, 12,
-            32, ".");
-        tmpLabel.scale = factor;
-        _t._drawsLabel = tmpLabel;
-        var locStatsPosition = cc.DIRECTOR_STATS_POSITION;
-        _t._drawsLabel.setPosition(locStatsPosition.x, 34 * factor + locStatsPosition.y);
-        _t._SPFLabel.setPosition(locStatsPosition.x, 17 * factor + locStatsPosition.y);
-        _t._FPSLabel.setPosition(locStatsPosition)
+    b._createStatsLabel = function () {
+        if (cc.LabelAtlas) {
+            if (!(null == cc.Director._fpsImageLoaded || !1 == cc.Director._fpsImageLoaded)) {
+                var a = new cc.Texture2D;
+                a.initWithElement(cc.Director._fpsImage);
+                a.handleLoadedTexture();
+                var b = cc.view.getDesignResolutionSize().height / 320;
+                0 === b && (b = this._winSizeInPoints.height / 320);
+                var g = new cc.LabelAtlas;
+                g._setIgnoreContentScaleFactor(!0);
+                g.initWithString("00.0", a, 12, 32, ".");
+                g.scale = b;
+                this._FPSLabel = g;
+                g = new cc.LabelAtlas;
+                g._setIgnoreContentScaleFactor(!0);
+                g.initWithString("0.000", a, 12, 32, ".");
+                g.scale = b;
+                this._SPFLabel = g;
+                g = new cc.LabelAtlas;
+                g._setIgnoreContentScaleFactor(!0);
+                g.initWithString("000", a, 12, 32, ".");
+                g.scale = b;
+                this._drawsLabel = g;
+                a = cc.DIRECTOR_STATS_POSITION;
+                this._drawsLabel.setPosition(a.x,
+                        34 * b + a.y);
+                this._SPFLabel.setPosition(a.x, 17 * b + a.y);
+                this._FPSLabel.setPosition(a)
+            }
+        } else this._createStatsLabelForCanvas()
     };
-    _p._createStatsLabelForCanvas = function () {
-        var _t = this;
-        var fontSize = 0;
-        if (_t._winSizeInPoints.width > _t._winSizeInPoints.height)fontSize = 0 | _t._winSizeInPoints.height / 320 * 24; else fontSize = 0 | _t._winSizeInPoints.width /
-            320 * 24;
-        _t._FPSLabel = cc.LabelTTF.create("000.0", "Arial", fontSize);
-        _t._SPFLabel = cc.LabelTTF.create("0.000", "Arial", fontSize);
-        _t._drawsLabel = cc.LabelTTF.create("0000", "Arial", fontSize);
-        var locStatsPosition = cc.DIRECTOR_STATS_POSITION;
-        _t._drawsLabel.setPosition(_t._drawsLabel.width / 2 + locStatsPosition.x, _t._drawsLabel.height * 5 / 2 + locStatsPosition.y);
-        _t._SPFLabel.setPosition(_t._SPFLabel.width / 2 + locStatsPosition.x, _t._SPFLabel.height * 3 / 2 + locStatsPosition.y);
-        _t._FPSLabel.setPosition(_t._FPSLabel.width / 2 + locStatsPosition.x,
-                _t._FPSLabel.height / 2 + locStatsPosition.y)
+    b._createStatsLabelForCanvas = function () {
+        var a = 0, a = this._winSizeInPoints.width > this._winSizeInPoints.height ? 0 | 24 * (this._winSizeInPoints.height / 320) : 0 | 24 * (this._winSizeInPoints.width / 320);
+        this._FPSLabel = cc.LabelTTF.create("000.0", "Arial", a);
+        this._SPFLabel = cc.LabelTTF.create("0.000", "Arial", a);
+        this._drawsLabel = cc.LabelTTF.create("0000", "Arial", a);
+        a = cc.DIRECTOR_STATS_POSITION;
+        this._drawsLabel.setPosition(this._drawsLabel.width /
+            2 + a.x, 5 * this._drawsLabel.height / 2 + a.y);
+        this._SPFLabel.setPosition(this._SPFLabel.width / 2 + a.x, 3 * this._SPFLabel.height / 2 + a.y);
+        this._FPSLabel.setPosition(this._FPSLabel.width / 2 + a.x, this._FPSLabel.height / 2 + a.y)
     };
-    _p.convertToGL = function (uiPoint) {
-        var transform = new cc.kmMat4;
-        cc.GLToClipTransform(transform);
-        var transformInv = new cc.kmMat4;
-        cc.kmMat4Inverse(transformInv, transform);
-        var zClip = transform.mat[14] / transform.mat[15];
-        var glSize = this._openGLView.getDesignResolutionSize();
-        var clipCoord = new cc.kmVec3(2 * uiPoint.x / glSize.width - 1, 1 - 2 * uiPoint.y / glSize.height, zClip);
-        var glCoord = new cc.kmVec3;
-        cc.kmVec3TransformCoord(glCoord, clipCoord, transformInv);
-        return cc.p(glCoord.x,
-            glCoord.y)
+    b.convertToGL = function (a) {
+        var b = new cc.kmMat4;
+        cc.GLToClipTransform(b);
+        var g = new cc.kmMat4;
+        cc.kmMat4Inverse(g, b);
+        var b = b.mat[14] / b.mat[15], d = this._openGLView.getDesignResolutionSize();
+        a = new cc.kmVec3(2 * a.x / d.width - 1, 1 - 2 * a.y / d.height, b);
+        b = new cc.kmVec3;
+        cc.kmVec3TransformCoord(b, a, g);
+        return cc.p(b.x,
+            b.y)
     };
-    _p.convertToUI = function (glPoint) {
-        var transform = new cc.kmMat4;
-        cc.GLToClipTransform(transform);
-        var clipCoord = new cc.kmVec3;
-        var glCoord = new cc.kmVec3(glPoint.x, glPoint.y, 0);
-        cc.kmVec3TransformCoord(clipCoord, glCoord, transform);
-        var glSize = this._openGLView.getDesignResolutionSize();
-        return cc.p(glSize.width * (clipCoord.x * 0.5 + 0.5), glSize.height * (-clipCoord.y * 0.5 + 0.5))
+    b.convertToUI = function (a) {
+        var b = new cc.kmMat4;
+        cc.GLToClipTransform(b);
+        var g = new cc.kmVec3;
+        a = new cc.kmVec3(a.x, a.y, 0);
+        cc.kmVec3TransformCoord(g, a, b);
+        b = this._openGLView.getDesignResolutionSize();
+        return cc.p(b.width * (0.5 * g.x + 0.5), b.height * (0.5 * -g.y + 0.5))
     };
-    _p.getVisibleSize = function () {
+    b.getVisibleSize = function () {
         return this._openGLView.getVisibleSize()
     };
-    _p.getVisibleOrigin = function () {
+    b.getVisibleOrigin = function () {
         return this._openGLView.getVisibleOrigin()
     };
-    _p.getZEye = function () {
+    b.getZEye = function () {
         return this._winSizeInPoints.height / 1.1566
     };
-    _p.setViewport = function () {
-        var view = this._openGLView;
-        if (view) {
-            var locWinSizeInPoints = this._winSizeInPoints;
-            view.setViewPortInPoints(-view._viewPortRect.x / view._scaleX, -view._viewPortRect.y / view._scaleY, locWinSizeInPoints.width, locWinSizeInPoints.height)
+    b.setViewport = function () {
+        if (this._openGLView) {
+            var a =
+                this._winSizeInPoints;
+            this._openGLView.setViewPortInPoints(0, 0, a.width, a.height)
         }
     };
-    _p.getOpenGLView = function () {
+    b.getOpenGLView = function () {
         return this._openGLView
     };
-    _p.getProjection = function () {
+    b.getProjection = function () {
         return this._projection
     };
-    _p.setAlphaBlending = function (on) {
-        if (on)cc.glBlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
-        else cc.glBlendFunc(cc._renderContext.ONE, cc._renderContext.ZERO)
+    b.setAlphaBlending = function (a) {
+        a ? cc.glBlendFunc(cc.BLEND_SRC, cc.BLEND_DST) : cc.glBlendFunc(cc._renderContext.ONE, cc._renderContext.ZERO)
     };
-    _p.setGLDefaultValues = function () {
-        var _t = this;
-        _t.setAlphaBlending(true);
-        _t.setDepthTest(false);
-        _t.setProjection(_t._projection);
+    b.setGLDefaultValues = function () {
+        this.setAlphaBlending(!0);
+        this.setDepthTest(!1);
+        this.setProjection(this._projection);
         cc._renderContext.clearColor(0, 0, 0, 1)
     }
 };

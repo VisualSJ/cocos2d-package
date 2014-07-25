@@ -3,6 +3,7 @@
         "actions": [
             "core",
 
+            "cocos2d/core/CCActionManager.js",
             "cocos2d/actions/CCAction.js",
             "cocos2d/actions/CCActionInterval.js",
             "cocos2d/actions/CCActionInstant.js",
@@ -66,7 +67,6 @@
 
             "cocos2d/core/platform/CCCommon.js",
             "cocos2d/core/platform/CCScreen.js",
-            "cocos2d/core/platform/CCVisibleRect.js",
             "cocos2d/core/platform/CCInputExtension.js",
             "cocos2d/core/support/CCVertex.js",
             "cocos2d/core/support/TransformUtils.js",
@@ -77,8 +77,7 @@
             "cocos2d/core/CCConfiguration.js",
             "cocos2d/core/CCCamera.js",
             "cocos2d/core/CCDrawingPrimitivesCanvas.js",
-            "cocos2d/core/CCDrawingPrimitivesWebGL.js",
-            "cocos2d/core/CCActionManager.js"
+            "cocos2d/core/CCDrawingPrimitivesWebGL.js"
         ],
         "webgl": [
             "core-webgl",
@@ -90,6 +89,7 @@
             "Base64Images.js",
             "cocos2d/core/platform/CCClass.js",
             "cocos2d/core/cocoa/CCGeometry.js",
+            "cocos2d/core/platform/CCVisibleRect.js",
             "cocos2d/core/platform/CCSAXParser.js",
             "cocos2d/core/platform/CCLoaders.js",
             "cocos2d/core/platform/CCConfig.js",
