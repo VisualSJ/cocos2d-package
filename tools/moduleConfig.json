@@ -66,7 +66,6 @@
             "core",
 
             "cocos2d/core/platform/CCCommon.js",
-            "cocos2d/core/platform/CCScreen.js",
             "cocos2d/core/platform/CCInputExtension.js",
             "cocos2d/core/support/CCVertex.js",
             "cocos2d/core/support/TransformUtils.js",
@@ -98,6 +97,7 @@
             "cocos2d/core/platform/CCTypesPropertyDefine.js",
             "cocos2d/core/platform/CCTypes.js",
             "cocos2d/core/platform/CCEGLView.js",
+            "cocos2d/core/platform/CCScreen.js",
 
             "cocos2d/core/platform/CCInputManager.js",
 
@@ -163,7 +163,7 @@
             "cocos2d/kazmath/gl/matrix.js"
         ],
         "labels": [
-            "core",
+            "core", "core-extensions",
 
             "cocos2d/labels/CCLabelAtlas.js",
             "cocos2d/labels/CCLabelBMFont.js"
