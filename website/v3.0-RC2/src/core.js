@@ -1158,30 +1158,6 @@ cc.rectIntersection = function (rectA, rectB) {
     intersection.height = Math.min(cc.rectGetMaxY(rectA), cc.rectGetMaxY(rectB)) - cc.rectGetMinY(intersection);
     return intersection
 };
-cc.visibleRect = {topLeft: cc.p(0, 0), topRight: cc.p(0, 0), top: cc.p(0, 0), bottomLeft: cc.p(0, 0), bottomRight: cc.p(0, 0), bottom: cc.p(0, 0), center: cc.p(0, 0), left: cc.p(0, 0), right: cc.p(0, 0), width: 0, height: 0, init: function (visibleRect) {
-    var w = this.width = visibleRect.width;
-    var h = this.height = visibleRect.height;
-    var l = visibleRect.x, b = visibleRect.y, t = b + h, r = l + w;
-    this.topLeft.x = l;
-    this.topLeft.y = t;
-    this.topRight.x = r;
-    this.topRight.y = t;
-    this.top.x = l + w / 2;
-    this.top.y = t;
-    this.bottomLeft.x = l;
-    this.bottomLeft.y = b;
-    this.bottomRight.x = r;
-    this.bottomRight.y =
-        b;
-    this.bottom.x = l + w / 2;
-    this.bottom.y = b;
-    this.center.x = l + w / 2;
-    this.center.y = b + h / 2;
-    this.left.x = l;
-    this.left.y = b + h / 2;
-    this.right.x = r;
-    this.right.y = b + h / 2
-}};
 cc.SAXParser = cc.Class.extend({_parser: null, _isSupportDOMParser: null, ctor: function () {
     if (window.DOMParser) {
         this._isSupportDOMParser = true;
@@ -2254,6 +2230,30 @@ cc.screen = {_supportsFullScreen: false, _preOnFullScreenChange: null, _touchEve
         cc._addEventListener(touchTarget, this._touchEvent, callback)
     }};
 cc.screen.init();
+cc.visibleRect = {topLeft: cc.p(0, 0), topRight: cc.p(0, 0), top: cc.p(0, 0), bottomLeft: cc.p(0, 0), bottomRight: cc.p(0, 0), bottom: cc.p(0, 0), center: cc.p(0, 0), left: cc.p(0, 0), right: cc.p(0, 0), width: 0, height: 0, init: function (visibleRect) {
+    var w = this.width = visibleRect.width;
+    var h = this.height = visibleRect.height;
+    var l = visibleRect.x, b = visibleRect.y, t = b + h, r = l + w;
+    this.topLeft.x = l;
+    this.topLeft.y = t;
+    this.topRight.x = r;
+    this.topRight.y = t;
+    this.top.x = l + w / 2;
+    this.top.y = t;
+    this.bottomLeft.x = l;
+    this.bottomLeft.y = b;
+    this.bottomRight.x = r;
+    this.bottomRight.y =
+        b;
+    this.bottom.x = l + w / 2;
+    this.bottom.y = b;
+    this.center.x = l + w / 2;
+    this.center.y = b + h / 2;
+    this.left.x = l;
+    this.left.y = b + h / 2;
+    this.right.x = r;
+    this.right.y = b + h / 2
+}};
 cc.UIInterfaceOrientationLandscapeLeft = -90;
 cc.UIInterfaceOrientationLandscapeRight = 90;
 cc.UIInterfaceOrientationPortraitUpsideDown = 180;
@@ -6229,6 +6229,32 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 cc.assert(typeof cc._tmp.PrototypeSprite === "function", cc._LogInfos.MissingFile, "SpritesPropertyDefine.js");
 cc._tmp.PrototypeSprite();
 delete cc._tmp.PrototypeSprite;
+cc.BakeSprite = cc.Sprite.extend({_cacheCanvas: null, _cacheContext: null, ctor: function () {
+    cc.Sprite.prototype.ctor.call(this);
+    var canvasElement = document.createElement("canvas");
+    canvasElement.width = canvasElement.height = 10;
+    this._cacheCanvas = canvasElement;
+    this._cacheContext = canvasElement.getContext("2d");
+    var texture = new cc.Texture2D;
+    texture.initWithElement(canvasElement);
+    texture.handleLoadedTexture();
+    this.setTexture(texture)
+}, getCacheContext: function () {
+    return this._cacheContext
+}, getCacheCanvas: function () {
+    return this._cacheCanvas
+},
+    resetCanvasSize: function (sizeOrWidth, height) {
+        if (height === undefined) {
+            height = sizeOrWidth.height;
+            sizeOrWidth = sizeOrWidth.width
+        }
+        var locCanvas = this._cacheCanvas;
+        locCanvas.width = sizeOrWidth;
+        locCanvas.height = height;
+        this.getTexture().handleLoadedTexture();
+        this.setTextureRect(cc.rect(0, 0, sizeOrWidth, height), false)
+    }});
 cc.AnimationFrame = cc.Class.extend({_spriteFrame: null, _delayPerUnit: 0, _userInfo: null, ctor: function (spriteFrame, delayUnits, userInfo) {
     this._spriteFrame = spriteFrame || null;
     this._delayPerUnit = delayUnits || 0;
