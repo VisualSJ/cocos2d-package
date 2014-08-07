@@ -88,7 +88,6 @@
             "Base64Images.js",
             "cocos2d/core/platform/CCClass.js",
             "cocos2d/core/cocoa/CCGeometry.js",
-            "cocos2d/core/platform/CCVisibleRect.js",
             "cocos2d/core/platform/CCSAXParser.js",
             "cocos2d/core/platform/CCLoaders.js",
             "cocos2d/core/platform/CCConfig.js",
@@ -98,6 +97,7 @@
             "cocos2d/core/platform/CCTypes.js",
             "cocos2d/core/platform/CCEGLView.js",
             "cocos2d/core/platform/CCScreen.js",
+            "cocos2d/core/platform/CCVisibleRect.js",
 
             "cocos2d/core/platform/CCInputManager.js",
 
@@ -124,6 +124,7 @@
 
             "cocos2d/core/sprites/SpritesPropertyDefine.js",
             "cocos2d/core/sprites/CCSprite.js",
+            "cocos2d/core/sprites/CCBakeSprite.js",
             "cocos2d/core/sprites/CCAnimation.js",
             "cocos2d/core/sprites/CCAnimationCache.js",
             "cocos2d/core/sprites/CCSpriteFrame.js",
@@ -356,7 +357,6 @@
             "extensions/cocostudio/components/CCComponent.js",
             "extensions/cocostudio/components/CCComponentContainer.js",
             "extensions/cocostudio/CocoStudio.js",
-            "extensions/cocostudio/ActionManagerEx.js",
 
             "extensions/cocostudio/armature/utils/CCArmatureDefine.js",
             "extensions/cocostudio/armature/utils/CCDataReaderHelper.js",
@@ -392,11 +392,6 @@
             "extensions/cocostudio/trigger/TriggerMng.js",
             "extensions/cocostudio/trigger/TriggerObj.js",
 
-            "extensions/cocostudio/reader/GUIReader.js",
-            "extensions/cocostudio/reader/SceneReader.js",
-            "extensions/cocostudio/reader/widgetreader/WidgetReaderProtocol.js",
-            "extensions/cocostudio/reader/widgetreader/WidgetReader.js",
-
             "extensions/cocostudio/reader/widgetreader/ButtonReader/ButtonReader.js",
             "extensions/cocostudio/reader/widgetreader/CheckBoxReader/CheckBoxReader.js",
             "extensions/cocostudio/reader/widgetreader/ImageViewReader/ImageViewReader.js",
@@ -409,7 +404,12 @@
             "extensions/cocostudio/reader/widgetreader/LoadingBarReader/LoadingBarReader.js",
             "extensions/cocostudio/reader/widgetreader/PageViewReader/PageViewReader.js",
             "extensions/cocostudio/reader/widgetreader/SliderReader/SliderReader.js",
-            "extensions/cocostudio/reader/widgetreader/TextFieldReader/TextFieldReader.js"
+            "extensions/cocostudio/reader/widgetreader/TextFieldReader/TextFieldReader.js",
+            "extensions/cocostudio/reader/widgetreader/WidgetReaderProtocol.js",
+            "extensions/cocostudio/reader/widgetreader/WidgetReader.js",
+
+            "extensions/cocostudio/reader/GUIReader.js",
+            "extensions/cocostudio/reader/SceneReader.js"
         ],
         "gui": [
             "core", "clipping-nodes", "render-texture", "actions", "progress-timer",
