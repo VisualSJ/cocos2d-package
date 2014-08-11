@@ -1019,7 +1019,8 @@ ccui.Layout = ccui.Widget.extend({_clippingEnabled: false, _backGroundScale9Enab
         ccui.Widget.prototype.removeAllChildren.call(this, cleanup);
         this._doLayoutDirty = true
     }, removeAllChildrenWithCleanup: function (cleanup) {
-        ccui.Widget.prototype.removeAllChildrenWithCleanup(cleanup);
+        ccui.Widget.prototype.removeAllChildrenWithCleanup.call(this,
+            cleanup);
         this._doLayoutDirty = true
     }, isClippingEnabled: function () {
         return this._clippingEnabled
