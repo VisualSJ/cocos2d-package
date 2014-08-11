@@ -1,6 +1,6 @@
 var sp = sp || {};
 sp.VERTEX_INDEX = {X1: 0, Y1: 1, X2: 2, Y2: 3, X3: 4, Y3: 5, X4: 6, Y4: 7};
-sp.ATTACHMENT_TYPE = {REGION: 0, REGION_SEQUENCE: 1, BOUNDING_BOX: 2};
+sp.ATTACHMENT_TYPE = {REGION: 0, BOUNDING_BOX: 1, REGION_SEQUENCE: 2};
 sp.Skeleton = cc.Node.extend({_skeleton: null, _rootBone: null, _timeScale: 1, _debugSlots: false, _debugBones: false, _premultipliedAlpha: false, _ownsSkeletonData: null, _atlas: null, _blendFunc: null, ctor: function () {
     cc.Node.prototype.ctor.call(this);
     this._blendFunc = {src: cc.BLEND_SRC, dst: cc.BLEND_DST}
@@ -270,7 +270,8 @@ spine.BoneData = function (name, parent) {
 spine.BoneData.prototype = {length: 0, x: 0, y: 0, rotation: 0, scaleX: 1, scaleY: 1, inheritScale: true, inheritRotation: true};
 spine.SlotData = function (name, boneData) {
     this.name = name;
-    this.boneData = boneData
+    this.boneData = boneData;
+    this.r = this.g = this.b = this.a = 1
 };
 spine.SlotData.prototype = {r: 1, g: 1, b: 1, a: 1, attachmentName: null, additiveBlending: false};
 spine.Bone = function (boneData, parent) {
@@ -835,7 +836,8 @@ spine.RegionAttachment = function (name) {
     this.offset = [];
     this.offset.length = 8;
     this.uvs = [];
-    this.uvs.length = 8
+    this.uvs.length = 8;
+    this["type"] = spine.AttachmentType.region
 };
 spine.RegionAttachment.prototype = {type: spine.AttachmentType.region, x: 0, y: 0, rotation: 0, scaleX: 1, scaleY: 1, width: 0, height: 0, rendererObject: null, regionOffsetX: 0, regionOffsetY: 0, regionWidth: 0, regionHeight: 0, regionOriginalWidth: 0, regionOriginalHeight: 0, setUVs: function (u, v, u2, v2, rotate) {
     var uvs = this.uvs;
@@ -906,7 +908,8 @@ spine.RegionAttachment.prototype = {type: spine.AttachmentType.region, x: 0, y: 
 }};
 spine.BoundingBoxAttachment = function (name) {
     this.name = name;
-    this.vertices = []
+    this.vertices = [];
+    this["type"] = spine.AttachmentType.boundingBox
 };
 spine.BoundingBoxAttachment.prototype = {type: spine.AttachmentType.boundingBox, computeWorldVertices: function (x, y, bone, worldVertices) {
     x += bone.worldX;

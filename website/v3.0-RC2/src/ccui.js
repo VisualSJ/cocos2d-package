@@ -156,12 +156,13 @@ cc.ProtectedNode = cc.Node.extend({_protectedChildren: null, _reorderProtectedCh
     updateDisplayedOpacity: function (parentOpacity) {
         this._displayedOpacity = this._realOpacity * parentOpacity / 255;
         this._updateColor();
+        var i, len, locChildren, _opacity = this._displayedOpacity;
         if (this._cascadeOpacityEnabled) {
-            var i, len, locChildren = this._children, _opacity = this._displayedOpacity;
-            for (i = 0, len = locChildren.length; i < len; i++)if (locChildren[i].updateDisplayedOpacity)locChildren[i].updateDisplayedOpacity(_opacity);
-            locChildren = this._protectedChildren;
+            locChildren = this._children;
             for (i = 0, len = locChildren.length; i < len; i++)if (locChildren[i].updateDisplayedOpacity)locChildren[i].updateDisplayedOpacity(_opacity)
         }
+        locChildren = this._protectedChildren;
+        for (i = 0, len = locChildren.length; i < len; i++)if (locChildren[i])locChildren[i].updateDisplayedOpacity(_opacity)
     },
     updateDisplayedColor: function (parentColor) {
         var displayedColor = this._displayedColor, realColor = this._realColor;
@@ -169,18 +170,19 @@ cc.ProtectedNode = cc.Node.extend({_protectedChildren: null, _reorderProtectedCh
         displayedColor.g = realColor.g * parentColor.g / 255;
         displayedColor.b = realColor.b * parentColor.b / 255;
         this._updateColor();
+        var i, len, locChildren;
         if (this._cascadeColorEnabled) {
-            var i, len, locChildren = this._children;
-            for (i = 0, len = locChildren.length; i < len; i++)if (locChildren[i].updateDisplayedColor)locChildren[i].updateDisplayedColor(displayedColor);
-            locChildren = this._protectedChildren;
+            locChildren = this._children;
             for (i = 0, len = locChildren.length; i < len; i++)if (locChildren[i].updateDisplayedColor)locChildren[i].updateDisplayedColor(displayedColor)
         }
+        locChildren = this._protectedChildren;
+        for (i = 0, len = locChildren.length; i < len; i++)if (locChildren[i])locChildren[i].updateDisplayedColor(displayedColor)
     }, disableCascadeColor: function () {
         var white = cc.color.WHITE;
         var i, len, locChildren = this._children;
         for (i = 0, len = locChildren.length; i < len; i++)locChildren[i].updateDisplayedColor(white);
         locChildren = this._protectedChildren;
-        for (i = 0, len = locChildren.length; i < len; i++)locChildren[i].updateDisplayedColor(white)
+        for (i = 0, len = locChildren.length; i < len; i++)locChildren[i].setColor(white)
     }});
 if (cc._renderType === cc._RENDER_TYPE_CANVAS)cc.ProtectedNode.prototype.visit = cc.ProtectedNode.prototype._visitForCanvas; else cc.ProtectedNode.prototype.visit = cc.ProtectedNode.prototype._visitForWebGL;
 cc.ProtectedNode.create = function () {
@@ -220,12 +222,11 @@ ccui.Widget = ccui.ProtectedNode.extend({_enabled: true, _bright: true, _touchEn
             this.onNextFocusedWidget = null;
             this.setAnchorPoint(cc.p(0.5, 0.5));
             this.ignoreContentAdaptWithSize(true);
-            this.setCascadeColorEnabled(true);
-            this.setCascadeOpacityEnabled(true);
             return true
         }
         return false
-    }, onEnter: function () {
+    },
+    onEnter: function () {
         this.updateSizeAndPosition();
         cc.ProtectedNode.prototype.onEnter.call(this)
     }, onExit: function () {
@@ -241,9 +242,9 @@ ccui.Widget = ccui.ProtectedNode.extend({_enabled: true, _bright: true, _touchEn
         if (widget instanceof ccui.Widget)return widget;
         return null
     }, _updateContentSizeWithTextureSize: function (size) {
-        this.setContentSize(this._ignoreSize ?
-            size : this._customSize)
-    }, _isAncestorsEnabled: function () {
+        this.setContentSize(this._ignoreSize ? size : this._customSize)
+    },
+    _isAncestorsEnabled: function () {
         var parentWidget = this._getAncensterWidget(this);
         if (parentWidget == null)return true;
         if (parentWidget && !parentWidget.isEnabled())return false;
@@ -254,9 +255,9 @@ ccui.Widget = ccui.ProtectedNode.extend({_enabled: true, _bright: true, _touchEn
         if (null == parent)return null;
         if (parent instanceof ccui.Widget)return parent; else return this._getAncensterWidget(parent.getParent())
     }, _isAncestorsVisible: function (node) {
-        if (null ==
-            node)return true;
-        var parent = node.getParent();
+        if (null == node)return true;
+        var parent =
+            node.getParent();
         if (parent && !parent.isVisible())return false;
         return this._isAncestorsVisible(parent)
     }, _cleanupWidget: function () {
@@ -267,8 +268,7 @@ ccui.Widget = ccui.ProtectedNode.extend({_enabled: true, _bright: true, _touchEn
     }, _initRenderer: function () {
     }, setContentSize: function (contentSize, height) {
         var locWidth = height === undefined ? contentSize.width : contentSize;
-        var locHeight = height === undefined ?
-            contentSize.height : height;
+        var locHeight = height === undefined ? contentSize.height : height;
         cc.Node.prototype.setContentSize.call(this, locWidth, locHeight);
         this._customSize.width = locWidth;
         this._customSize.height = locHeight;
@@ -280,9 +280,9 @@ ccui.Widget = ccui.ProtectedNode.extend({_enabled: true, _bright: true, _touchEn
             this._sizePercent.y = pSize.height > 0 ? locHeight / pSize.height : 0
         }
         this._onSizeChanged()
-    },
-    _setWidth: function (w) {
-        cc.Node.prototype._setWidth.call(this, w);
+    }, _setWidth: function (w) {
+        cc.Node.prototype._setWidth.call(this,
+            w);
         this._customSize.width = w;
         if (this._ignoreSize)this._contentSize = this.getVirtualRendererSize();
         if (this._running) {
@@ -311,9 +311,9 @@ ccui.Widget = ccui.ProtectedNode.extend({_enabled: true, _bright: true, _touchEn
                 width = widgetParent.width * percent.x;
                 height = widgetParent.height * percent.y
             } else {
-                width =
-                    this._parent.width * percent.x;
-                height = this._parent.height * percent.y
+                width = this._parent.width * percent.x;
+                height = this._parent.height *
+                    percent.y
             }
         }
         if (this._ignoreSize)this.setContentSize(this.getVirtualRendererSize()); else this.setContentSize(width, height);
@@ -326,8 +326,7 @@ ccui.Widget = ccui.ProtectedNode.extend({_enabled: true, _bright: true, _touchEn
             var widgetParent = this.getWidgetParent();
             width = (widgetParent ? widgetParent.width : this._parent.width) * percent
         }
-        if (this._ignoreSize)this._setWidth(this.getVirtualRendererSize().width);
-        else this._setWidth(width);
+        if (this._ignoreSize)this._setWidth(this.getVirtualRendererSize().width); else this._setWidth(width);
         this._customSize.width = width
     }, _setHeightPercent: function (percent) {
         this._sizePercent.y = percent;
@@ -341,7 +340,8 @@ ccui.Widget = ccui.ProtectedNode.extend({_enabled: true, _bright: true, _touchEn
     }, updateSizeAndPosition: function (parentSize) {
         if (!parentSize) {
             var widgetParent = this.getWidgetParent();
-            if (widgetParent)parentSize = widgetParent.getLayoutSize(); else parentSize = this._parent.getContentSize()
+            if (widgetParent)parentSize =
+                widgetParent.getLayoutSize(); else parentSize = this._parent.getContentSize()
         }
         switch (this._sizeType) {
             case ccui.Widget.SIZE_ABSOLUTE:
@@ -350,8 +350,8 @@ ccui.Widget = ccui.ProtectedNode.extend({_enabled: true, _bright: true, _touchEn
                 this._sizePercent.y = parentSize.height > 0 ? this._customSize.height / parentSize.height : 0;
                 break;
             case ccui.Widget.SIZE_PERCENT:
-                var cSize = cc.size(parentSize.width *
-                    this._sizePercent.x, parentSize.height * this._sizePercent.y);
+                var cSize = cc.size(parentSize.width * this._sizePercent.x, parentSize.height *
+                    this._sizePercent.y);
                 if (this._ignoreSize)this.setContentSize(this.getVirtualRendererSize()); else this.setContentSize(cSize);
                 this._customSize.width = cSize.width;
                 this._customSize.height = cSize.height;
@@ -364,9 +364,9 @@ ccui.Widget = ccui.ProtectedNode.extend({_enabled: true, _bright: true, _touchEn
         switch (this._positionType) {
             case ccui.Widget.POSITION_ABSOLUTE:
                 if (parentSize.width <= 0 || parentSize.height <= 0)this._positionPercent.x = this._positionPercent.y = 0; else {
-                    this._positionPercent.x = absPos.x /
-                        parentSize.width;
-                    this._positionPercent.y = absPos.y / parentSize.height
+                    this._positionPercent.x = absPos.x / parentSize.width;
+                    this._positionPercent.y =
+                        absPos.y / parentSize.height
                 }
                 break;
             case ccui.Widget.POSITION_PERCENT:
@@ -374,6 +374,10 @@ ccui.Widget = ccui.ProtectedNode.extend({_enabled: true, _bright: true, _touchEn
                 break;
             default:
                 break
+        }
+        if (this._parent instanceof ccui.ImageView) {
+            var renderer = this._parent._imageRenderer;
+            if (renderer && !renderer._textureLoaded)return
         }
         this.setPosition(absPos)
     }, setSizeType: function (type) {
@@ -383,8 +387,7 @@ ccui.Widget = ccui.ProtectedNode.extend({_enabled: true, _bright: true, _touchEn
     }, ignoreContentAdaptWithSize: function (ignore) {
         if (this._ignoreSize == ignore)return;
         this._ignoreSize = ignore;
-        this.setContentSize(ignore ? this.getVirtualRendererSize() :
-            this._customSize);
+        this.setContentSize(ignore ? this.getVirtualRendererSize() : this._customSize);
         this._onSizeChanged()
     }, isIgnoreContentAdaptWithSize: function () {
         return this._ignoreSize
@@ -399,8 +402,8 @@ ccui.Widget = ccui.ProtectedNode.extend({_enabled: true, _bright: true, _touchEn
     }, _getHeightPercent: function () {
         return this._sizePercent.y
     }, getWorldPosition: function () {
-        return this.convertToWorldSpace(cc.p(this._anchorPoint.x * this._contentSize.width,
-                this._anchorPoint.y * this._contentSize.height))
+        return this.convertToWorldSpace(cc.p(this._anchorPoint.x *
+            this._contentSize.width, this._anchorPoint.y * this._contentSize.height))
     }, getVirtualRenderer: function () {
         return this
     }, getVirtualRendererSize: function () {
@@ -415,8 +418,8 @@ ccui.Widget = ccui.ProtectedNode.extend({_enabled: true, _bright: true, _touchEn
         if (this._touchEnabled === enable)return;
         this._touchEnabled = enable;
         if (this._touchEnabled) {
-            this._touchListener = cc.EventListener.create({event: cc.EventListener.TOUCH_ONE_BY_ONE,
-                swallowTouches: true, onTouchBegan: this.onTouchBegan.bind(this), onTouchMoved: this.onTouchMoved.bind(this), onTouchEnded: this.onTouchEnded.bind(this)});
+            this._touchListener =
+                cc.EventListener.create({event: cc.EventListener.TOUCH_ONE_BY_ONE, swallowTouches: true, onTouchBegan: this.onTouchBegan.bind(this), onTouchMoved: this.onTouchMoved.bind(this), onTouchEnded: this.onTouchEnded.bind(this)});
             cc.eventManager.addListener(this._touchListener, this)
         } else cc.eventManager.removeListener(this._touchListener)
     }, isTouchEnabled: function () {
@@ -425,9 +428,9 @@ ccui.Widget = ccui.ProtectedNode.extend({_enabled: true, _bright: true, _touchEn
         return this._highlight
     }, setHighlighted: function (highlight) {
         if (highlight == this._highlight)return;
-        this._highlight = highlight;
-        if (this._bright)if (this._highlight)this.setBrightStyle(ccui.Widget.BRIGHT_STYLE_HIGH_LIGHT);
-        else this.setBrightStyle(ccui.Widget.BRIGHT_STYLE_NORMAL); else this.onPressStateChangedToDisabled()
+        this._highlight =
+            highlight;
+        if (this._bright)if (this._highlight)this.setBrightStyle(ccui.Widget.BRIGHT_STYLE_HIGH_LIGHT); else this.setBrightStyle(ccui.Widget.BRIGHT_STYLE_NORMAL); else this.onPressStateChangedToDisabled()
     }, isFocused: function () {
         return this._focused
     }, setFocused: function (focus) {
@@ -438,7 +441,8 @@ ccui.Widget = ccui.ProtectedNode.extend({_enabled: true, _bright: true, _touchEn
     }, setFocusEnabled: function (enable) {
         this._focused = enable
     }, findNextFocusedWidget: function (direction, current) {
-        if (null == this.onNextFocusedWidget || null == this.onNextFocusedWidget(direction)) {
+        if (null ==
+            this.onNextFocusedWidget || null == this.onNextFocusedWidget(direction)) {
             var isLayout = current instanceof ccui.Layout;
             if (this.isFocused() || isLayout) {
                 var layout = this.getParent();
@@ -453,12 +457,12 @@ ccui.Widget = ccui.ProtectedNode.extend({_enabled: true, _bright: true, _touchEn
             return getFocusWidget
         }
     }, requestFocus: function () {
-        if (this == ccui.Widget._focusedWidget)return;
+        if (this ==
+            ccui.Widget._focusedWidget)return;
         this.dispatchFocusEvent(ccui.Widget._focusedWidget, this)
     }, getCurrentFocusedWidget: function () {
         return ccui.Widget._focusedWidget
-    },
-    enableDpadNavigation: function (enable) {
+    }, enableDpadNavigation: function (enable) {
     }, onFocusChanged: null, onNextFocusedWidget: null, interceptTouchEvent: function (eventType, sender, touch) {
         var widgetParent = this.getWidgetParent();
         if (widgetParent)widgetParent.interceptTouchEvent(eventType, sender, touch)
@@ -466,12 +470,12 @@ ccui.Widget = ccui.ProtectedNode.extend({_enabled: true, _bright: true, _touchEn
         if (widgetLostFocus)widgetLostFocus.setFocused(false);
         if (widgetGetFocus)widgetGetFocus.setFocused(true)
     }, dispatchFocusEvent: function (widgetLostFocus, widgetGetFocus) {
-        if (widgetLostFocus && !widgetLostFocus.isFocused())widgetLostFocus =
-            ccui.Widget._focusedWidget;
+        if (widgetLostFocus && !widgetLostFocus.isFocused())widgetLostFocus = ccui.Widget._focusedWidget;
         if (widgetGetFocus != widgetLostFocus) {
             if (widgetGetFocus && widgetGetFocus.onFocusChanged)widgetGetFocus.onFocusChanged(widgetLostFocus, widgetGetFocus);
             if (widgetLostFocus && widgetGetFocus.onFocusChanged)widgetLostFocus.onFocusChanged(widgetLostFocus, widgetGetFocus);
-            cc.eventManager.dispatchEvent(new cc.EventFocus(widgetLostFocus, widgetGetFocus))
+            cc.eventManager.dispatchEvent(new cc.EventFocus(widgetLostFocus,
+                widgetGetFocus))
         }
     }, setBright: function (bright) {
         this._bright = bright;
@@ -479,8 +483,7 @@ ccui.Widget = ccui.ProtectedNode.extend({_enabled: true, _bright: true, _touchEn
             this._brightStyle = ccui.Widget.BRIGHT_STYLE_NONE;
             this.setBrightStyle(ccui.Widget.BRIGHT_STYLE_NORMAL)
         } else this.onPressStateChangedToDisabled()
-    },
-    setBrightStyle: function (style) {
+    }, setBrightStyle: function (style) {
         if (this._brightStyle == style)return;
         style = style || ccui.Widget.BRIGHT_STYLE_NORMAL;
         this._brightStyle = style;
@@ -504,13 +507,13 @@ ccui.Widget = ccui.ProtectedNode.extend({_enabled: true, _bright: true, _touchEn
             var touchPoint = touch.getLocation();
             this._touchBeganPosition.x = touchPoint.x;
             this._touchBeganPosition.y = touchPoint.y;
-            if (this.hitTest(this._touchBeganPosition) && this.isClippingParentContainsPoint(this._touchBeganPosition))this._hit = true
+            if (this.hitTest(this._touchBeganPosition) && this.isClippingParentContainsPoint(this._touchBeganPosition))this._hit =
+                true
         }
         if (!this._hit)return false;
         this.setHighlighted(true);
         var widgetParent = this.getWidgetParent();
-        if (widgetParent)widgetParent.interceptTouchEvent(ccui.Widget.TOUCH_BEGAN,
-            this, touch);
+        if (widgetParent)widgetParent.interceptTouchEvent(ccui.Widget.TOUCH_BEGAN, this, touch);
         this._pushDownEvent();
         return true
     }, onTouchMoved: function (touch, event) {
@@ -519,13 +522,13 @@ ccui.Widget = ccui.ProtectedNode.extend({_enabled: true, _bright: true, _touchEn
         this._touchMovePosition.y = touchPoint.y;
         this.setHighlighted(this.hitTest(touchPoint));
         var widgetParent = this.getWidgetParent();
-        if (widgetParent)widgetParent.interceptTouchEvent(ccui.Widget.TOUCH_MOVED, this, touch);
+        if (widgetParent)widgetParent.interceptTouchEvent(ccui.Widget.TOUCH_MOVED,
+            this, touch);
         this._moveEvent()
     }, onTouchEnded: function (touch, event) {
         var touchPoint = touch.getLocation();
         this._touchEndPosition.x = touchPoint.x;
-        this._touchEndPosition.y =
-            touchPoint.y;
+        this._touchEndPosition.y = touchPoint.y;
         var widgetParent = this.getWidgetParent();
         if (widgetParent)widgetParent.interceptTouchEvent(ccui.Widget.TOUCH_ENDED, this, touch);
         var highlight = this._highlight;
@@ -534,26 +537,27 @@ ccui.Widget = ccui.ProtectedNode.extend({_enabled: true, _bright: true, _touchEn
     }, onTouchCancelled: function (touchPoint) {
         this.setHighlighted(false);
         this._cancelUpEvent()
-    }, onTouchLongClicked: function (touchPoint) {
+    },
+    onTouchLongClicked: function (touchPoint) {
         this.longClickEvent()
     }, _pushDownEvent: function () {
         if (this._touchEventCallback)this._touchEventCallback(this, ccui.Widget.TOUCH_BEGAN);
         if (this._touchEventListener && this._touchEventSelector)this._touchEventSelector.call(this._touchEventListener, this, ccui.Widget.TOUCH_BEGAN)
     }, _moveEvent: function () {
         if (this._touchEventCallback)this._touchEventCallback(this, ccui.Widget.TOUCH_MOVED);
-        if (this._touchEventListener && this._touchEventSelector)this._touchEventSelector.call(this._touchEventListener, this, ccui.Widget.TOUCH_MOVED)
+        if (this._touchEventListener && this._touchEventSelector)this._touchEventSelector.call(this._touchEventListener,
+            this, ccui.Widget.TOUCH_MOVED)
     }, _releaseUpEvent: function () {
         if (this._touchEventCallback)this._touchEventCallback(this, ccui.Widget.TOUCH_ENDED);
-        if (this._touchEventListener &&
-            this._touchEventSelector)this._touchEventSelector.call(this._touchEventListener, this, ccui.Widget.TOUCH_ENDED)
+        if (this._touchEventListener && this._touchEventSelector)this._touchEventSelector.call(this._touchEventListener, this, ccui.Widget.TOUCH_ENDED)
     }, _cancelUpEvent: function () {
         if (this._touchEventCallback)this._touchEventCallback(this, ccui.Widget.TOUCH_CANCELED);
-        if (this._touchEventListener && this._touchEventSelector)this._touchEventSelector.call(this._touchEventListener, this, ccui.Widget.TOUCH_CANCELED)
+        if (this._touchEventListener && this._touchEventSelector)this._touchEventSelector.call(this._touchEventListener,
+            this, ccui.Widget.TOUCH_CANCELED)
     }, longClickEvent: function () {
     }, addTouchEventListener: function (selector, target) {
         if (target === undefined)this._touchEventCallback = selector; else {
-            this._touchEventSelector =
-                selector;
+            this._touchEventSelector = selector;
             this._touchEventListener = target
         }
     }, hitTest: function (pt) {
@@ -562,7 +566,8 @@ ccui.Widget = ccui.ProtectedNode.extend({_enabled: true, _bright: true, _touchEn
     }, isClippingParentContainsPoint: function (pt) {
         this._affectByClipping = false;
         var parent = this.getParent();
-        var clippingParent = null;
+        var clippingParent =
+            null;
         while (parent) {
             if (parent instanceof ccui.Layout)if (parent.isClippingEnabled()) {
                 this._affectByClipping = true;
@@ -580,14 +585,14 @@ ccui.Widget = ccui.ProtectedNode.extend({_enabled: true, _bright: true, _touchEn
     }, checkChildInfo: function (handleState, sender, touchPoint) {
         var widgetParent = this.getWidgetParent();
         if (widgetParent)widgetParent.checkChildInfo(handleState, sender, touchPoint)
-    }, setPosition: function (pos, posY) {
+    },
+    setPosition: function (pos, posY) {
         if (this._running) {
             var widgetParent = this.getWidgetParent();
             if (widgetParent) {
-                var pSize = widgetParent.getSize();
+                var pSize = widgetParent.getContentSize();
                 if (pSize.width <= 0 || pSize.height <= 0) {
-                    this._positionPercent.x =
-                        0;
+                    this._positionPercent.x = 0;
                     this._positionPercent.y = 0
                 } else if (posY) {
                     this._positionPercent.x = pos / pSize.width;
@@ -601,14 +606,14 @@ ccui.Widget = ccui.ProtectedNode.extend({_enabled: true, _bright: true, _touchEn
         cc.Node.prototype.setPosition.call(this, pos, posY)
     }, setPositionX: function (x) {
         if (this._running) {
-            var widgetParent = this.getWidgetParent();
+            var widgetParent =
+                this.getWidgetParent();
             if (widgetParent) {
                 var pw = widgetParent.width;
                 if (pw <= 0)this._positionPercent.x = 0; else this._positionPercent.x = x / pw
             }
         }
-        cc.Node.prototype.setPositionX.call(this,
-            x)
+        cc.Node.prototype.setPositionX.call(this, x)
     }, setPositionY: function (y) {
         if (this._running) {
             var widgetParent = this.getWidgetParent();
@@ -621,11 +626,11 @@ ccui.Widget = ccui.ProtectedNode.extend({_enabled: true, _bright: true, _touchEn
     }, setPositionPercent: function (percent) {
         this._positionPercent = percent;
         if (this._running) {
-            var widgetParent = this.getWidgetParent();
+            var widgetParent =
+                this.getWidgetParent();
             if (widgetParent) {
                 var parentSize = widgetParent.getSize();
-                this.setPosition(parentSize.width * this._positionPercent.x, parentSize.height *
-                    this._positionPercent.y)
+                this.setPosition(parentSize.width * this._positionPercent.x, parentSize.height * this._positionPercent.y)
             }
         }
     }, _setXPercent: function (percent) {
@@ -638,14 +643,14 @@ ccui.Widget = ccui.ProtectedNode.extend({_enabled: true, _bright: true, _touchEn
         this._positionPercent.y = percent;
         if (this._running) {
             var widgetParent = this.getWidgetParent();
-            if (widgetParent)this.setPositionY(widgetParent.height * percent)
+            if (widgetParent)this.setPositionY(widgetParent.height *
+                percent)
         }
     }, getPositionPercent: function () {
         return cc.p(this._positionPercent)
     }, _getXPercent: function () {
         return this._positionPercent.x
-    },
-    _getYPercent: function () {
+    }, _getYPercent: function () {
         return this._positionPercent.y
     }, setPositionType: function (type) {
         this._positionType = type
@@ -661,13 +666,13 @@ ccui.Widget = ccui.ProtectedNode.extend({_enabled: true, _bright: true, _touchEn
         this._updateFlippedY()
     }, isFlippedY: function () {
         return this._flippedY
-    }, _updateFlippedX: function () {
+    },
+    _updateFlippedX: function () {
     }, _updateFlippedY: function () {
     }, _adaptRenderers: function () {
     }, isBright: function () {
         return this._bright
-    },
-    isEnabled: function () {
+    }, isEnabled: function () {
         return this._enabled
     }, getLeftBoundary: function () {
         return this.getPositionX() - this._getAnchorX() * this._contentSize.width
@@ -676,13 +681,13 @@ ccui.Widget = ccui.ProtectedNode.extend({_enabled: true, _bright: true, _touchEn
     }, getRightBoundary: function () {
         return this.getLeftBoundary() + this._contentSize.width
     }, getTopBoundary: function () {
-        return this.getBottomBoundary() + this._contentSize.height
+        return this.getBottomBoundary() +
+            this._contentSize.height
     }, getTouchBeganPosition: function () {
         return cc.p(this._touchBeganPosition)
     }, getTouchMovePosition: function () {
         return cc.p(this._touchMovePosition)
-    },
-    getTouchEndPosition: function () {
+    }, getTouchEndPosition: function () {
         return cc.p(this._touchEndPosition)
     }, setName: function (name) {
         this._name = name
@@ -693,14 +698,14 @@ ccui.Widget = ccui.ProtectedNode.extend({_enabled: true, _bright: true, _touchEn
     }, setLayoutParameter: function (parameter) {
         if (!parameter)return;
         this._layoutParameterDictionary[parameter.getLayoutType()] = parameter;
-        this._layoutParameterType = parameter.getLayoutType()
+        this._layoutParameterType =
+            parameter.getLayoutType()
     }, getLayoutParameter: function (type) {
         type = type || this._layoutParameterType;
         return this._layoutParameterDictionary[type]
     }, getDescription: function () {
         return"Widget"
-    },
-    clone: function () {
+    }, clone: function () {
         var clonedWidget = this._createCloneInstance();
         clonedWidget._copyProperties(this);
         clonedWidget._copyClonedWidgetChildren(this);
@@ -709,7 +714,8 @@ ccui.Widget = ccui.ProtectedNode.extend({_enabled: true, _bright: true, _touchEn
         return ccui.Widget.create()
     }, _copyClonedWidgetChildren: function (model) {
         var widgetChildren = model.getChildren();
-        for (var i = 0; i < widgetChildren.length; i++) {
+        for (var i =
+            0; i < widgetChildren.length; i++) {
             var locChild = widgetChildren[i];
             if (locChild instanceof ccui.Widget)this.addChild(locChild.clone())
         }
@@ -747,7 +753,8 @@ ccui.Widget = ccui.ProtectedNode.extend({_enabled: true, _bright: true, _touchEn
         this.setOpacity(widget.getOpacity());
         this._touchEventCallback = widget._touchEventCallback;
         this._touchEventListener = widget._touchEventListener;
-        this._touchEventSelector = widget._touchEventSelector;
+        this._touchEventSelector =
+            widget._touchEventSelector;
         this._focused = widget._focused;
         this._focusEnabled = widget._focusEnabled;
         for (var key in widget._layoutParameterDictionary) {
@@ -755,22 +762,21 @@ ccui.Widget = ccui.ProtectedNode.extend({_enabled: true, _bright: true, _touchEn
             if (parameter)this.setLayoutParameter(parameter.clone())
         }
         this._onSizeChanged()
-    },
-    setActionTag: function (tag) {
+    }, setActionTag: function (tag) {
         this._actionTag = tag
     }, getActionTag: function () {
         return this._actionTag
     }, getLeftInParent: function () {
         cc.log("getLeftInParent is deprecated. Please use getLeftBoundary instead.");
         return this.getLeftBoundary()
-    }, getBottomInParent: function () {
+    },
+    getBottomInParent: function () {
         cc.log("getBottomInParent is deprecated. Please use getBottomBoundary instead.");
         return this.getBottomBoundary()
     }, getRightInParent: function () {
         cc.log("getRightInParent is deprecated. Please use getRightBoundary instead.");
         return this.getRightBoundary()
-    },
-    getTopInParent: function () {
+    }, getTopInParent: function () {
         cc.log("getTopInParent is deprecated. Please use getTopBoundary instead.");
         return this.getTopBoundary()
     }, getTouchEndPos: function () {
@@ -785,7 +791,8 @@ ccui.Widget = ccui.ProtectedNode.extend({_enabled: true, _bright: true, _touchEn
     }, getTouchStartPos: function () {
         cc.log("getTouchStartPos is deprecated. Please use getTouchBeganPosition instead.");
         return this.getTouchBeganPosition()
-    }, setSize: function (size) {
+    },
+    setSize: function (size) {
         this.setContentSize(size)
     }, getSize: function () {
         return this.getContentSize()
@@ -797,8 +804,7 @@ ccui.Widget = ccui.ProtectedNode.extend({_enabled: true, _bright: true, _touchEn
         cc.Node.prototype.addChild.call(this, node, zOrder, tag);
         this._nodes.push(node)
     }, getNodeByTag: function (tag) {
-        var _nodes =
-            this._nodes;
+        var _nodes = this._nodes;
         for (var i = 0; i < _nodes.length; i++) {
             var node = _nodes[i];
             if (node && node.getTag() == tag)return node
@@ -814,17 +820,20 @@ ccui.Widget = ccui.ProtectedNode.extend({_enabled: true, _bright: true, _touchEn
         if (!node)cc.log("cocos2d: removeNodeByTag(tag \x3d %d): child not found!", tag); else this.removeNode(node)
     }, removeAllNodes: function () {
         for (var i = 0; i < this._nodes.length; i++) {
-            var node =
-                this._nodes[i];
+            var node = this._nodes[i];
             cc.Node.prototype.removeChild.call(this, node)
         }
         this._nodes.length = 0
     }, _findLayout: function () {
         var layout = this._parent;
         while (layout)if (layout._doLayout) {
-            layout._doLayoutDirty = true;
+            layout._doLayoutDirty =
+                true;
             break
         } else layout = layout._parent
+    }, _updateChildrenDisplayedRGBA: function () {
+        this.setColor(this.getColor());
+        this.setOpacity(this.getOpacity())
     }});
 var _p = ccui.Widget.prototype;
 _p.xPercent;
@@ -1278,8 +1287,9 @@ ccui.Layout = ccui.Widget.extend({_clippingEnabled: false, _backGroundScale9Enab
         if (this._backGroundImage == null)this._addBackGroundImage();
         this._backGroundImageFileName = fileName;
         this._bgImageTexType = texType;
+        var locBackgroundImage = this._backGroundImage;
         if (this._backGroundScale9Enabled) {
-            var bgiScale9 = this._backGroundImage;
+            var bgiScale9 = locBackgroundImage;
             switch (this._bgImageTexType) {
                 case ccui.Widget.LOCAL_TEXTURE:
                     bgiScale9.initWithFile(fileName);
@@ -1292,8 +1302,7 @@ ccui.Layout = ccui.Widget.extend({_clippingEnabled: false, _backGroundScale9Enab
             }
             bgiScale9.setPreferredSize(this._contentSize)
         } else {
-            var sprite =
-                this._backGroundImage;
+            var sprite = locBackgroundImage;
             switch (this._bgImageTexType) {
                 case ccui.Widget.LOCAL_TEXTURE:
                     sprite.initWithFile(fileName);
@@ -1305,14 +1314,14 @@ ccui.Layout = ccui.Widget.extend({_clippingEnabled: false, _backGroundScale9Enab
                     break
             }
         }
-        this._backGroundImageTextureSize = this._backGroundImage.getContentSize();
-        this._backGroundImage.setPosition(this._contentSize.width * 0.5, this._contentSize.height * 0.5);
+        this._backGroundImageTextureSize = locBackgroundImage.getContentSize();
+        locBackgroundImage.setPosition(this._contentSize.width * 0.5, this._contentSize.height * 0.5);
         this._updateBackGroundImageColor()
     }, setBackGroundImageCapInsets: function (capInsets) {
-        this._backGroundImageCapInsets = capInsets;
+        this._backGroundImageCapInsets =
+            capInsets;
         if (this._backGroundScale9Enabled)this._backGroundImage.setCapInsets(capInsets)
-    },
-    getBackGroundImageCapInsets: function () {
+    }, getBackGroundImageCapInsets: function () {
         return this._backGroundImageCapInsets
     }, _supplyTheLayoutParameterLackToChild: function (locChild) {
         if (!locChild)return;
@@ -1336,7 +1345,8 @@ ccui.Layout = ccui.Widget.extend({_clippingEnabled: false, _backGroundScale9Enab
             this._backGroundImage = cc.Scale9Sprite.create();
             this._backGroundImage.setPreferredSize(this._contentSize)
         } else this._backGroundImage = cc.Sprite.create();
-        this.addProtectedChild(this._backGroundImage, ccui.Layout.BACKGROUND_IMAGE_ZORDER, -1);
+        this.addProtectedChild(this._backGroundImage, ccui.Layout.BACKGROUND_IMAGE_ZORDER,
+            -1);
         this._backGroundImage.setPosition(this._contentSize.width / 2, this._contentSize.height / 2)
     }, removeBackGroundImage: function () {
         if (!this._backGroundImage)return;
@@ -1355,8 +1365,7 @@ ccui.Layout = ccui.Widget.extend({_clippingEnabled: false, _backGroundScale9Enab
                 }
                 if (this._gradientRender) {
                     this.removeProtectedChild(this._gradientRender);
-                    this._gradientRender =
-                        null
+                    this._gradientRender = null
                 }
                 break;
             case ccui.Layout.BG_COLOR_SOLID:
@@ -1379,7 +1388,8 @@ ccui.Layout = ccui.Widget.extend({_clippingEnabled: false, _backGroundScale9Enab
             case ccui.Layout.BG_COLOR_NONE:
                 break;
             case ccui.Layout.BG_COLOR_SOLID:
-                this._colorRender = cc.LayerColor.create();
+                this._colorRender =
+                    cc.LayerColor.create();
                 this._colorRender.setContentSize(this._contentSize);
                 this._colorRender.setOpacity(this._opacity);
                 this._colorRender.setColor(this._color);
@@ -1410,8 +1420,7 @@ ccui.Layout = ccui.Widget.extend({_clippingEnabled: false, _backGroundScale9Enab
             this._startColor.g = color.g;
             this._startColor.b = color.b;
             if (this._gradientRender)this._gradientRender.setStartColor(color);
-            this._endColor.r =
-                endColor.r;
+            this._endColor.r = endColor.r;
             this._endColor.g = endColor.g;
             this._endColor.b = endColor.b;
             if (this._gradientRender)this._gradientRender.setEndColor(endColor)
@@ -1423,10 +1432,10 @@ ccui.Layout = ccui.Widget.extend({_clippingEnabled: false, _backGroundScale9Enab
         var tmpColor = this._startColor;
         return cc.color(tmpColor.r, tmpColor.g, tmpColor.b, tmpColor.a)
     }, getBackGroundEndColor: function () {
-        var tmpColor = this._endColor;
+        var tmpColor =
+            this._endColor;
         return cc.color(tmpColor.r, tmpColor.g, tmpColor.b, tmpColor.a)
-    },
-    setBackGroundColorOpacity: function (opacity) {
+    }, setBackGroundColorOpacity: function (opacity) {
         this._opacity = opacity;
         switch (this._colorType) {
             case ccui.Layout.BG_COLOR_NONE:
@@ -1446,8 +1455,7 @@ ccui.Layout = ccui.Widget.extend({_clippingEnabled: false, _backGroundScale9Enab
         this._alongVector.x = vector.x;
         this._alongVector.y = vector.y;
         if (this._gradientRender)this._gradientRender.setVector(vector)
-    },
-    getBackGroundColorVector: function () {
+    }, getBackGroundColorVector: function () {
         return this._alongVector
     }, setBackGroundImageColor: function (color) {
         this._backGroundImageColor.r = color.r;
@@ -1462,8 +1470,7 @@ ccui.Layout = ccui.Widget.extend({_clippingEnabled: false, _backGroundScale9Enab
         return cc.color(color.r, color.g, color.b, color.a)
     }, getBackGroundImageOpacity: function () {
         return this._backGroundImageColor.a
-    },
-    _updateBackGroundImageColor: function () {
+    }, _updateBackGroundImageColor: function () {
         if (this._backGroundImage)this._backGroundImage.setColor(this._backGroundImageColor)
     }, getBackGroundImageTextureSize: function () {
         return this._backGroundImageTextureSize
@@ -1476,8 +1483,7 @@ ccui.Layout = ccui.Widget.extend({_clippingEnabled: false, _backGroundScale9Enab
             if (locChild instanceof ccui.Widget)this._supplyTheLayoutParameterLackToChild(locChild)
         }
         this._doLayoutDirty = true
-    },
-    getLayoutType: function () {
+    }, getLayoutType: function () {
         return this._layoutType
     }, requestDoLayout: function () {
         this._doLayoutDirty = true
@@ -1491,11 +1497,11 @@ ccui.Layout = ccui.Widget.extend({_clippingEnabled: false, _backGroundScale9Enab
         return this.getContentSize()
     }, _getLayoutElements: function () {
         return this.getChildren()
-    }, _onBeforeVisitStencil: function () {
+    },
+    _onBeforeVisitStencil: function () {
     }, _drawFullScreenQuadClearStencil: function () {
     }, _onAfterDrawStencil: function () {
-    },
-    _onAfterVisitStencil: function () {
+    }, _onAfterVisitStencil: function () {
     }, _onAfterVisitScissor: function () {
     }, _onAfterVisitScissor: function () {
     }, _updateBackGroundImageOpacity: function () {
@@ -1505,10 +1511,10 @@ ccui.Layout = ccui.Widget.extend({_clippingEnabled: false, _backGroundScale9Enab
             this._backGroundImage.setColor(this._backGroundImageColor);
             this._backGroundImage.setOpacity(this._backGroundImageOpacity)
         }
-    }, _getLayoutAccumulatedSize: function () {
+    },
+    _getLayoutAccumulatedSize: function () {
         var children = this.getChildren();
-        var layoutSize =
-            cc.size(0, 0);
+        var layoutSize = cc.size(0, 0);
         var widgetCount = 0, locSize;
         for (var i = 0, len = children.length; i < len; i++) {
             var layout = children[i];
@@ -1520,12 +1526,12 @@ ccui.Layout = ccui.Widget.extend({_clippingEnabled: false, _backGroundScale9Enab
                 widgetCount++;
                 var m = layout.getLayoutParameter().getMargin();
                 locSize = layout.getContentSize();
-                layoutSize.width += locSize.width + (m.right + m.left) * 0.5;
+                layoutSize.width += locSize.width +
+                    (m.right + m.left) * 0.5;
                 layoutSize.height += locSize.height + (m.top + m.bottom) * 0.5
             }
         }
-        var type =
-            this.getLayoutType();
+        var type = this.getLayoutType();
         if (type == ccui.Layout.LINEAR_HORIZONTAL)layoutSize.height = layoutSize.height - layoutSize.height / widgetCount * (widgetCount - 1);
         if (type == ccui.Layout.LINEAR_VERTICAL)layoutSize.width = layoutSize.width - layoutSize.width / widgetCount * (widgetCount - 1);
         return layoutSize
@@ -1539,7 +1545,8 @@ ccui.Layout = ccui.Widget.extend({_clippingEnabled: false, _backGroundScale9Enab
             while (index < count) {
                 var w = locChildren[index];
                 if (w && w instanceof ccui.Widget && w.isFocusEnabled()) {
-                    var length = w instanceof ccui.Layout ? w._calculateNearestDistance(baseWidget) : cc.pLength(cc.pSub(this._getWorldCenterPoint(w), widgetPosition));
+                    var length = w instanceof ccui.Layout ? w._calculateNearestDistance(baseWidget) : cc.pLength(cc.pSub(this._getWorldCenterPoint(w),
+                        widgetPosition));
                     if (length < distance) {
                         found = index;
                         distance = length
@@ -1557,11 +1564,11 @@ ccui.Layout = ccui.Widget.extend({_clippingEnabled: false, _backGroundScale9Enab
         var count = locChildren.length;
         var distance = -cc.FLT_MAX, found = 0;
         if (direction == ccui.Widget.LEFT || direction == ccui.Widget.RIGHT || direction == ccui.Widget.DOWN || direction == ccui.Widget.UP) {
-            var widgetPosition = this._getWorldCenterPoint(baseWidget);
+            var widgetPosition =
+                this._getWorldCenterPoint(baseWidget);
             while (index < count) {
                 var w = locChildren[index];
-                if (w && w instanceof ccui.Widget &&
-                    w.isFocusEnabled()) {
+                if (w && w instanceof ccui.Widget && w.isFocusEnabled()) {
                     var length = w instanceof ccui.Layout ? w._calculateFarthestDistance(baseWidget) : cc.pLength(cc.pSub(this._getWorldCenterPoint(w), widgetPosition));
                     if (length > distance) {
                         found = index;
@@ -1579,8 +1586,7 @@ ccui.Layout = ccui.Widget.extend({_clippingEnabled: false, _backGroundScale9Enab
         var widgetPosition = this._getWorldCenterPoint(baseWidget);
         var locChildren = this._children;
         for (var i = 0, len = locChildren.length; i < len; i++) {
-            var widget = locChildren[i],
-                length;
+            var widget = locChildren[i], length;
             if (widget instanceof ccui.Layout)length = widget._calculateNearestDistance(baseWidget); else if (widget instanceof ccui.Widget && widget.isFocusEnabled())length = cc.pLength(cc.pSub(this._getWorldCenterPoint(widget), widgetPosition)); else continue;
             if (length < distance)distance = length
         }
@@ -1590,8 +1596,7 @@ ccui.Layout = ccui.Widget.extend({_clippingEnabled: false, _backGroundScale9Enab
         var widgetPosition = this._getWorldCenterPoint(baseWidget);
         var locChildren = this._children;
         for (var i = 0, len = locChildren.length; i < len; i++) {
-            var layout =
-                locChildren[i];
+            var layout = locChildren[i];
             var length;
             if (layout instanceof ccui.Layout)length = layout._calculateFarthestDistance(baseWidget); else if (layout instanceof ccui.Widget && layout.isFocusEnabled()) {
                 var wPosition = this._getWorldCenterPoint(layout);
@@ -1601,18 +1606,18 @@ ccui.Layout = ccui.Widget.extend({_clippingEnabled: false, _backGroundScale9Enab
         }
         return distance
     }, _findProperSearchingFunctor: function (direction, baseWidget) {
-        if (baseWidget == null)return;
+        if (baseWidget ==
+            null)return;
         var previousWidgetPosition = this._getWorldCenterPoint(baseWidget);
-        var widgetPosition =
-            this._getWorldCenterPoint(this._findFirstNonLayoutWidget());
-        if (direction == ccui.Widget.LEFT)this.onPassFocusToChild = previousWidgetPosition.x > widgetPosition.x ? this._findNearestChildWidgetIndex.bind(this) : this._findFarthestChildWidgetIndex.bind(this); else if (direction == ccui.Widget.RIGHT)this.onPassFocusToChild = previousWidgetPosition.x > widgetPosition.x ? this._findFarthestChildWidgetIndex.bind(this) : this._findNearestChildWidgetIndex.bind(this); else if (direction == ccui.Widget.DOWN)this.onPassFocusToChild =
-                previousWidgetPosition.y > widgetPosition.y ? this._findNearestChildWidgetIndex.bind(this) : this._findFarthestChildWidgetIndex.bind(this); else if (direction == ccui.Widget.UP)this.onPassFocusToChild = previousWidgetPosition.y < widgetPosition.y ? this._findNearestChildWidgetIndex.bind(this) : this._findFarthestChildWidgetIndex.bind(this); else cc.log("invalid direction!")
+        var widgetPosition = this._getWorldCenterPoint(this._findFirstNonLayoutWidget());
+        if (direction == ccui.Widget.LEFT)this.onPassFocusToChild = previousWidgetPosition.x > widgetPosition.x ? this._findNearestChildWidgetIndex.bind(this) : this._findFarthestChildWidgetIndex.bind(this); else if (direction == ccui.Widget.RIGHT)this.onPassFocusToChild = previousWidgetPosition.x > widgetPosition.x ? this._findFarthestChildWidgetIndex.bind(this) : this._findNearestChildWidgetIndex.bind(this);
+        else if (direction == ccui.Widget.DOWN)this.onPassFocusToChild = previousWidgetPosition.y > widgetPosition.y ? this._findNearestChildWidgetIndex.bind(this) : this._findFarthestChildWidgetIndex.bind(this); else if (direction == ccui.Widget.UP)this.onPassFocusToChild = previousWidgetPosition.y < widgetPosition.y ? this._findNearestChildWidgetIndex.bind(this) : this._findFarthestChildWidgetIndex.bind(this); else cc.log("invalid direction!")
     }, _findFirstNonLayoutWidget: function () {
         var locChildren = this._children;
-        for (var i = 0, len = locChildren.length; i < len; i++) {
+        for (var i = 0, len =
+            locChildren.length; i < len; i++) {
             var child = locChildren[i];
-            if (child instanceof
-                ccui.Layout) {
+            if (child instanceof ccui.Layout) {
                 var widget = child._findFirstNonLayoutWidget();
                 if (widget)return widget
             } else if (child instanceof cc.Widget)return child
@@ -1628,7 +1633,8 @@ ccui.Layout = ccui.Widget.extend({_clippingEnabled: false, _backGroundScale9Enab
         }
         return 0
     }, _findFocusEnabledChildWidgetByIndex: function (index) {
-        var widget = this._getChildWidgetByIndex(index);
+        var widget =
+            this._getChildWidgetByIndex(index);
         if (widget) {
             if (widget.isFocusEnabled())return widget;
             index = index + 1;
@@ -1640,10 +1646,10 @@ ccui.Layout = ccui.Widget.extend({_clippingEnabled: false, _backGroundScale9Enab
         return widget.convertToWorldSpace(cc.p(widgetSize.width / 2, widgetSize.height / 2))
     }, _getNextFocusedWidget: function (direction, current) {
         var nextWidget = null, locChildren = this._children;
-        var previousWidgetPos = locChildren.indexOf(current);
+        var previousWidgetPos =
+            locChildren.indexOf(current);
         previousWidgetPos = previousWidgetPos + 1;
-        if (previousWidgetPos <
-            locChildren.length) {
+        if (previousWidgetPos < locChildren.length) {
             nextWidget = this._getChildWidgetByIndex(previousWidgetPos);
             if (nextWidget)if (nextWidget.isFocusEnabled())if (nextWidget instanceof ccui.Layout) {
                 nextWidget._isFocusPassing = true;
@@ -1653,7 +1659,8 @@ ccui.Layout = ccui.Widget.extend({_clippingEnabled: false, _backGroundScale9Enab
                 return nextWidget
             } else return this._getNextFocusedWidget(direction, nextWidget); else return current
         } else if (this._loopFocus)if (this._checkFocusEnabledChild()) {
-            previousWidgetPos = 0;
+            previousWidgetPos =
+                0;
             nextWidget = this._getChildWidgetByIndex(previousWidgetPos);
             if (nextWidget.isFocusEnabled())if (nextWidget instanceof ccui.Layout) {
                 nextWidget._isFocusPassing = true;
@@ -1663,8 +1670,8 @@ ccui.Layout = ccui.Widget.extend({_clippingEnabled: false, _backGroundScale9Enab
                 return nextWidget
             } else return this._getNextFocusedWidget(direction, nextWidget)
         } else if (current instanceof ccui.Layout)return current; else return this._focusedWidget; else if (this._isLastWidgetInContainer(current, direction)) {
-            if (this._isWidgetAncestorSupportLoopFocus(this, direction))return this.findNextFocusedWidget(direction,
-                this);
+            if (this._isWidgetAncestorSupportLoopFocus(this,
+                direction))return this.findNextFocusedWidget(direction, this);
             if (current instanceof ccui.Layout)return current; else return this._focusedWidget
         } else return this.findNextFocusedWidget(direction, this)
     }, _getPreviousFocusedWidget: function (direction, current) {
@@ -1674,9 +1681,9 @@ ccui.Layout = ccui.Widget.extend({_clippingEnabled: false, _backGroundScale9Enab
         if (previousWidgetPos >= 0) {
             nextWidget = this._getChildWidgetByIndex(previousWidgetPos);
             if (nextWidget.isFocusEnabled()) {
-                if (nextWidget instanceof ccui.Layout) {
-                    nextWidget._isFocusPassing =
-                        true;
+                if (nextWidget instanceof
+                    ccui.Layout) {
+                    nextWidget._isFocusPassing = true;
                     return nextWidget.findNextFocusedWidget(direction, nextWidget)
                 }
                 this.dispatchFocusEvent(current, nextWidget);
@@ -2565,6 +2572,7 @@ ccui.Button = ccui.Widget.extend({_buttonNormalRenderer: null, _buttonClickedRen
             self._normalTextureSize = self._buttonNormalRenderer.getContentSize();
             self._updateFlippedX();
             self._updateFlippedY();
+            self._updateChildrenDisplayedRGBA();
             self._buttonNormalRenderer.setColor(self.getColor());
             self._buttonNormalRenderer.setOpacity(self.getOpacity());
             self._updateContentSizeWithTextureSize(self._normalTextureSize);
@@ -2600,8 +2608,7 @@ ccui.Button = ccui.Widget.extend({_buttonNormalRenderer: null, _buttonClickedRen
         this._normalTextureSize = this._buttonNormalRenderer.getContentSize();
         this._updateFlippedX();
         this._updateFlippedY();
-        this._buttonNormalRenderer.setColor(this.getColor());
-        this._buttonNormalRenderer.setOpacity(this.getOpacity());
+        this._updateChildrenDisplayedRGBA();
         this._updateContentSizeWithTextureSize(this._normalTextureSize);
         this._normalTextureLoaded = true;
         this._normalTextureAdaptDirty = true
@@ -2613,10 +2620,10 @@ ccui.Button = ccui.Widget.extend({_buttonNormalRenderer: null, _buttonClickedRen
         var self = this;
         if (!this._buttonClickedRenderer.texture || !this._buttonClickedRenderer.texture.isLoaded())this._buttonClickedRenderer.addLoadedEventListener(function () {
             self._findLayout();
-            self._pressedTextureSize =
-                self._buttonClickedRenderer.getContentSize();
+            self._pressedTextureSize = self._buttonClickedRenderer.getContentSize();
             self._updateFlippedX();
             self._updateFlippedY();
+            self._updateChildrenDisplayedRGBA();
             self._pressedTextureLoaded = true;
             self._pressedTextureAdaptDirty = true
         });
@@ -2634,8 +2641,7 @@ ccui.Button = ccui.Widget.extend({_buttonNormalRenderer: null, _buttonClickedRen
             }
             clickedRendererScale9.setCapInsets(this._capInsetsPressed)
         } else {
-            var clickedRenderer =
-                this._buttonClickedRenderer;
+            var clickedRenderer = this._buttonClickedRenderer;
             switch (this._pressedTexType) {
                 case ccui.Widget.LOCAL_TEXTURE:
                     clickedRenderer.initWithFile(selected);
@@ -2650,12 +2656,13 @@ ccui.Button = ccui.Widget.extend({_buttonNormalRenderer: null, _buttonClickedRen
         this._pressedTextureSize = this._buttonClickedRenderer.getContentSize();
         this._updateFlippedX();
         this._updateFlippedY();
-        this._pressedTextureLoaded = true;
+        this._updateChildrenDisplayedRGBA();
+        this._pressedTextureLoaded =
+            true;
         this._pressedTextureAdaptDirty = true
     }, loadTextureDisabled: function (disabled, texType) {
         if (!disabled)return;
-        texType = texType ||
-            ccui.Widget.LOCAL_TEXTURE;
+        texType = texType || ccui.Widget.LOCAL_TEXTURE;
         this._disabledFileName = disabled;
         this._disabledTexType = texType;
         var self = this;
@@ -2664,12 +2671,12 @@ ccui.Button = ccui.Widget.extend({_buttonNormalRenderer: null, _buttonClickedRen
             self._disabledTextureSize = self._buttonDisableRenderer.getContentSize();
             self._updateFlippedX();
             self._updateFlippedY();
+            self._updateChildrenDisplayedRGBA();
             self._disabledTextureLoaded = true;
             self._disabledTextureAdaptDirty = true
         });
         if (this._scale9Enabled) {
-            var disabledScale9 =
-                this._buttonDisableRenderer;
+            var disabledScale9 = this._buttonDisableRenderer;
             switch (this._disabledTexType) {
                 case ccui.Widget.LOCAL_TEXTURE:
                     disabledScale9.initWithFile(disabled);
@@ -2697,6 +2704,7 @@ ccui.Button = ccui.Widget.extend({_buttonNormalRenderer: null, _buttonClickedRen
         this._disabledTextureSize = this._buttonDisableRenderer.getContentSize();
         this._updateFlippedX();
         this._updateFlippedY();
+        this._updateChildrenDisplayedRGBA();
         this._disabledTextureLoaded = true;
         this._disabledTextureAdaptDirty = true
     }, setCapInsets: function (capInsets) {
@@ -2704,11 +2712,11 @@ ccui.Button = ccui.Widget.extend({_buttonNormalRenderer: null, _buttonClickedRen
         this.setCapInsetsPressedRenderer(capInsets);
         this.setCapInsetsDisabledRenderer(capInsets)
     }, setCapInsetsNormalRenderer: function (capInsets) {
-        this._capInsetsNormal = capInsets;
+        this._capInsetsNormal =
+            capInsets;
         if (!this._scale9Enabled)return;
         this._buttonNormalRenderer.setCapInsets(capInsets)
-    },
-    getCapInsetsNormalRenderer: function () {
+    }, getCapInsetsNormalRenderer: function () {
         return this._capInsetsNormal
     }, setCapInsetsPressedRenderer: function (capInsets) {
         this._capInsetsPressed = capInsets;
@@ -2722,8 +2730,7 @@ ccui.Button = ccui.Widget.extend({_buttonNormalRenderer: null, _buttonClickedRen
         this._buttonDisableRenderer.setCapInsets(capInsets)
     }, getCapInsetsDisabledRenderer: function () {
         return this._capInsetsDisabled
-    },
-    onPressStateChangedToNormal: function () {
+    }, onPressStateChangedToNormal: function () {
         this._buttonNormalRenderer.setVisible(true);
         this._buttonClickedRenderer.setVisible(false);
         this._buttonDisableRenderer.setVisible(false);
@@ -2731,10 +2738,10 @@ ccui.Button = ccui.Widget.extend({_buttonNormalRenderer: null, _buttonClickedRen
             if (this.pressedActionEnabled) {
                 this._buttonNormalRenderer.stopAllActions();
                 this._buttonClickedRenderer.stopAllActions();
-                var zoomAction = cc.ScaleTo.create(0.05, this._normalTextureScaleXInSize, this._normalTextureScaleYInSize);
+                var zoomAction = cc.ScaleTo.create(0.05, this._normalTextureScaleXInSize,
+                    this._normalTextureScaleYInSize);
                 this._buttonNormalRenderer.runAction(zoomAction);
-                this._buttonClickedRenderer.setScale(this._pressedTextureScaleXInSize,
-                    this._pressedTextureScaleYInSize)
+                this._buttonClickedRenderer.setScale(this._pressedTextureScaleXInSize, this._pressedTextureScaleYInSize)
             }
         } else if (this._scale9Enabled)this._updateTexturesRGBA(); else {
             this._buttonNormalRenderer.stopAllActions();
@@ -2757,8 +2764,7 @@ ccui.Button = ccui.Widget.extend({_buttonNormalRenderer: null, _buttonClickedRen
             locNormalRenderer.setVisible(true);
             this._buttonClickedRenderer.setVisible(true);
             this._buttonDisableRenderer.setVisible(false);
-            if (this._scale9Enabled)locNormalRenderer.setColor(cc.Color.GRAY);
-            else {
+            if (this._scale9Enabled)locNormalRenderer.setColor(cc.Color.GRAY); else {
                 locNormalRenderer.stopAllActions();
                 locNormalRenderer.setScale(this._normalTextureScaleXInSize + 0.1, this._normalTextureScaleYInSize + 0.1)
             }
@@ -2767,10 +2773,10 @@ ccui.Button = ccui.Widget.extend({_buttonNormalRenderer: null, _buttonClickedRen
         this._buttonNormalRenderer.setVisible(false);
         this._buttonClickedRenderer.setVisible(false);
         this._buttonDisableRenderer.setVisible(true);
-        this._buttonNormalRenderer.setScale(this._normalTextureScaleXInSize, this._normalTextureScaleYInSize);
+        this._buttonNormalRenderer.setScale(this._normalTextureScaleXInSize,
+            this._normalTextureScaleYInSize);
         this._buttonClickedRenderer.setScale(this._pressedTextureScaleXInSize, this._pressedTextureScaleYInSize)
-    },
-    _updateFlippedX: function () {
+    }, _updateFlippedX: function () {
         var flip = this._flippedX ? -1 : 1;
         this._titleRenderer.setScaleX(flip);
         if (this._scale9Enabled) {
@@ -3006,6 +3012,7 @@ ccui.CheckBox = ccui.Widget.extend({_backGroundBoxRenderer: null, _backGroundSel
             self._findLayout();
             self._updateFlippedX();
             self._updateFlippedY();
+            self._updateChildrenDisplayedRGBA();
             self._updateContentSizeWithTextureSize(self._backGroundBoxRenderer.getContentSize());
             self._backGroundBoxRendererAdaptDirty = true
         });
@@ -3022,11 +3029,13 @@ ccui.CheckBox = ccui.Widget.extend({_backGroundBoxRenderer: null, _backGroundSel
         if (!bgBoxRenderer.textureLoaded()) {
             this._backGroundBoxRenderer.setContentSize(this._customSize);
             bgBoxRenderer.addLoadedEventListener(function () {
-                this._updateContentSizeWithTextureSize(this._backGroundBoxRenderer.getContentSize())
-            }, this)
+                    this._updateContentSizeWithTextureSize(this._backGroundBoxRenderer.getContentSize())
+                },
+                this)
         }
         this._updateFlippedX();
         this._updateFlippedY();
+        this._updateChildrenDisplayedRGBA();
         this._updateContentSizeWithTextureSize(this._backGroundBoxRenderer.getContentSize());
         this._backGroundBoxRendererAdaptDirty = true
     }, loadTextureBackGroundSelected: function (backGroundSelected, texType) {
@@ -3039,6 +3048,7 @@ ccui.CheckBox = ccui.Widget.extend({_backGroundBoxRenderer: null, _backGroundSel
             self._findLayout();
             self._updateFlippedX();
             self._updateFlippedY();
+            self._updateChildrenDisplayedRGBA();
             self._backGroundSelectedBoxRendererAdaptDirty = true
         });
         switch (this._backGroundSelectedTexType) {
@@ -3053,6 +3063,7 @@ ccui.CheckBox = ccui.Widget.extend({_backGroundBoxRenderer: null, _backGroundSel
         }
         this._updateFlippedX();
         this._updateFlippedY();
+        this._updateChildrenDisplayedRGBA();
         this._backGroundSelectedBoxRendererAdaptDirty = true
     }, loadTextureFrontCross: function (cross, texType) {
         if (!cross)return;
@@ -3064,6 +3075,7 @@ ccui.CheckBox = ccui.Widget.extend({_backGroundBoxRenderer: null, _backGroundSel
             self._findLayout();
             self._updateFlippedX();
             self._updateFlippedY();
+            self._updateChildrenDisplayedRGBA();
             self._frontCrossRendererAdaptDirty = true
         });
         switch (this._frontCrossTexType) {
@@ -3078,6 +3090,7 @@ ccui.CheckBox = ccui.Widget.extend({_backGroundBoxRenderer: null, _backGroundSel
         }
         this._updateFlippedX();
         this._updateFlippedY();
+        this._updateChildrenDisplayedRGBA();
         this._frontCrossRendererAdaptDirty = true
     }, loadTextureBackGroundDisabled: function (backGroundDisabled, texType) {
         if (!backGroundDisabled)return;
@@ -3089,7 +3102,9 @@ ccui.CheckBox = ccui.Widget.extend({_backGroundBoxRenderer: null, _backGroundSel
             self._findLayout();
             self._updateFlippedX();
             self._updateFlippedY();
-            self._backGroundBoxDisabledRendererAdaptDirty = true
+            self._updateChildrenDisplayedRGBA();
+            self._backGroundBoxDisabledRendererAdaptDirty =
+                true
         });
         switch (this._backGroundDisabledTexType) {
             case ccui.Widget.LOCAL_TEXTURE:
@@ -3103,6 +3118,7 @@ ccui.CheckBox = ccui.Widget.extend({_backGroundBoxRenderer: null, _backGroundSel
         }
         this._updateFlippedX();
         this._updateFlippedY();
+        this._updateChildrenDisplayedRGBA();
         this._backGroundBoxDisabledRendererAdaptDirty = true
     }, loadTextureFrontCrossDisabled: function (frontCrossDisabled, texType) {
         if (!frontCrossDisabled)return;
@@ -3114,6 +3130,7 @@ ccui.CheckBox = ccui.Widget.extend({_backGroundBoxRenderer: null, _backGroundSel
             self._findLayout();
             self._updateFlippedX();
             self._updateFlippedY();
+            self._updateChildrenDisplayedRGBA();
             self._frontCrossDisabledRendererAdaptDirty = true
         });
         switch (this._frontCrossDisabledTexType) {
@@ -3128,13 +3145,15 @@ ccui.CheckBox = ccui.Widget.extend({_backGroundBoxRenderer: null, _backGroundSel
         }
         this._updateFlippedX();
         this._updateFlippedY();
+        this._updateChildrenDisplayedRGBA();
         this._frontCrossDisabledRendererAdaptDirty = true
     }, onPressStateChangedToNormal: function () {
         this._backGroundBoxRenderer.setVisible(true);
         this._backGroundSelectedBoxRenderer.setVisible(false);
         this._backGroundBoxDisabledRenderer.setVisible(false);
         this._frontCrossDisabledRenderer.setVisible(false)
-    }, onPressStateChangedToPressed: function () {
+    },
+    onPressStateChangedToPressed: function () {
         this._backGroundBoxRenderer.setVisible(false);
         this._backGroundSelectedBoxRenderer.setVisible(true);
         this._backGroundBoxDisabledRenderer.setVisible(false);
@@ -3145,9 +3164,9 @@ ccui.CheckBox = ccui.Widget.extend({_backGroundBoxRenderer: null, _backGroundSel
         this._backGroundBoxDisabledRenderer.setVisible(true);
         this._frontCrossRenderer.setVisible(false);
         if (this._isSelected)this._frontCrossDisabledRenderer.setVisible(true)
-    }, setSelectedState: function (selected) {
-        if (selected ==
-            this._isSelected)return;
+    },
+    setSelectedState: function (selected) {
+        if (selected == this._isSelected)return;
         this._isSelected = selected;
         this._frontCrossRenderer.setVisible(this._isSelected)
     }, getSelectedState: function () {
@@ -3344,14 +3363,6 @@ ccui.ImageView = ccui.Widget.extend({_scale9Enabled: false, _prevIgnoreSize: tru
     this._imageTexType =
         texType;
     var imageRenderer = self._imageRenderer;
-    if (!imageRenderer.texture || !imageRenderer.texture.isLoaded())imageRenderer.addLoadedEventListener(function () {
-        self._findLayout();
-        self._imageTextureSize = imageRenderer.getContentSize();
-        self._updateFlippedX();
-        self._updateFlippedY();
-        self._updateContentSizeWithTextureSize(self._imageTextureSize);
-        self._imageRendererAdaptDirty = true
-    });
     switch (self._imageTexType) {
         case ccui.Widget.LOCAL_TEXTURE:
             if (self._scale9Enabled) {
@@ -3368,84 +3379,93 @@ ccui.ImageView = ccui.Widget.extend({_scale9Enabled: false, _prevIgnoreSize: tru
         default:
             break
     }
+    if (!imageRenderer.texture || !imageRenderer.texture.isLoaded())imageRenderer.addLoadedEventListener(function () {
+        self._findLayout();
+        self._imageTextureSize = imageRenderer.getContentSize();
+        self._updateFlippedX();
+        self._updateFlippedY();
+        self._updateChildrenDisplayedRGBA();
+        self._updateContentSizeWithTextureSize(self._imageTextureSize);
+        self._imageRendererAdaptDirty = true
+    });
     self._imageTextureSize = imageRenderer.getContentSize();
     self._updateFlippedX();
     self._updateFlippedY();
+    this._updateChildrenDisplayedRGBA();
     self._updateContentSizeWithTextureSize(self._imageTextureSize);
     self._imageRendererAdaptDirty = true
 }, setTextureRect: function (rect) {
     if (!this._scale9Enabled)this._imageRenderer.setTextureRect(rect)
-},
-    _updateFlippedX: function () {
-        if (this._scale9Enabled)this._imageRenderer.setScaleX(this._flippedX ? -1 : 1); else this._imageRenderer.setFlippedX(this._flippedX)
-    }, _updateFlippedY: function () {
-        if (this._scale9Enabled)this._imageRenderer.setScaleY(this._flippedY ? -1 : 1); else this._imageRenderer.setFlippedY(this._flippedY)
-    }, setScale9Enabled: function (able) {
-        if (this._scale9Enabled == able)return;
-        this._scale9Enabled = able;
-        this.removeProtectedChild(this._imageRenderer);
-        this._imageRenderer = null;
-        if (this._scale9Enabled)this._imageRenderer =
-            cc.Scale9Sprite.create(); else this._imageRenderer = cc.Sprite.create();
-        this.loadTexture(this._textureFile, this._imageTexType);
-        this.addProtectedChild(this._imageRenderer, ccui.ImageView.RENDERER_ZORDER, -1);
-        if (this._scale9Enabled) {
-            var ignoreBefore = this._ignoreSize;
-            this.ignoreContentAdaptWithSize(false);
-            this._prevIgnoreSize = ignoreBefore
-        } else this.ignoreContentAdaptWithSize(this._prevIgnoreSize);
-        this.setCapInsets(this._capInsets)
-    }, isScale9Enabled: function () {
-        return this._scale9Enabled
-    }, ignoreContentAdaptWithSize: function (ignore) {
-        if (!this._scale9Enabled ||
-            this._scale9Enabled && !ignore) {
-            ccui.Widget.prototype.ignoreContentAdaptWithSize.call(this, ignore);
-            this._prevIgnoreSize = ignore
+}, _updateFlippedX: function () {
+    if (this._scale9Enabled)this._imageRenderer.setScaleX(this._flippedX ? -1 : 1); else this._imageRenderer.setFlippedX(this._flippedX)
+}, _updateFlippedY: function () {
+    if (this._scale9Enabled)this._imageRenderer.setScaleY(this._flippedY ? -1 : 1); else this._imageRenderer.setFlippedY(this._flippedY)
+}, setScale9Enabled: function (able) {
+    if (this._scale9Enabled == able)return;
+    this._scale9Enabled = able;
+    this.removeProtectedChild(this._imageRenderer);
+    this._imageRenderer = null;
+    if (this._scale9Enabled)this._imageRenderer = cc.Scale9Sprite.create(); else this._imageRenderer = cc.Sprite.create();
+    this.loadTexture(this._textureFile, this._imageTexType);
+    this.addProtectedChild(this._imageRenderer, ccui.ImageView.RENDERER_ZORDER, -1);
+    if (this._scale9Enabled) {
+        var ignoreBefore = this._ignoreSize;
+        this.ignoreContentAdaptWithSize(false);
+        this._prevIgnoreSize = ignoreBefore
+    } else this.ignoreContentAdaptWithSize(this._prevIgnoreSize);
+    this.setCapInsets(this._capInsets)
+}, isScale9Enabled: function () {
+    return this._scale9Enabled
+}, ignoreContentAdaptWithSize: function (ignore) {
+    if (!this._scale9Enabled || this._scale9Enabled && !ignore) {
+        ccui.Widget.prototype.ignoreContentAdaptWithSize.call(this, ignore);
+        this._prevIgnoreSize = ignore
+    }
+}, setCapInsets: function (capInsets) {
+    this._capInsets = capInsets;
+    if (!this._scale9Enabled)return;
+    this._imageRenderer.setCapInsets(capInsets)
+}, getCapInsets: function () {
+    return this._capInsets
+}, _onSizeChanged: function () {
+    ccui.Widget.prototype._onSizeChanged.call(this);
+    this._imageRendererAdaptDirty = true
+}, _adaptRenderers: function () {
+    if (this._imageRendererAdaptDirty) {
+        this._imageTextureScaleChangedWithSize();
+        this._imageRendererAdaptDirty = false
+    }
+}, getVirtualRendererSize: function () {
+    return cc.size(this._imageTextureSize)
+}, getVirtualRenderer: function () {
+    return this._imageRenderer
+}, _imageTextureScaleChangedWithSize: function () {
+    if (this._ignoreSize) {
+        if (!this._scale9Enabled)this._imageRenderer.setScale(1)
+    } else if (this._scale9Enabled)this._imageRenderer.setPreferredSize(this._contentSize);
+    else {
+        var textureSize = this._imageRenderer.getContentSize();
+        if (textureSize.width <= 0 || textureSize.height <= 0) {
+            this._imageRenderer.setScale(1);
+            return
         }
-    }, setCapInsets: function (capInsets) {
-        this._capInsets = capInsets;
-        if (!this._scale9Enabled)return;
-        this._imageRenderer.setCapInsets(capInsets)
-    }, getCapInsets: function () {
-        return this._capInsets
-    }, _onSizeChanged: function () {
-        ccui.Widget.prototype._onSizeChanged.call(this);
-        this._imageRendererAdaptDirty = true
-    }, _adaptRenderers: function () {
-        if (this._imageRendererAdaptDirty) {
-            this._imageTextureScaleChangedWithSize();
-            this._imageRendererAdaptDirty = false
-        }
-    }, getVirtualRendererSize: function () {
-        return cc.size(this._imageTextureSize)
-    }, getVirtualRenderer: function () {
-        return this._imageRenderer
-    }, _imageTextureScaleChangedWithSize: function () {
-        if (this._ignoreSize) {
-            if (!this._scale9Enabled)this._imageRenderer.setScale(1)
-        } else if (this._scale9Enabled)this._imageRenderer.setPreferredSize(this._contentSize); else {
-            var textureSize = this._imageRenderer.getContentSize();
-            if (textureSize.width <= 0 || textureSize.height <= 0) {
-                this._imageRenderer.setScale(1);
-                return
-            }
-            this._imageRenderer.setScaleX(this._contentSize.width / textureSize.width);
-            this._imageRenderer.setScaleY(this._contentSize.height / textureSize.height)
-        }
-        this._imageRenderer.setPosition(this._contentSize.width / 2, this._contentSize.height / 2)
-    }, getDescription: function () {
-        return"ImageView"
-    }, _createCloneInstance: function () {
-        return ccui.ImageView.create()
-    }, _copySpecialProperties: function (imageView) {
-        if (imageView instanceof ccui.ImageView) {
-            this._prevIgnoreSize = imageView._prevIgnoreSize;
-            this.setScale9Enabled(imageView._scale9Enabled);
-            this.loadTexture(imageView._textureFile, imageView._imageTexType);
-            this.setCapInsets(imageView._capInsets)
-        }
-    }});
+        this._imageRenderer.setScaleX(this._contentSize.width / textureSize.width);
+        this._imageRenderer.setScaleY(this._contentSize.height / textureSize.height)
+    }
+    this._imageRenderer.setPosition(this._contentSize.width / 2, this._contentSize.height / 2)
+}, getDescription: function () {
+    return"ImageView"
+}, _createCloneInstance: function () {
+    return ccui.ImageView.create()
+}, _copySpecialProperties: function (imageView) {
+    if (imageView instanceof
+        ccui.ImageView) {
+        this._prevIgnoreSize = imageView._prevIgnoreSize;
+        this.setScale9Enabled(imageView._scale9Enabled);
+        this.loadTexture(imageView._textureFile, imageView._imageTexType);
+        this.setCapInsets(imageView._capInsets)
+    }
+}});
 ccui.ImageView.create = function (imageFileName, texType) {
     return new ccui.ImageView(imageFileName, texType)
 };
@@ -3501,6 +3521,7 @@ ccui.LoadingBar = ccui.Widget.extend({_direction: null, _percent: 100, _totalLen
                 if (!self._scale9Enabled)barRenderer.setFlippedX(true);
                 break
         }
+        self._updateChildrenDisplayedRGBA();
         self._barRendererScaleChangedWithSize();
         self._updateContentSizeWithTextureSize(self._barRendererTextureSize);
         self._barRendererAdaptDirty = true
@@ -3534,6 +3555,7 @@ ccui.LoadingBar = ccui.Widget.extend({_direction: null, _percent: 100, _totalLen
             if (!this._scale9Enabled)barRenderer.setFlippedX(true);
             break
     }
+    this._updateChildrenDisplayedRGBA();
     this._barRendererScaleChangedWithSize();
     this._updateContentSizeWithTextureSize(this._barRendererTextureSize);
     this._barRendererAdaptDirty = true
@@ -3688,6 +3710,7 @@ ccui.Slider = ccui.Widget.extend({_barRenderer: null, _progressBarRenderer: null
         var self = this;
         if (!barRenderer.texture || !barRenderer.texture.isLoaded())barRenderer.addLoadedEventListener(function () {
             self._findLayout();
+            self._updateChildrenDisplayedRGBA();
             self._barRendererAdaptDirty = true;
             self._progressBarRendererDirty = true;
             self._updateContentSizeWithTextureSize(self._barRenderer.getContentSize())
@@ -3702,6 +3725,7 @@ ccui.Slider = ccui.Widget.extend({_barRenderer: null, _progressBarRenderer: null
             default:
                 break
         }
+        this._updateChildrenDisplayedRGBA();
         this._barRendererAdaptDirty = true;
         this._progressBarRendererDirty = true;
         this._updateContentSizeWithTextureSize(this._barRenderer.getContentSize())
@@ -3714,6 +3738,7 @@ ccui.Slider = ccui.Widget.extend({_barRenderer: null, _progressBarRenderer: null
         var self = this;
         if (!progressBarRenderer.texture || !progressBarRenderer.texture.isLoaded())progressBarRenderer.addLoadedEventListener(function () {
             self._findLayout();
+            self._updateChildrenDisplayedRGBA();
             self._progressBarRenderer.setAnchorPoint(cc.p(0, 0.5));
             var tz = self._progressBarRenderer.getContentSize();
             self._progressBarTextureSize = {width: tz.width, height: tz.height};
@@ -3729,6 +3754,7 @@ ccui.Slider = ccui.Widget.extend({_barRenderer: null, _progressBarRenderer: null
             default:
                 break
         }
+        this._updateChildrenDisplayedRGBA();
         this._progressBarRenderer.setAnchorPoint(cc.p(0, 0.5));
         var tz = this._progressBarRenderer.getContentSize();
         this._progressBarTextureSize = {width: tz.width, height: tz.height};
@@ -3737,12 +3763,12 @@ ccui.Slider = ccui.Widget.extend({_barRenderer: null, _progressBarRenderer: null
         if (this._scale9Enabled == able)return;
         this._scale9Enabled = able;
         this.removeProtectedChild(this._barRenderer, true);
-        this.removeProtectedChild(this._progressBarRenderer, true);
+        this.removeProtectedChild(this._progressBarRenderer,
+            true);
         this._barRenderer = null;
         this._progressBarRenderer = null;
         if (this._scale9Enabled) {
-            this._barRenderer =
-                cc.Scale9Sprite.create();
+            this._barRenderer = cc.Scale9Sprite.create();
             this._progressBarRenderer = cc.Scale9Sprite.create()
         } else {
             this._barRenderer = cc.Sprite.create();
@@ -3751,10 +3777,10 @@ ccui.Slider = ccui.Widget.extend({_barRenderer: null, _progressBarRenderer: null
         this.loadBarTexture(this._textureFile, this._barTexType);
         this.loadProgressBarTexture(this._progressBarTextureFile, this._progressBarTexType);
         this.addProtectedChild(this._barRenderer, ccui.Slider.BASEBAR_RENDERER_ZORDER, -1);
-        this.addProtectedChild(this._progressBarRenderer, ccui.Slider.PROGRESSBAR_RENDERER_ZORDER, -1);
+        this.addProtectedChild(this._progressBarRenderer,
+            ccui.Slider.PROGRESSBAR_RENDERER_ZORDER, -1);
         if (this._scale9Enabled) {
-            var ignoreBefore =
-                this._ignoreSize;
+            var ignoreBefore = this._ignoreSize;
             this.ignoreContentAdaptWithSize(false);
             this._prevIgnoreSize = ignoreBefore
         } else this.ignoreContentAdaptWithSize(this._prevIgnoreSize);
@@ -3765,8 +3791,7 @@ ccui.Slider = ccui.Widget.extend({_barRenderer: null, _progressBarRenderer: null
     }, ignoreContentAdaptWithSize: function (ignore) {
         if (!this._scale9Enabled || this._scale9Enabled && !ignore) {
             ccui.Widget.prototype.ignoreContentAdaptWithSize.call(this, ignore);
-            this._prevIgnoreSize =
-                ignore
+            this._prevIgnoreSize = ignore
         }
     }, setCapInsets: function (capInsets) {
         this.setCapInsetsBarRenderer(capInsets);
@@ -3778,11 +3803,11 @@ ccui.Slider = ccui.Widget.extend({_barRenderer: null, _progressBarRenderer: null
     }, getCapInsetsBarRenderer: function () {
         return this._capInsetsBarRenderer
     }, setCapInsetProgressBarRebderer: function (capInsets) {
-        this._capInsetsProgressBarRenderer = capInsets;
+        this._capInsetsProgressBarRenderer =
+            capInsets;
         if (!this._scale9Enabled)return;
         this._progressBarRenderer.setCapInsets(capInsets)
-    },
-    setCapInsetProgressBarRenderer: function (capInsets) {
+    }, setCapInsetProgressBarRenderer: function (capInsets) {
         this._capInsetsProgressBarRenderer = capInsets;
         if (!this._scale9Enabled)return;
         this._progressBarRenderer.setCapInsets(capInsets)
@@ -3790,13 +3815,18 @@ ccui.Slider = ccui.Widget.extend({_barRenderer: null, _progressBarRenderer: null
         return this._capInsetsProgressBarRenderer
     }, loadSlidBallTextures: function (normal, pressed, disabled, texType) {
         this.loadSlidBallTextureNormal(normal, texType);
-        this.loadSlidBallTexturePressed(pressed, texType);
+        this.loadSlidBallTexturePressed(pressed,
+            texType);
         this.loadSlidBallTextureDisabled(disabled, texType)
     }, loadSlidBallTextureNormal: function (normal, texType) {
         if (!normal)return;
         texType = texType || ccui.Widget.LOCAL_TEXTURE;
         this._slidBallNormalTextureFile = normal;
         this._ballNTexType = texType;
+        var self = this;
+        if (!this._slidBallNormalRenderer.texture || !this._slidBallNormalRenderer.texture.isLoaded())this._slidBallNormalRenderer.addLoadedEventListener(function () {
+            self._updateChildrenDisplayedRGBA()
+        });
         switch (this._ballNTexType) {
             case ccui.Widget.LOCAL_TEXTURE:
                 this._slidBallNormalRenderer.initWithFile(normal);
@@ -3807,12 +3837,16 @@ ccui.Slider = ccui.Widget.extend({_barRenderer: null, _progressBarRenderer: null
             default:
                 break
         }
+        this._updateChildrenDisplayedRGBA()
     }, loadSlidBallTexturePressed: function (pressed, texType) {
         if (!pressed)return;
         texType = texType || ccui.Widget.LOCAL_TEXTURE;
-        this._slidBallPressedTextureFile =
-            pressed;
+        this._slidBallPressedTextureFile = pressed;
         this._ballPTexType = texType;
+        var self = this;
+        if (!this._slidBallPressedRenderer.texture || !this._slidBallPressedRenderer.texture.isLoaded())this._slidBallPressedRenderer.addLoadedEventListener(function () {
+            self._updateChildrenDisplayedRGBA()
+        });
         switch (this._ballPTexType) {
             case ccui.Widget.LOCAL_TEXTURE:
                 this._slidBallPressedRenderer.initWithFile(pressed);
@@ -3823,11 +3857,16 @@ ccui.Slider = ccui.Widget.extend({_barRenderer: null, _progressBarRenderer: null
             default:
                 break
         }
+        this._updateChildrenDisplayedRGBA()
     }, loadSlidBallTextureDisabled: function (disabled, texType) {
         if (!disabled)return;
         texType = texType || ccui.Widget.LOCAL_TEXTURE;
         this._slidBallDisabledTextureFile = disabled;
         this._ballDTexType = texType;
+        var self = this;
+        if (!this._slidBallDisabledRenderer.texture || !this._slidBallDisabledRenderer.texture.isLoaded())this._slidBallDisabledRenderer.addLoadedEventListener(function () {
+            self._updateChildrenDisplayedRGBA()
+        });
         switch (this._ballDTexType) {
             case ccui.Widget.LOCAL_TEXTURE:
                 this._slidBallDisabledRenderer.initWithFile(disabled);
@@ -3838,9 +3877,11 @@ ccui.Slider = ccui.Widget.extend({_barRenderer: null, _progressBarRenderer: null
             default:
                 break
         }
+        this._updateChildrenDisplayedRGBA()
     }, setPercent: function (percent) {
         if (percent > 100)percent = 100;
-        if (percent < 0)percent = 0;
+        if (percent < 0)percent =
+            0;
         this._percent = percent;
         var res = percent / 100;
         var dis = this._barLength * res;
@@ -3864,32 +3905,33 @@ ccui.Slider = ccui.Widget.extend({_barRenderer: null, _progressBarRenderer: null
             this._percentChangedEvent()
         }
         return pass
-    }, onTouchMoved: function (touch, event) {
+    },
+    onTouchMoved: function (touch, event) {
         var touchPoint = touch.getLocation();
         var nsp = this.convertToNodeSpace(touchPoint);
         this.setPercent(this._getPercentWithBallPos(nsp.x));
         this._percentChangedEvent()
     }, onTouchEnded: function (touch, event) {
-        ccui.Widget.prototype.onTouchEnded.call(this,
-            touch, event)
+        ccui.Widget.prototype.onTouchEnded.call(this, touch, event)
     }, onTouchCancelled: function (touch, event) {
         ccui.Widget.prototype.onTouchCancelled.call(this, touch, event)
     }, _getPercentWithBallPos: function (px) {
         return px / this._barLength * 100
     }, addEventListenerSlider: function (selector, target) {
-        this._sliderEventSelector = selector;
+        this._sliderEventSelector =
+            selector;
         this._sliderEventListener = target
     }, addEventListener: function (callback) {
         this._eventCallback = callback
     }, _percentChangedEvent: function () {
-        if (this._sliderEventListener && this._sliderEventSelector)this._sliderEventSelector.call(this._sliderEventListener,
-            this, ccui.Slider.EVENT_PERCENT_CHANGED);
+        if (this._sliderEventListener && this._sliderEventSelector)this._sliderEventSelector.call(this._sliderEventListener, this, ccui.Slider.EVENT_PERCENT_CHANGED);
         if (this._eventCallback)this._eventCallback(ccui.Slider.EVENT_PERCENT_CHANGED)
     }, getPercent: function () {
         return this._percent
     }, _onSizeChanged: function () {
         ccui.Widget.prototype._onSizeChanged.call(this);
-        this._barRendererAdaptDirty = true;
+        this._barRendererAdaptDirty =
+            true;
         this._progressBarRendererDirty = true
     }, _adaptRenderers: function () {
         if (this._barRendererAdaptDirty) {
@@ -3912,8 +3954,7 @@ ccui.Slider = ccui.Widget.extend({_barRenderer: null, _progressBarRenderer: null
             this._barLength = this._contentSize.width;
             if (this._scale9Enabled)this._barRenderer.setPreferredSize(this._contentSize); else {
                 var btextureSize = this._barRenderer.getContentSize();
-                if (btextureSize.width <=
-                    0 || btextureSize.height <= 0) {
+                if (btextureSize.width <= 0 || btextureSize.height <= 0) {
                     this._barRenderer.setScale(1);
                     return
                 }
@@ -3923,7 +3964,8 @@ ccui.Slider = ccui.Widget.extend({_barRenderer: null, _progressBarRenderer: null
                 this._barRenderer.setScaleY(bscaleY)
             }
         }
-        this._barRenderer.setPosition(this._contentSize.width / 2, this._contentSize.height / 2);
+        this._barRenderer.setPosition(this._contentSize.width /
+            2, this._contentSize.height / 2);
         this.setPercent(this._percent)
     }, _progressBarRendererScaleChangedWithSize: function () {
         if (this._ignoreSize) {
@@ -3936,7 +3978,8 @@ ccui.Slider = ccui.Widget.extend({_barRenderer: null, _progressBarRenderer: null
             }
         } else if (this._scale9Enabled) {
             this._progressBarRenderer.setPreferredSize(this._contentSize);
-            this._progressBarTextureSize = this._progressBarRenderer.getContentSize()
+            this._progressBarTextureSize =
+                this._progressBarRenderer.getContentSize()
         } else {
             var ptextureSize = this._progressBarTextureSize;
             if (ptextureSize.width <= 0 || ptextureSize.height <= 0) {
@@ -3964,7 +4007,8 @@ ccui.Slider = ccui.Widget.extend({_barRenderer: null, _progressBarRenderer: null
         this._slidBallDisabledRenderer.setVisible(true)
     }, getDescription: function () {
         return"Slider"
-    }, _createCloneInstance: function () {
+    },
+    _createCloneInstance: function () {
         return ccui.Slider.create()
     }, _copySpecialProperties: function (slider) {
         this._prevIgnoreSize = slider._prevIgnoreSize;
@@ -4007,7 +4051,7 @@ ccui.Text = ccui.Widget.extend({_touchScaleChangeEnabled: false, _normalScaleVal
     }
     return false
 }, _initRenderer: function () {
-    this._labelRenderer = cc.LabelTTF.create();
+    this._labelRenderer = new cc.LabelTTF;
     this.addProtectedChild(this._labelRenderer, ccui.Text.RENDERER_ZORDER, -1)
 }, setText: function (text) {
     cc.log("Please use the setString");
@@ -4243,15 +4287,9 @@ ccui.TextAtlas = ccui.Widget.extend({_labelAtlasRenderer: null, _stringValue: ""
         locRenderer.setPosition(this._contentSize.width / 2, this._contentSize.height / 2)
     }, getDescription: function () {
         return"LabelAtlas"
-    }, _updateTextureColor: function () {
-        this.updateColorToRenderer(this._labelAtlasRenderer)
     }, _copySpecialProperties: function (labelAtlas) {
-        if (labelAtlas)this.setProperty(labelAtlas._stringValue,
-            labelAtlas._charMapFileName, labelAtlas._itemWidth, labelAtlas._itemHeight, labelAtlas._startCharMap)
-    }, _updateTextureOpacity: function () {
-        this.updateOpacityToRenderer(this._labelAtlasRenderer)
-    }, _updateTextureRGBA: function () {
-        this.updateRGBAToRenderer(this._labelAtlasRenderer)
+        if (labelAtlas)this.setProperty(labelAtlas._stringValue, labelAtlas._charMapFileName,
+            labelAtlas._itemWidth, labelAtlas._itemHeight, labelAtlas._startCharMap)
     }, _createCloneInstance: function () {
         return ccui.TextAtlas.create()
     }});
@@ -4274,9 +4312,14 @@ ccui.LabelBMFont = ccui.TextBMFont = ccui.Widget.extend({_labelBMFontRenderer: n
     this.addProtectedChild(this._labelBMFontRenderer, ccui.TextBMFont.RENDERER_ZORDER, -1)
 }, setFntFile: function (fileName) {
     if (!fileName)return;
-    this._fntFileName = fileName;
-    this._fntFileHasInit = true;
-    this._labelBMFontRenderer.initWithString(this._stringValue, fileName)
+    var _self = this;
+    _self._fntFileName = fileName;
+    _self._fntFileHasInit = true;
+    _self._labelBMFontRenderer.initWithString(this._stringValue, fileName);
+    var locRenderer = _self._labelBMFontRenderer;
+    if (!locRenderer._textureLoaded)locRenderer.addLoadedEventListener(function () {
+        _self.updateSizeAndPosition()
+    })
 }, setText: function (value) {
     cc.log("Please use the setString");
     this.setString(value)
@@ -4288,24 +4331,23 @@ ccui.LabelBMFont = ccui.TextBMFont = ccui.Widget.extend({_labelBMFontRenderer: n
     this._labelBMFontRendererAdaptDirty = true
 }, getString: function () {
     return this._stringValue
+}, getStringLength: function () {
+    return this._labelBMFontRenderer.getStringLength()
+}, _onSizeChanged: function () {
+    ccui.Widget.prototype._onSizeChanged.call(this);
+    this._labelBMFontRendererAdaptDirty = true
+}, _adaptRenderers: function () {
+    if (this._labelBMFontRendererAdaptDirty) {
+        this._labelBMFontScaleChangedWithSize();
+        this._labelBMFontRendererAdaptDirty = false
+    }
+}, getVirtualRendererSize: function () {
+    return this._labelBMFontRenderer.getContentSize()
 },
-    getStringLength: function () {
-        return this._labelBMFontRenderer.getStringLength()
-    }, _onSizeChanged: function () {
-        ccui.Widget.prototype._onSizeChanged.call(this);
-        this._labelBMFontRendererAdaptDirty = true
-    }, _adaptRenderers: function () {
-        if (this._labelBMFontRendererAdaptDirty) {
-            this._labelBMFontScaleChangedWithSize();
-            this._labelBMFontRendererAdaptDirty = false
-        }
-    }, getVirtualRendererSize: function () {
-        return this._labelBMFontRenderer.getContentSize()
-    }, getVirtualRenderer: function () {
+    getVirtualRenderer: function () {
         return this._labelBMFontRenderer
     }, _labelBMFontScaleChangedWithSize: function () {
-        var locRenderer =
-            this._labelBMFontRenderer;
+        var locRenderer = this._labelBMFontRenderer;
         if (this._ignoreSize)locRenderer.setScale(1); else {
             var textureSize = locRenderer.getContentSize();
             if (textureSize.width <= 0 || textureSize.height <= 0) {
@@ -4315,21 +4357,15 @@ ccui.LabelBMFont = ccui.TextBMFont = ccui.Widget.extend({_labelBMFontRenderer: n
             locRenderer.setScaleX(this._contentSize.width / textureSize.width);
             locRenderer.setScaleY(this._contentSize.height / textureSize.height)
         }
-        locRenderer.setPosition(this._contentSize.width / 2, this._contentSize.height / 2)
-    }, _updateTextureColor: function () {
-        this.updateColorToRenderer(this._labelBMFontRenderer)
-    }, _updateTextureOpacity: function () {
-        this.updateOpacityToRenderer(this._labelBMFontRenderer)
-    },
-    _updateTextureRGBA: function () {
-        this.updateRGBAToRenderer(this._labelBMFontRenderer)
+        locRenderer.setPosition(this._contentSize.width /
+            2, this._contentSize.height / 2)
     }, getDescription: function () {
         return"LabelBMFont"
     }, createCloneInstance: function () {
         return ccui.TextBMFont.create()
     }, copySpecialProperties: function (labelBMFont) {
         this.setFntFile(labelBMFont._fntFileName);
-        this.setText(labelBMFont._stringValue)
+        this.setString(labelBMFont._stringValue)
     }});
 var _p = ccui.TextBMFont.prototype;
 _p.string;

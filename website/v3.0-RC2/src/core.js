@@ -803,18 +803,15 @@ cc.game = {DEBUG_MODE_NONE: 0, DEBUG_MODE_INFO: 1, DEBUG_MODE_WARN: 2, DEBUG_MOD
     }, prepare: function (cb) {
         var self = this;
         var config = self.config, CONFIG_KEY = self.CONFIG_KEY, engineDir = config[CONFIG_KEY.engineDir], loader = cc.loader;
-        if (!cc._supportRender) {
-            cc.error("Can not support render!");
-            return
-        }
+        if (!cc._supportRender)throw"The renderer doesn't support the renderMode " + config[CONFIG_KEY.renderMode];
         self._prepareCalled = true;
         var jsList = config[CONFIG_KEY.jsList] || [];
-        if (cc.Class)loader.loadJsWithImg("", jsList, function (err) {
-            if (err)throw err;
-            self._prepared =
-                true;
-            if (cb)cb()
-        }); else {
+        if (cc.Class)loader.loadJsWithImg("", jsList,
+            function (err) {
+                if (err)throw err;
+                self._prepared = true;
+                if (cb)cb()
+            }); else {
             var ccModulesPath = cc.path.join(engineDir, "moduleConfig.json");
             loader.loadJson(ccModulesPath, function (err, modulesJson) {
                 if (err)throw err;
@@ -823,11 +820,11 @@ cc.game = {DEBUG_MODE_NONE: 0, DEBUG_MODE_INFO: 1, DEBUG_MODE_WARN: 2, DEBUG_MOD
                 var newJsList = [];
                 if (cc._renderType == cc._RENDER_TYPE_WEBGL)modules.splice(0, 0, "shaders"); else if (modules.indexOf("core") < 0)modules.splice(0, 0, "core");
                 for (var i = 0, li = modules.length; i < li; i++) {
-                    var arr = self._getJsListOfModule(moduleMap, modules[i], engineDir);
+                    var arr = self._getJsListOfModule(moduleMap,
+                        modules[i], engineDir);
                     if (arr)newJsList = newJsList.concat(arr)
                 }
-                newJsList =
-                    newJsList.concat(jsList);
+                newJsList = newJsList.concat(jsList);
                 cc.loader.loadJsWithImg(newJsList, function (err) {
                     if (err)throw err;
                     self._prepared = true;
@@ -4439,11 +4436,10 @@ cc.Node = cc.Class.extend({_localZOrder: 0, _globalZOrder: 0, _vertexZ: 0, _rota
         locDisplayedColor.b = locRealColor.b = color.b;
         var parentColor, locParent = this._parent;
         if (locParent && locParent.cascadeColor)parentColor = locParent.getDisplayedColor(); else parentColor = cc.color.WHITE;
-        this.updateDisplayedColor(parentColor);
-        if (color.a !==
-            undefined && !color.a_undefined)this.setOpacity(color.a)
+        this.updateDisplayedColor(parentColor)
     }, updateDisplayedColor: function (parentColor) {
-        var locDispColor = this._displayedColor, locRealColor = this._realColor;
+        var locDispColor =
+            this._displayedColor, locRealColor = this._realColor;
         locDispColor.r = 0 | locRealColor.r * parentColor.r / 255;
         locDispColor.g = 0 | locRealColor.g * parentColor.g / 255;
         locDispColor.b = 0 | locRealColor.b * parentColor.b / 255;
@@ -4456,9 +4452,9 @@ cc.Node = cc.Class.extend({_localZOrder: 0, _globalZOrder: 0, _vertexZ: 0, _rota
         }
     }, isCascadeColorEnabled: function () {
         return this._cascadeColorEnabled
-    },
-    setCascadeColorEnabled: function (cascadeColorEnabled) {
-        if (this._cascadeColorEnabled === cascadeColorEnabled)return;
+    }, setCascadeColorEnabled: function (cascadeColorEnabled) {
+        if (this._cascadeColorEnabled ===
+            cascadeColorEnabled)return;
         this._cascadeColorEnabled = cascadeColorEnabled;
         if (this._cascadeColorEnabled)this._enableCascadeColor(); else this._disableCascadeColor()
     }, _enableCascadeColor: function () {
@@ -4466,9 +4462,9 @@ cc.Node = cc.Class.extend({_localZOrder: 0, _globalZOrder: 0, _vertexZ: 0, _rota
         if (locParent && locParent.cascadeColor)parentColor = locParent.getDisplayedColor(); else parentColor = cc.color.WHITE;
         this.updateDisplayedColor(parentColor)
     }, _disableCascadeColor: function () {
-        var locDisplayedColor =
-            this._displayedColor, locRealColor = this._realColor;
-        locDisplayedColor.r = locRealColor.r;
+        var locDisplayedColor = this._displayedColor, locRealColor = this._realColor;
+        locDisplayedColor.r =
+            locRealColor.r;
         locDisplayedColor.g = locRealColor.g;
         locDisplayedColor.b = locRealColor.b;
         var selChildren = this._children, whiteColor = cc.color.WHITE;
@@ -6015,6 +6011,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         _t._originalTexture = sender;
         _t.texture = sender;
         _t.setTextureRect(locRect, _t._rectRotated);
+        var locColor = this._displayedColor;
+        if (locColor.r != 255 || locColor.g != 255 || locColor.b != 255)_t._changeTextureColor();
         _t.batchNode = _t._batchNode;
         _t._callLoadedEventCallbacks()
     };
@@ -6023,7 +6021,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         _t._rectRotated = rotated || false;
         _t.setContentSize(untrimmedSize || rect);
         _t.setVertexRect(rect);
-        var locTextureRect = _t._textureRect_Canvas, scaleFactor = cc.contentScaleFactor();
+        var locTextureRect = _t._textureRect_Canvas,
+            scaleFactor = cc.contentScaleFactor();
         locTextureRect.x = 0 | rect.x * scaleFactor;
         locTextureRect.y = 0 | rect.y * scaleFactor;
         locTextureRect.width = 0 | rect.width * scaleFactor;
@@ -6032,9 +6031,9 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         var relativeOffset = _t._unflippedOffsetPositionFromCenter;
         if (_t._flippedX)relativeOffset.x = -relativeOffset.x;
         if (_t._flippedY)relativeOffset.y = -relativeOffset.y;
-        _t._offsetPosition.x = relativeOffset.x + (_t._contentSize.width - _t._rect.width) / 2;
-        _t._offsetPosition.y = relativeOffset.y + (_t._contentSize.height -
-            _t._rect.height) / 2;
+        _t._offsetPosition.x =
+            relativeOffset.x + (_t._contentSize.width - _t._rect.width) / 2;
+        _t._offsetPosition.y = relativeOffset.y + (_t._contentSize.height - _t._rect.height) / 2;
         if (_t._batchNode)_t.dirty = true
     };
     _p.updateTransform = function () {
@@ -6043,13 +6042,13 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             var locParent = _t._parent;
             if (!_t._visible || locParent && locParent != _t._batchNode && locParent._shouldBeHidden)_t._shouldBeHidden = true; else {
                 _t._shouldBeHidden = false;
-                if (!locParent || locParent == _t._batchNode)_t._transformToBatch = _t.nodeToParentTransform(); else _t._transformToBatch = cc.affineTransformConcat(_t.nodeToParentTransform(), locParent._transformToBatch)
+                if (!locParent || locParent == _t._batchNode)_t._transformToBatch = _t.nodeToParentTransform(); else _t._transformToBatch = cc.affineTransformConcat(_t.nodeToParentTransform(),
+                    locParent._transformToBatch)
             }
             _t._recursiveDirty = false;
             _t.dirty = false
         }
-        if (_t._hasChildren)_t._arrayMakeObjectsPerformSelector(_t._children,
-            cc.Node.StateCallbackType.updateTransform)
+        if (_t._hasChildren)_t._arrayMakeObjectsPerformSelector(_t._children, cc.Node.StateCallbackType.updateTransform)
     };
     _p.addChild = function (child, localZOrder, tag) {
         cc.assert(child, cc._LogInfos.CCSpriteBatchNode_addChild_2);
@@ -6059,14 +6058,14 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         this._hasChildren = true
     };
     _p.setOpacity = function (opacity) {
-        cc.Node.prototype.setOpacity.call(this, opacity);
+        cc.Node.prototype.setOpacity.call(this,
+            opacity);
         this._setNodeDirtyForCache()
     };
     _p.setColor = function (color3) {
         var _t = this;
         var curColor = _t.color;
-        this._oldDisplayColor =
-            curColor;
+        this._oldDisplayColor = curColor;
         if (curColor.r === color3.r && curColor.g === color3.g && curColor.b === color3.b)return;
         cc.Node.prototype.setColor.call(_t, color3)
     };
@@ -6081,8 +6080,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     };
     _p.setSpriteFrame = function (newFrame) {
         var _t = this;
-        if (typeof newFrame ==
-            "string") {
+        if (typeof newFrame == "string") {
             newFrame = cc.spriteFrameCache.getSpriteFrame(newFrame);
             cc.assert(newFrame, cc._LogInfos.CCSpriteBatchNode_setSpriteFrame)
         }
@@ -6092,12 +6090,12 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         _t._unflippedOffsetPositionFromCenter.y = frameOffset.y;
         _t._rectRotated = newFrame.isRotated();
         var pNewTexture = newFrame.getTexture();
-        var locTextureLoaded = newFrame.textureLoaded();
+        var locTextureLoaded =
+            newFrame.textureLoaded();
         if (!locTextureLoaded) {
             _t._textureLoaded = false;
             newFrame.addLoadedEventListener(function (sender) {
-                _t._textureLoaded =
-                    true;
+                _t._textureLoaded = true;
                 var locNewTexture = sender.getTexture();
                 if (locNewTexture != _t._texture)_t.texture = locNewTexture;
                 _t.setTextureRect(sender.getRect(), sender.isRotated(), sender.getOriginalSize());
@@ -6106,12 +6104,12 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         }
         if (pNewTexture != _t._texture)_t.texture = pNewTexture;
         if (_t._rectRotated)_t._originalTexture = pNewTexture;
-        _t.setTextureRect(newFrame.getRect(), _t._rectRotated, newFrame.getOriginalSize());
+        _t.setTextureRect(newFrame.getRect(), _t._rectRotated,
+            newFrame.getOriginalSize());
         _t._colorized = false;
         if (locTextureLoaded) {
             var curColor = _t.color;
-            if (curColor.r !== 255 || curColor.g !== 255 || curColor.b !==
-                255)_t._changeTextureColor()
+            if (curColor.r !== 255 || curColor.g !== 255 || curColor.b !== 255)_t._changeTextureColor()
         }
     };
     _p.isFrameDisplayed = function (frame) {
@@ -6124,7 +6122,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         if (!_t._batchNode) {
             _t.atlasIndex = cc.Sprite.INDEX_NOT_INITIALIZED;
             _t.textureAtlas = null;
-            _t._recursiveDirty = false;
+            _t._recursiveDirty =
+                false;
             _t.dirty = false
         } else {
             _t._transformToBatch = cc.affineTransformIdentity();
@@ -6132,8 +6131,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         }
     };
     _p.setTexture = function (texture) {
-        var _t =
-            this;
+        var _t = this;
         if (texture && typeof texture === "string") {
             texture = cc.textureCache.addImage(texture);
             _t.setTexture(texture);
@@ -6143,7 +6141,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         }
         cc.assert(!texture || texture instanceof cc.Texture2D, cc._LogInfos.CCSpriteBatchNode_setTexture);
         if (_t._texture != texture) {
-            if (texture && texture.getHtmlElementObj()instanceof HTMLImageElement)_t._originalTexture = texture;
+            if (texture && texture.getHtmlElementObj()instanceof
+                HTMLImageElement)_t._originalTexture = texture;
             _t._texture = texture
         }
     };
@@ -6155,9 +6154,9 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         var locEGL_ScaleX = cc.view.getScaleX(), locEGL_ScaleY = cc.view.getScaleY();
         context.globalAlpha = _t._displayedOpacity / 255;
         var locRect = _t._rect, locContentSize = _t._contentSize, locOffsetPosition = _t._offsetPosition, locDrawSizeCanvas = _t._drawSize_Canvas;
-        var flipXOffset = 0 | locOffsetPosition.x, flipYOffset = -locOffsetPosition.y - locRect.height, locTextureCoord = _t._textureRect_Canvas;
-        locDrawSizeCanvas.width = locRect.width *
-            locEGL_ScaleX;
+        var flipXOffset = 0 | locOffsetPosition.x,
+            flipYOffset = -locOffsetPosition.y - locRect.height, locTextureCoord = _t._textureRect_Canvas;
+        locDrawSizeCanvas.width = locRect.width * locEGL_ScaleX;
         locDrawSizeCanvas.height = locRect.height * locEGL_ScaleY;
         if (_t._flippedX || _t._flippedY) {
             context.save();
@@ -6174,45 +6173,44 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         flipYOffset *= locEGL_ScaleY;
         if (_t._texture && locTextureCoord.validRect) {
             var image = _t._texture.getHtmlElementObj();
-            if (_t._colorized)context.drawImage(image, 0, 0, locTextureCoord.width, locTextureCoord.height, flipXOffset,
-                flipYOffset, locDrawSizeCanvas.width, locDrawSizeCanvas.height); else context.drawImage(image, locTextureCoord.x, locTextureCoord.y, locTextureCoord.width, locTextureCoord.height, flipXOffset, flipYOffset, locDrawSizeCanvas.width, locDrawSizeCanvas.height)
+            if (_t._colorized)context.drawImage(image, 0, 0, locTextureCoord.width, locTextureCoord.height, flipXOffset, flipYOffset, locDrawSizeCanvas.width, locDrawSizeCanvas.height); else context.drawImage(image, locTextureCoord.x, locTextureCoord.y, locTextureCoord.width, locTextureCoord.height, flipXOffset, flipYOffset, locDrawSizeCanvas.width, locDrawSizeCanvas.height)
         } else if (!_t._texture && locTextureCoord.validRect) {
             var curColor = _t.color;
             context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + ",1)";
-            context.fillRect(flipXOffset, flipYOffset, locContentSize.width * locEGL_ScaleX, locContentSize.height * locEGL_ScaleY)
+            context.fillRect(flipXOffset,
+                flipYOffset, locContentSize.width * locEGL_ScaleX, locContentSize.height * locEGL_ScaleY)
         }
-        if (cc.SPRITE_DEBUG_DRAW ===
-            1 || _t._showNode) {
+        if (cc.SPRITE_DEBUG_DRAW === 1 || _t._showNode) {
             context.strokeStyle = "rgba(0,255,0,1)";
             flipXOffset /= locEGL_ScaleX;
             flipYOffset /= locEGL_ScaleY;
             flipYOffset = -flipYOffset;
             var vertices1 = [cc.p(flipXOffset, flipYOffset), cc.p(flipXOffset + locRect.width, flipYOffset), cc.p(flipXOffset + locRect.width, flipYOffset - locRect.height), cc.p(flipXOffset, flipYOffset - locRect.height)];
             cc._drawingUtil.drawPoly(vertices1, 4, true)
-        } else if (cc.SPRITE_DEBUG_DRAW === 2) {
+        } else if (cc.SPRITE_DEBUG_DRAW ===
+            2) {
             context.strokeStyle = "rgba(0,255,0,1)";
             var drawRect = _t._rect;
             flipYOffset = -flipYOffset;
-            var vertices2 =
-                [cc.p(flipXOffset, flipYOffset), cc.p(flipXOffset + drawRect.width, flipYOffset), cc.p(flipXOffset + drawRect.width, flipYOffset - drawRect.height), cc.p(flipXOffset, flipYOffset - drawRect.height)];
+            var vertices2 = [cc.p(flipXOffset, flipYOffset), cc.p(flipXOffset + drawRect.width, flipYOffset), cc.p(flipXOffset + drawRect.width, flipYOffset - drawRect.height), cc.p(flipXOffset, flipYOffset - drawRect.height)];
             cc._drawingUtil.drawPoly(vertices2, 4, true)
         }
         if (_t._flippedX || _t._flippedY)context.restore();
         cc.g_NumberOfDraws++
     };
     if (!cc.sys._supportCanvasNewBlendModes)_p._changeTextureColor = function () {
-        var locElement, locTexture = this._texture, locRect = this._textureRect_Canvas;
+        var locElement, locTexture = this._texture,
+            locRect = this._textureRect_Canvas;
         if (locTexture && locRect.validRect && this._originalTexture) {
-            locElement =
-                locTexture.getHtmlElementObj();
+            locElement = locTexture.getHtmlElementObj();
             if (!locElement)return;
             var cacheTextureForColor = cc.textureCache.getTextureColors(this._originalTexture.getHtmlElementObj());
             if (cacheTextureForColor) {
                 this._colorized = true;
                 if (locElement instanceof HTMLCanvasElement && !this._rectRotated && !this._newTextureWhenChangeColor)cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor, locRect, locElement); else {
-                    locElement = cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor, locRect);
-                    locTexture =
-                        new cc.Texture2D;
+                    locElement =
+                        cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor, locRect);
+                    locTexture = new cc.Texture2D;
                     locTexture.initWithElement(locElement);
                     locTexture.handleLoadedTexture();
                     this.texture = locTexture
@@ -7996,15 +7994,15 @@ cc.LabelTTF = cc.Sprite.extend({_dimensions: null, _hAlignment: cc.TEXT_ALIGNMEN
         var locContentSize = this._contentSize;
         if (this._string.length === 0) {
             locLabelCanvas.width = 1;
-            locLabelCanvas.height = locContentSize.height;
+            locLabelCanvas.height = locContentSize.height || 1;
+            this._texture && this._texture.handleLoadedTexture();
             this.setTextureRect(cc.rect(0, 0, 1, locContentSize.height));
             return true
         }
         locContext.font = this._fontStyleStr;
         this._updateTTF();
         var width = locContentSize.width, height = locContentSize.height;
-        var flag = locLabelCanvas.width == width &&
-            locLabelCanvas.height == height;
+        var flag = locLabelCanvas.width == width && locLabelCanvas.height == height;
         locLabelCanvas.width = width;
         locLabelCanvas.height = height;
         if (flag)locContext.clearRect(0, 0, width, height);
@@ -8019,9 +8017,9 @@ cc.LabelTTF = cc.Sprite.extend({_dimensions: null, _hAlignment: cc.TEXT_ALIGNMEN
             this._updateTexture()
         }
         var context = ctx || cc._renderContext;
-        cc.Sprite.prototype.visit.call(this, context)
-    },
-    draw: null, _setTextureCoords: function (rect) {
+        cc.Sprite.prototype.visit.call(this,
+            context)
+    }, draw: null, _setTextureCoords: function (rect) {
         var tex = this._batchNode ? this.textureAtlas.texture : this._texture;
         if (!tex)return;
         var atlasWidth = tex.pixelsWidth;
@@ -8035,8 +8033,8 @@ cc.LabelTTF = cc.Sprite.extend({_dimensions: null, _hAlignment: cc.TEXT_ALIGNMEN
                 bottom = top + (rect.width * 2 - 2) / (2 * atlasHeight)
             } else {
                 left = rect.x / atlasWidth;
-                right = (rect.x + rect.height) /
-                    atlasWidth;
+                right = (rect.x +
+                    rect.height) / atlasWidth;
                 top = rect.y / atlasHeight;
                 bottom = (rect.y + rect.width) / atlasHeight
             }
@@ -8061,8 +8059,7 @@ cc.LabelTTF = cc.Sprite.extend({_dimensions: null, _hAlignment: cc.TEXT_ALIGNMEN
         } else {
             if (cc.FIX_ARTIFACTS_BY_STRECHING_TEXEL) {
                 left = (2 * rect.x + 1) / (2 * atlasWidth);
-                right =
-                    left + (rect.width * 2 - 2) / (2 * atlasWidth);
+                right = left + (rect.width * 2 - 2) / (2 * atlasWidth);
                 top = (2 * rect.y + 1) / (2 * atlasHeight);
                 bottom = top + (rect.height * 2 - 2) / (2 * atlasHeight)
             } else {

@@ -828,21 +828,22 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({tiles: null, tileset: null, layerOrient
     var locCacheCanvas = this._cacheCanvas;
     if (locCacheCanvas) {
         var locSubCacheCount = this._subCacheCount, locCanvasHeight = locCacheCanvas.height * eglViewer._scaleY;
-        if (locSubCacheCount > 0) {
+        var halfTileSize = this._mapTileSize.height * 0.5 * eglViewer._scaleY;
+        if (locSubCacheCount >
+            0) {
             var locSubCacheCanvasArr = this._subCacheCanvas;
             for (var i = 0; i < locSubCacheCount; i++) {
-                var selSubCanvas =
-                    locSubCacheCanvasArr[i];
-                if (this.layerOrientation === cc.TMX_ORIENTATION_HEX)context.drawImage(locSubCacheCanvasArr[i], 0, 0, selSubCanvas.width, selSubCanvas.height, posX + i * this._subCacheWidth, -(posY + locCanvasHeight) + this._mapTileSize.height * 0.5, selSubCanvas.width * eglViewer._scaleX, locCanvasHeight); else context.drawImage(locSubCacheCanvasArr[i], 0, 0, selSubCanvas.width, selSubCanvas.height, posX + i * this._subCacheWidth, -(posY + locCanvasHeight), selSubCanvas.width * eglViewer._scaleX, locCanvasHeight)
+                var selSubCanvas = locSubCacheCanvasArr[i];
+                if (this.layerOrientation === cc.TMX_ORIENTATION_HEX)context.drawImage(locSubCacheCanvasArr[i], 0, 0, selSubCanvas.width, selSubCanvas.height, posX + i * this._subCacheWidth, -(posY + locCanvasHeight) + halfTileSize, selSubCanvas.width * eglViewer._scaleX, locCanvasHeight); else context.drawImage(locSubCacheCanvasArr[i], 0, 0, selSubCanvas.width, selSubCanvas.height, posX + i * this._subCacheWidth, -(posY +
+                    locCanvasHeight), selSubCanvas.width * eglViewer._scaleX, locCanvasHeight)
             }
-        } else if (this.layerOrientation ===
-            cc.TMX_ORIENTATION_HEX)context.drawImage(locCacheCanvas, 0, 0, locCacheCanvas.width, locCacheCanvas.height, posX, -(posY + locCanvasHeight) + this._mapTileSize.height * 0.5, locCacheCanvas.width * eglViewer._scaleX, locCanvasHeight); else context.drawImage(locCacheCanvas, 0, 0, locCacheCanvas.width, locCacheCanvas.height, posX, -(posY + locCanvasHeight), locCacheCanvas.width * eglViewer._scaleX, locCanvasHeight)
+        } else if (this.layerOrientation === cc.TMX_ORIENTATION_HEX)context.drawImage(locCacheCanvas, 0, 0, locCacheCanvas.width, locCacheCanvas.height, posX, -(posY + locCanvasHeight) + halfTileSize, locCacheCanvas.width * eglViewer._scaleX, locCanvasHeight); else context.drawImage(locCacheCanvas, 0, 0, locCacheCanvas.width, locCacheCanvas.height, posX, -(posY + locCanvasHeight), locCacheCanvas.width * eglViewer._scaleX, locCanvasHeight)
     }
 }, getLayerSize: function () {
-    return cc.size(this._layerSize.width, this._layerSize.height)
+    return cc.size(this._layerSize.width,
+        this._layerSize.height)
 }, setLayerSize: function (Var) {
-    this._layerSize.width =
-        Var.width;
+    this._layerSize.width = Var.width;
     this._layerSize.height = Var.height
 }, _getLayerWidth: function () {
     return this._layerSize.width
@@ -855,33 +856,33 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({tiles: null, tileset: null, layerOrient
 }, getMapTileSize: function () {
     return cc.size(this._mapTileSize.width, this._mapTileSize.height)
 }, setMapTileSize: function (Var) {
-    this._mapTileSize.width = Var.width;
+    this._mapTileSize.width =
+        Var.width;
     this._mapTileSize.height = Var.height
 }, _getTileWidth: function () {
     return this._mapTileSize.width
+}, _setTileWidth: function (width) {
+    this._mapTileSize.width = width
+}, _getTileHeight: function () {
+    return this._mapTileSize.height
+}, _setTileHeight: function (height) {
+    this._mapTileSize.height = height
+}, getTiles: function () {
+    return this.tiles
+}, setTiles: function (Var) {
+    this.tiles = Var
+}, getTileset: function () {
+    return this.tileset
+}, setTileset: function (Var) {
+    this.tileset = Var
+}, getLayerOrientation: function () {
+    return this.layerOrientation
 },
-    _setTileWidth: function (width) {
-        this._mapTileSize.width = width
-    }, _getTileHeight: function () {
-        return this._mapTileSize.height
-    }, _setTileHeight: function (height) {
-        this._mapTileSize.height = height
-    }, getTiles: function () {
-        return this.tiles
-    }, setTiles: function (Var) {
-        this.tiles = Var
-    }, getTileset: function () {
-        return this.tileset
-    }, setTileset: function (Var) {
-        this.tileset = Var
-    }, getLayerOrientation: function () {
-        return this.layerOrientation
-    }, setLayerOrientation: function (Var) {
+    setLayerOrientation: function (Var) {
         this.layerOrientation = Var
     }, getProperties: function () {
         return this.properties
-    },
-    setProperties: function (Var) {
+    }, setProperties: function (Var) {
         this.properties = Var
     }, initWithTilesetInfo: function (tilesetInfo, layerInfo, mapInfo) {
         var size = layerInfo._layerSize;
@@ -904,7 +905,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({tiles: null, tileset: null, layerOrient
             var offset = this._calculateLayerOffset(layerInfo.offset);
             this.setPosition(cc.pointPixelsToPoints(offset));
             this._atlasIndexArray = [];
-            this.setContentSize(cc.sizePixelsToPoints(cc.size(this._layerSize.width * this._mapTileSize.width, this._layerSize.height * this._mapTileSize.height)));
+            this.setContentSize(cc.sizePixelsToPoints(cc.size(this._layerSize.width *
+                this._mapTileSize.width, this._layerSize.height * this._mapTileSize.height)));
             this._useAutomaticVertexZ = false;
             this._vertexZvalue = 0;
             return true
@@ -937,8 +939,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({tiles: null, tileset: null, layerOrient
             tile.anchorY = 0;
             tile.opacity = this._opacity;
             var indexForZ = this._atlasIndexForExistantZ(z);
-            this.addSpriteWithoutQuad(tile,
-                indexForZ, z)
+            this.addSpriteWithoutQuad(tile, indexForZ, z)
         }
         return tile
     }, getTileGIDAt: function (pos, y) {
@@ -951,8 +952,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({tiles: null, tileset: null, layerOrient
         }
         var idx = 0 | pos.x + pos.y * this._layerSize.width;
         var tile = this.tiles[idx];
-        return(tile & cc.TMX_TILE_FLIPPED_MASK) >>>
-            0
+        return(tile & cc.TMX_TILE_FLIPPED_MASK) >>> 0
     }, getTileFlagsAt: function (pos, y) {
         if (!pos)throw"cc.TMXLayer.getTileFlagsAt(): pos should be non-null";
         if (y !== undefined)pos = cc.p(pos, y);
@@ -963,8 +963,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({tiles: null, tileset: null, layerOrient
         }
         var idx = 0 | pos.x + pos.y * this._layerSize.width;
         var tile = this.tiles[idx];
-        return(tile & cc.TMX_TILE_FLIPPED_ALL) >>>
-            0
+        return(tile & cc.TMX_TILE_FLIPPED_ALL) >>> 0
     }, setTileGID: function (gid, posOrX, flagsOrY, flags) {
         if (!posOrX)throw"cc.TMXLayer.setTileGID(): pos should be non-null";
         var pos;
@@ -978,8 +977,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({tiles: null, tileset: null, layerOrient
             return
         }
         if (gid !== 0 && gid < this.tileset.firstGid) {
-            cc.log("cc.TMXLayer.setTileGID(): invalid gid:" +
-                gid);
+            cc.log("cc.TMXLayer.setTileGID(): invalid gid:" + gid);
             return
         }
         flags = flags || 0;
@@ -995,8 +993,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({tiles: null, tileset: null, layerOrient
                     var rect = this.tileset.rectForGID(gid);
                     rect = cc.rectPixelsToPoints(rect);
                     sprite.setTextureRect(rect, false);
-                    if (flags !=
-                        null)this._setupTileSprite(sprite, pos, gidAndFlags);
+                    if (flags != null)this._setupTileSprite(sprite, pos, gidAndFlags);
                     this.tiles[z] = gidAndFlags
                 } else this._updateTileForGID(gidAndFlags, pos)
             }
