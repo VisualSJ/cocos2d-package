@@ -1,4 +1,4 @@
-var defaultVersion = 'v3.0-RC2';
+var defaultVersion = 'v3.0-RC3';
 
 var pageSet = {};
 

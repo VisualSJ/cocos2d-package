@@ -330,6 +330,7 @@
             "extensions/ccui/base-classes/CCProtectedNode.js",
             "extensions/ccui/system/CocosGUI.js",
             "extensions/ccui/base-classes/UIWidget.js",
+            "extensions/ccui/base-classes/UIScale9Sprite.js",
             "extensions/ccui/layouts/UILayout.js",
             "extensions/ccui/layouts/UILayoutParameter.js",
             "extensions/ccui/layouts/UILayoutManager.js",
