@@ -16,19 +16,16 @@ var app = {
         var _moduleFile = path.join(app._dir, './moduleConfig.json');
         app._list = app._readJson(_moduleFile);
         app.sorting();
+        console.log("Create xml....");
         app.createXml();
+        console.log("success....");
+        console.log("Create package.... ant");
         app.merge();
     },
     sorting: function () {
         //合并CCBoot到core
         app._list.module.core = [app._list.bootFile].concat(app._list.module.core);
         app._list = app._list.module;
-
-        //分离CCDebugger
-//        app._list['debugger'] = ['CCDebugger.js'];
-//        app._list['core'] = app._list['core'].filter(function (_file) {
-//            return _file != 'CCDebugger.js';
-//        });
 
         //去除依赖关系
         for (var p in app._list) {
@@ -82,11 +79,18 @@ var app = {
     },
     merge: function () {
 
-        cp.exec('ant', function () {
+        cp.exec('ant', function (error, stdout, stderr) {
 
-            console.log('Success ant. The total number of files : %d', app._num);
+            stdout && console.log('stdout: ' + stdout);
+            stderr && console.log('stderr: ' + stderr);
 
-            app.createJSON();
+            if(!error){
+                console.log('Success ant. The total number of files : %d', app._num);
+
+                console.log("Create module.js....");
+                app.createJSON();
+                console.log("success....");
+            }
 
         });
     },
@@ -112,7 +116,7 @@ var app = {
         var _moduleConfig = app._readJson(path.join(app._dir, './moduleConfig.json')).module;
 
         _module.info.forEach(function (_info, i) {
-            console.log(_info)
+//            console.log(_info)
             var _a = _moduleConfig[_info.name]
             if (_a) {
                 _a = _a.filter(function (_t) {
@@ -123,11 +127,28 @@ var app = {
                 _module.info[i].rule = [];
             }
             _module.info[i].info = app._info[_info.name] || 'Unknow';
-//            if(_info.name=='debugger') _module.info[i].rule.push('core')
         });
 
+        var hiddenList = {
+            'core-webgl': 0,
+            'core-extensions': 1,
+            'kazmath': 1,
+            'shaders': 1,
+            'node-grid': 1,
+            'compression': 1,
+            'effects': 1,
+            'physics': 1
+        };
 
-        fs.writeFileSync('./' + name + '/module.js', "var module=" + JSON.stringify(_module));
+        fs.writeFileSync(
+                './' + name + '/module.js',
+                "var module=" +
+                JSON.stringify(_module) +
+                ';var _sort=' +
+                JSON.stringify(this._sort) +
+                ';var hiddenList=' +
+                JSON.stringify(hiddenList)
+        );
 
     },
     _sort: [
@@ -137,36 +158,36 @@ var app = {
         "webgl",
         "debugger",
         "actions",
-        "labels",
         "audio",
         "menus",
-        "transitions",
-        "ccui",
-        "shape-nodes",
-        "clipping-nodes",
-        "particle",
-        "progress-timer",
-        "actions3d",
-        "tilemap",
-        "parallax",
-        "render-texture",
-        "text-input",
-        "gui",
-        "editbox",
-        "cocostudio",
-        "ccbreader",
-        "box2d",
-        "chipmunk",
-        "socketio",
-        "pluginx",
-        "motion-streak",
-
         "kazmath",
         "shaders",
+        "render-texture",
+        "labels",
+        "motion-streak",
         "node-grid",
+        "shape-nodes",
+        "clipping-nodes",
         "effects",
+        "actions3d",
+        "progress-timer",
+        "transitions",
         "compression",
-        "physics"
+        "particle",
+        "text-input",
+        "tilemap",
+        "parallax",
+        "gui",
+        "ccbreader",
+        "editbox",
+        "ccui",
+        "cocostudio",
+        "pluginx",
+        "physics",
+        "socketio",
+        "box2d",
+        "chipmunk",
+        "spine"
     ],
     _info: {
         "core-extensions": "Cocos2d Core extensions",
@@ -203,7 +224,8 @@ var app = {
         "physics": 'Physics node for Box2d and Chipmunk',
         "socketio": 'ScoketIO library support',
         "box2d": 'Built in box2d physics engine support',
-        "chipmunk": 'Built in Chipmunk physics engine support'
+        "chipmunk": 'Built in Chipmunk physics engine support',
+        "spine": "The spine support library"
     }
 };
 

@@ -37,7 +37,7 @@ var module = {"info": [
 ]};
 
 var hiddenList = {
-    'core-webgl': 1,
+    'core-webgl': 0,
     'core-extensions': 1,
     'kazmath': 1,
     'shaders': 1,
