@@ -15,7 +15,7 @@ module.exports = function (app) {
 
         var file = param['file'].split(',');
 
-        var _result = '/** \n * Cocos2d-html5 ' + param['ver'] + '\n * ' + (param['com'] == 'true' ? '' : 'No ') + 'comparess\n */\n\n';
+        var _result = '';//'/** \n * Cocos2d-html5 ' + param['ver'] + '\n * ' + (param['com'] == 'true' ? '' : 'No ') + 'comparess\n */\n\n';
 
         file.forEach(function (_name) {
             _result += fs.readFileSync(path.join(__dirname, './' + param['ver'] + '/', param['com'] == 'true' ? 'dist' : 'src', _name + '.js'));

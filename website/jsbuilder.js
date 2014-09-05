@@ -1,91 +1,322 @@
 var defaultVersion = 'v3.0-RC3';
 
-var pageSet = {};
-
-pageSet._tbody = document.getElementById("tbody");
-
-pageSet.init = function(){
-    pageSet.setVersion();
-    pageSet.All();
-    pageSet.getImage();
+var removeClass = function(DOM, CLASS){
+    DOM.className = DOM.className.replace(" " + CLASS, "");
+};
+var addClass = function(DOM, CLASS){
+    removeClass(DOM, CLASS);
+    DOM.className += " " + CLASS;
 };
 
-pageSet.continue = function(){
-    pageSet.createHTML();
-    pageSet.setDropdown();
-    pageSet.onClick();
-};
+/**
+ * Program module
+ * @namespace
+ */
+var pagePG = {};
 
-pageSet.createHTML = function () {
-    module.info.forEach(function (_result) {
-        if (_result.name == "core"){
-            pageSet.Html(_result);
+pagePG.ModuleDiv = document.getElementById("custom");
+pagePG.ModuleList = null;
+pagePG.ModuleButtonList = null;
+pagePG.ModuleCheckList = null;
+
+pagePG.prevClickModuleName = "";
+pagePG.prevClickChangeModule = [];
+
+/**
+ * Mode label button event
+ * @function
+ */
+pagePG.ModeButton = function(){
+
+    var tmp;
+    var modeLabel = document.getElementById("mode");
+    tmp = modeLabel.getElementsByTagName("span");
+    var Default = tmp[0].parentNode;
+    var Full = tmp[1].parentNode;
+    var Custom = tmp[2].parentNode;
+
+    Default.addEventListener("click", function(){
+        removeClass(tmp[1], "checked");
+        removeClass(tmp[2], "checked");
+        addClass(tmp[0], "checked");
+        if(module && hiddenList && _sort){
+            pagePG.Init();
+            addClass(pagePG.ModuleDiv, "custom");
         }
     });
-    module.info.forEach(function (_result) {
-        if (_result.name != "core")
-            pageSet.Html(_result);
+    Full.addEventListener("click", function(){
+        removeClass(tmp[0], "checked");
+        removeClass(tmp[2], "checked");
+        addClass(tmp[1], "checked");
+        if(module && hiddenList && _sort){
+            pagePG.SelectAll();
+            addClass(pagePG.ModuleDiv, "custom");
+        }
+    });
+    Custom.addEventListener("click", function(){
+        removeClass(tmp[0], "checked");
+        removeClass(tmp[1], "checked");
+        addClass(tmp[2], "checked");
+        if(module && hiddenList && _sort){
+            pagePG.MiniSize();
+            removeClass(pagePG.ModuleDiv, "custom");
+        }
     });
 };
 
-pageSet.Html = function (result) {
 
-    var _tr = document.createElement('tr');
-    if(hiddenList[result.name]){
-        _tr.style.display = 'none';
-    }
+/**
+ * Load module list
+ * @function
+ */
+pagePG.LoadList = function(){
+    var version = window.location.href.split('?')[1];
+    if (version == undefined) version = 'ver=' + defaultVersion;
+    var paramArr = version.split('&');
 
-    var _td = document.createElement('td');
+    paramArr = paramArr.map(function (_param) {
+        return _param.split('=');
+    });
 
-    var _span = document.createElement('span');
-    _span.id = result.name;
-    _span.className = 'mark';
+    paramArr.forEach(function (_param) {
+        if (_param[0] == 'ver') {
+            //show version
+            document.getElementById('version').innerHTML = _param[1];
 
-    if (result.name == 'core') {
-        _span.className += ' checked';
-        result.checked = 1;
-    }
-    _td.appendChild(_span);
-    if(result.name == 'actions3d'){
-        _td.innerHTML += 'effects';
-    }else if(result.name == 'debugger'){
+            //load module.js
+            var scp = document.createElement('script');
+            defaultVersion = _param[1];
+            scp.src = _param[1] + '/module.js';
+            document.body.appendChild(scp);
 
-        _td.innerHTML += 'log';
-    }else{
-
-        _td.innerHTML += result.name;
-    }
-    _tr.appendChild(_td);
-
-//    _td = document.createElement('td');
-//    _td.innerHTML = result.size || 'Unknow';
-//    _tr.appendChild(_td);
-
-    _td = document.createElement('td');
-    _td.innerHTML = result.info || 'Unknow';
-    _tr.appendChild(_td);
-
-    pageSet._tbody.appendChild(_tr);
-
-
+            scp.addEventListener("load", function(){
+                if(module && hiddenList && _sort){
+                    pagePG.Init();
+                    pagePG.ModeButton();
+                }
+            });
+        }
+    });
 };
 
-pageSet.onClick = function(){
-    var _tr = pageSet._tbody.getElementsByTagName('tr');
-    for(var i=0;i<_tr.length;i++){
-        _tr[i].onclick = function(){
-            var _span = this.getElementsByTagName('span')[0];
-            var t = '';
-            for(var i=0;i<module.info.length;i++){
-                if(_span.id == module.info[i].name){
-                    t = module.info[i];
-                    break;
+/**
+ * Init the html
+ * @function
+ */
+pagePG.Init = function(){
+    var tbody = pagePG.ModuleDiv.getElementsByTagName("tbody")[0];
+    tbody.innerHTML = "";
+
+    var createHtml = function(result){
+        var tr = document.createElement('tr');
+        if(hiddenList[result.name]){
+            tr.style.display = 'none';
+        }
+
+        var td = document.createElement('td');
+
+        //checked button
+        var span = document.createElement('span');
+        span.id = result.name;
+        span.className = 'mark';
+        td.appendChild(span);
+
+        //default checked
+        if (result.name == 'core' || result.checked != 0) {
+            span.className += ' checked';
+            result.checked = 1;
+        }
+
+        //change module name
+        if(result.name == 'actions3d'){
+            td.innerHTML += 'effects';
+        }else if(result.name == 'debugger'){
+            td.innerHTML += 'log';
+        }else if(result.name == "core-webgl"){
+            td.innerHTML += "webgl";
+        }else{
+            td.innerHTML += result.name;
+        }
+        tr.appendChild(td);
+
+        //info td
+        td = document.createElement('td');
+        td.innerHTML = result.info || 'Unknow';
+        tr.appendChild(td);
+
+        tbody.appendChild(tr);
+    };
+
+    pagePG.ModuleCheckList = {};
+    //Create core <tr>
+    var i;
+    for(i=0; i<module["info"].length; i++){
+        if (module["info"][i].name == "core"){
+            createHtml(module["info"][i]);
+            pagePG.ModuleCheckList["core"] = 1;
+            break;
+        }
+    }
+    //Other module <tr>
+    for(i=0; i<_sort.length; i++){
+
+        var name = _sort[i];
+        if (name != "core"){
+            for(var j=0; j<module["info"].length; j++){
+                if(module["info"][j]["name"] == name){
+                    var result = module["info"][j];
+                    createHtml(result);
+                    pagePG.ModuleCheckList[result["name"]] = result["checked"];
                 }
             }
-            pageSet._check = 0;
-            return pageSet.checkDown.call(_span, t);
         }
     }
+
+    pagePG.BindEvent()
+};
+
+/**
+ * Bind event
+ * @function
+ */
+pagePG.BindEvent = function(){
+    var spanList = pagePG.ModuleDiv.getElementsByTagName("span");
+    pagePG.ModuleButtonList = Array.prototype.map.call(spanList, function(item){
+        return item.parentNode;
+    });
+    pagePG.ModuleButtonList.forEach(function(item, i){
+
+        item.addEventListener("click", function(){
+
+            var name = spanList[i].id;
+
+            if(pagePG.ModuleCheckList[name] === 0){
+                pagePG.prevClickModuleName = name;
+            }else{
+                if(name === pagePG.prevClickModuleName){
+                    pagePG.prevClickChangeModule.forEach(function(item){
+                        if(pagePG.ModuleCheckList[item] === 1){
+
+                            removeClass(document.getElementById(item), "checked");
+                            pagePG.ModuleCheckList[item] = 0;
+                        }
+                    });
+                    pagePG.prevClickModuleName = "";
+                }
+            }
+            pagePG.prevClickChangeModule = [];
+
+            pagePG.ChangeChecked(name, spanList, i);
+        });
+    });
+};
+
+/**
+ * Change module checked
+ * @function
+ *
+ * @param {String} name
+ * @param [spanList=]
+ * @param {number} [i=]
+ */
+pagePG.ChangeChecked = function(name, spanList, i){
+    if(!spanList){
+        i = 0;
+        spanList = [document.getElementById(name)];
+    }
+    if(pagePG.ModuleCheckList[name] === 0){
+
+        addClass(spanList[i], "checked");
+        pagePG.ModuleCheckList[name] = 1;
+        pagePG.checkRule(name, 1);
+    }else if(pagePG.ModuleCheckList[name] === 1){
+
+        removeClass(spanList[i], "checked");
+        pagePG.ModuleCheckList[name] = 0;
+        pagePG.checkRule(name, 0);
+    }else{
+        console.log(name + " is not exists.");
+    }
+};
+
+/**
+ * Check module rule
+ * @function
+ *
+ * @param {string} name
+ * @param {number} mode
+ */
+pagePG.checkRule = function(name, mode){
+    var i, m;
+
+    for(i=0; i<pagePG.prevClickChangeModule.length; i++){
+        if(pagePG.prevClickChangeModule[i] == name){
+            return;
+        }
+    }
+
+    //Find dependencies
+    if(mode){
+        for(i=0; i<module["info"].length; i++){
+            if(module["info"][i]["name"] === name){
+                m = module["info"][i];
+                break;
+            }
+        }
+        m["rule"].forEach(function(item){
+            if(pagePG.ModuleCheckList[item] === 0){
+                pagePG.ChangeChecked(item);
+                if(pagePG.prevClickChangeModule.every(function(item2){
+                    return item2 != item;
+                })){
+                    pagePG.prevClickChangeModule.push(item);
+                }
+            }
+        });
+
+    }
+    //To find module that dependencies this module
+    else{
+        for(i=0; i<module["info"].length; i++){
+            m = module["info"][i];
+            for(var j=0; j<m["rule"].length; j++){
+                if(m["rule"][j] == name){
+                    if(pagePG.ModuleCheckList[m["name"]] === 1){
+                        pagePG.ChangeChecked(m["name"]);
+                    }
+                }
+            }
+        }
+    }
+};
+
+pagePG.checkDrop = false;
+/**
+ * Select list
+ * @function
+ */
+pagePG.setDropdown = function(){
+    var drop = document.getElementById('dropdown');
+
+    var _ver = drop.getElementsByTagName('ul')[0];
+
+    drop.onclick = function () {
+        if (pagePG.checkDrop) {
+            pagePG.checkDrop = false;
+            _ver.style.display = 'none';
+        }
+        else {
+            pagePG.checkDrop = true;
+            _ver.style.display = 'block';
+        }
+    };
+};
+
+/**
+ * Compressed button
+ * @function
+ */
+pagePG.Compressed = function(){
     var _tr2 = document.getElementById('compress').getElementsByTagName('tr');
     for(var i=0;i<_tr2.length;i++){
         _tr2[i].onclick = function(){
@@ -103,198 +334,50 @@ pageSet.onClick = function(){
     }
 };
 
-pageSet.checked = function(result){
-    if (name == 'core' || pageSet._check++ > 10) {
-        return false;
+/**
+ * Select all module
+ * @function
+ */
+pagePG.SelectAll = function(){
+    var p;
+
+    for(p in pagePG.ModuleCheckList){
+        pagePG.ModuleCheckList[p] = 1;
+        addClass(document.getElementById(p), "checked");
     }
 
-    result.rule.forEach(function (_y) {
-        var _t = document.getElementById(_y);
-        if(_t == null) return;
-        var _l;
-        for (var i = 0; i < module.info.length; i++) {
-            if (module.info[i].name == _y) _l = module.info[i];
-        }
-        _l.checked = 1;
-        _t.className = _t.className.replace(' checked', '');
-        _t.className += ' checked';
-        pageSet.checked.call(_t, _l);
-    });
-    result.checked = 1;
 };
 
-pageSet.unchecked = function(result){
-    if (name == 'core' || pageSet._check++ > 10) {
-        return false;
-    }
-
-    var hidden_check = 0;
-    var hidden = function(result){
-        if(result.name == 'box2d'){
-            if(/checked/.test(document.getElementById('chipmunk').className)){
-                return;
-            }
-        }
-        if(result.name == 'chipmunk'){
-            if(/checked/.test(document.getElementById('box2d').className)){
-                return;
-            }
-        }
-        if(hidden_check++ < 5)
-            result.rule.forEach(function(_o){
-                if(hiddenList[_o]){
-                    module.info.forEach(function(_module){
-                        if(_module.name == _o){
-                            _module.checked = 0;
-                            hidden(_module);
-                        }
-                    });
-                }
-            });
-    };
-    hidden(result);
-
-
-    module.info.forEach(function (_module) {
-
-        _module.rule.forEach(function (_r) {
-            var _b = ( _r == result.name );
-            if (_b) {
-                var _t = document.getElementById(_module.name);
-                if(_t == null) return;
-
-                _t.className = _t.className.replace(' checked', '');
-                _module.checked = 0;
-                pageSet.unchecked.call(_t, _module);
-            }
-        });
-
-    });
-
-    result.checked = 0;
-};
-
-pageSet.checkDown = function (result, checked) {
-
-    if (!/checked/.test(this.className)){
-        this.className = this.className.replace(' checked', '');
-        this.className += ' checked';
-
-        pageSet.checked(result);
-
-    }else{
-        this.className = this.className.replace(' checked', '');
-
-        pageSet.unchecked(result);
-
-    }
-};
-
-pageSet.checkDrop = false;
-pageSet.setDropdown = function(){
-    var drop = document.getElementById('dropdown');
-
-    var _ver = drop.getElementsByTagName('ul')[0];
-
-    drop.onclick = function () {
-        if (pageSet.checkDrop) {
-            pageSet.checkDrop = false;
-            _ver.style.display = 'none';
-        }
-        else {
-            pageSet.checkDrop = true;
-            _ver.style.display = 'block';
-        }
-    };
-};
-
-pageSet.setVersion = function(){
-    var version = window.location.href.split('?')[1];
-    if (version == undefined) version = 'ver=' + defaultVersion;
-    var paramArr = version.split('&');
-
-    paramArr = paramArr.map(function (_param) {
-        return _param.split('=');
-    });
-
-    paramArr.forEach(function (_param) {
-        if (_param[0] == 'ver') {
-
-            var _script = document.createElement('script');
-            defaultVersion = _param[1];
-
-            document.getElementById('version').innerHTML = _param[1];
-
-            _script.src = _param[1] + '/module.js';
-            document.body.appendChild(_script);
-
-            _script.onload = function () {
-
-                pageSet.continue();
-            };
-
-            _script.onerror = function () {
-                pageSet.setDropdown();
-            };
-        }
-    });
-};
-
-pageSet._All = false;
-pageSet.All = function(){
-    var _all = document.getElementById('All');
-    _all.parentNode.onclick = function(){
-        if(!pageSet._All){
-            _all.className += ' checked';
-            pageSet._All = true;
-            pageSet.checkedAll();
+/**
+ * Only core
+ * @function
+ */
+pagePG.MiniSize = function(){
+    for(p in pagePG.ModuleCheckList){
+        if(p == "core"){
+            pagePG.ModuleCheckList[p] = 1;
+            addClass(document.getElementById(p), "checked");
         }else{
-            _all.className = _all.className.replace(' checked', '');
-            pageSet._All = false;
-            pageSet.UncheckedAll();
+            pagePG.ModuleCheckList[p] = 0;
+            removeClass(document.getElementById(p), "checked");
         }
-    };
+    }
 };
 
-pageSet.checkedAll = function(){
-    module.info.forEach(function(_module){
-        _module.checked = 1;
-        var _t = document.getElementById(_module.name);
-        _t.className = _t.className.replace(' checked', '');
-        _t.className += ' checked';
-    });
-};
+pagePG.LoadList();
+pagePG.setDropdown();
+pagePG.Compressed();
 
-pageSet.UncheckedAll = function(){
-    module.info.forEach(function(_module){
-        if(_module.name != 'core'){
-            _module.checked = 0;
-            var _t = document.getElementById(_module.name);
-            _t.className = _t.className.replace(' checked', '');
-        }
-    });
-};
-
-pageSet.getImage = function(){
-    var _img = document.createElement('img');
-    _img.src = "img/DownloadHover.png";
-};
-
-pageSet.init();
-
-var Load = function (_a) {
+var Load = function(_a){
     var _com = /checked/.test(document.getElementById("Compressor").className);
 
     var _s = 'download_.js?ver=' + defaultVersion + '&com=' + _com + '&file=';
 
-    _sort.forEach(function(name){
-        for(var i=0;i<module.info.length;i++){
-            if(module.info[i].checked && module.info[i].name == name){
-                _s += module.info[i].name + ',';
-            }
+    _sort.forEach(function(item){
+        if(pagePG.ModuleCheckList[item] === 1){
+            _s += item + ',';
         }
     });
-
     _s = _s.substr(0, _s.length - 1);
     _a.href = _s;
 };
