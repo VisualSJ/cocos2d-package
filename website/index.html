@@ -54,7 +54,7 @@
 </div>
 
 
-<link href="style.css" rel="stylesheet" type="text/css" />
+<link href="style.css?ver=14911" rel="stylesheet" type="text/css" />
 <div class="channel-nav">
     <div class="w960">
         <div id="quick-search" class="channel-search">
@@ -95,6 +95,7 @@
                 <span>More</span>
 
                 <ul>
+                    <li><a href="?ver=v3.0">v3.0</a></li>
                     <li><a href="?ver=v3.0-RC3">v3.0-RC3</a></li>
                     <li><a href="?ver=v3.0-RC2">v3.0-RC2</a></li>
                     <li><a href="?ver=v3.0-RC1">v3.0-RC1</a></li>
@@ -119,10 +120,10 @@
                 <tr>
                     <td class="file">
                         <span class="mark checked"></span>
-                        Express Version
+                        Lite Version
                     </td>
                     <td class="info">
-                        Express version engine contains some core features of Cocos2d-JS, it’s very fast, light and easy to use. It supports features like sprite, events, label, audio, actions and menu, so it’s powerful enough to make cool social games.
+                        Lite Version contains some core features of Cocos2d-JS, it's extremely easy to use and light as a feather. It supports features like sprite, events, label, audio, actions and menu, so it’s powerful enough to make cool social games.
                     </td>
                 </tr>
                 <tr>
@@ -187,6 +188,9 @@
                 <thead>
                 <tr>
                     <td class="file">Compressor</td>
+                    <td class="fileSize">
+                        Size
+                    </td>
                     <td></td>
                 </tr>
                 </thead>
@@ -197,12 +201,18 @@
                         <span id="Compressor" class="mark"></span>
                         Compressed
                     </td>
+                    <td id="cSize" class="fileSize">
+                        Loading...
+                    </td>
                     <td>Uses Google Closure Compiler, to clean whitespace and rename internal variables to shorter values. Highead compression ratio.</td>
                 </tr>
                 <tr>
                     <td>
                         <span class="mark checked"></span>
                         Uncompressed
+                    </td>
+                    <td id="uSize" class="fileSize">
+                        Loading...
                     </td>
                     <td>Uncompressed source. Recommended in testing phase.</td>
                 </tr>
@@ -224,7 +234,7 @@
     </div>
 
 </div>
-<script src="jsbuilder.js"></script>
+<script src="jsbuilder.js?ver=14911"></script>
 
 
 

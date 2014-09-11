@@ -159,3 +159,7 @@
 .custom, .none{
     display: none;
 }
+
+.fileSize{
+    width: 60px;
+}

@@ -1,4 +1,4 @@
-var defaultVersion = 'v3.0-RC3';
+var defaultVersion = 'v3.0';
 
 var removeClass = function(DOM, CLASS){
     DOM.className = DOM.className.replace(" " + CLASS, "");
@@ -14,10 +14,15 @@ var addClass = function(DOM, CLASS){
  */
 var pagePG = {};
 
+pagePG.express = true;
 pagePG.ModuleDiv = document.getElementById("custom");
 pagePG.ModuleList = null;
 pagePG.ModuleButtonList = null;
 pagePG.ModuleCheckList = null;
+pagePG.SizeDivList = {
+    dist: document.getElementById("cSize"),
+    src: document.getElementById("uSize")
+};
 
 pagePG.prevClickModuleName = "";
 pagePG.prevClickChangeModule = [];
@@ -39,6 +44,7 @@ pagePG.ModeButton = function(){
         removeClass(tmp[1], "checked");
         removeClass(tmp[2], "checked");
         addClass(tmp[0], "checked");
+        pagePG.express = true;
         if(module && hiddenList && _sort){
             pagePG.Init();
             addClass(pagePG.ModuleDiv, "custom");
@@ -48,6 +54,7 @@ pagePG.ModeButton = function(){
         removeClass(tmp[0], "checked");
         removeClass(tmp[2], "checked");
         addClass(tmp[1], "checked");
+        pagePG.express = false;
         if(module && hiddenList && _sort){
             pagePG.SelectAll();
             addClass(pagePG.ModuleDiv, "custom");
@@ -57,6 +64,7 @@ pagePG.ModeButton = function(){
         removeClass(tmp[0], "checked");
         removeClass(tmp[1], "checked");
         addClass(tmp[2], "checked");
+        pagePG.express = false;
         if(module && hiddenList && _sort){
             pagePG.MiniSize();
             removeClass(pagePG.ModuleDiv, "custom");
@@ -172,7 +180,8 @@ pagePG.Init = function(){
         }
     }
 
-    pagePG.BindEvent()
+    pagePG.BindEvent();
+    pagePG.readSize();
 };
 
 /**
@@ -207,8 +216,35 @@ pagePG.BindEvent = function(){
             pagePG.prevClickChangeModule = [];
 
             pagePG.ChangeChecked(name, spanList, i);
+
+            pagePG.readSize();
         });
     });
+};
+
+/**
+ * show size
+ */
+pagePG.readSize = function(){
+    var p;
+    var dist = 0;
+    var src = 0;
+
+    for(p in pagePG.ModuleCheckList){
+        if(pagePG.ModuleCheckList[p]){
+
+            for(var i=0; i<module["info"].length; i++){
+                var item = module["info"][i];
+                if(item['name'] === p){
+                    dist += parseFloat(item['minSize']);
+                    src += parseFloat(item['maxSize']);
+                    break;
+                }
+            }
+        }
+    }
+    pagePG.SizeDivList.dist.innerHTML = (dist | 0) + "KB";
+    pagePG.SizeDivList.src.innerHTML = (src | 0) + "KB";
 };
 
 /**
@@ -345,6 +381,7 @@ pagePG.SelectAll = function(){
         pagePG.ModuleCheckList[p] = 1;
         addClass(document.getElementById(p), "checked");
     }
+    pagePG.readSize();
 
 };
 
@@ -362,6 +399,7 @@ pagePG.MiniSize = function(){
             removeClass(document.getElementById(p), "checked");
         }
     }
+    pagePG.readSize();
 };
 
 pagePG.LoadList();
@@ -371,7 +409,7 @@ pagePG.Compressed();
 var Load = function(_a){
     var _com = /checked/.test(document.getElementById("Compressor").className);
 
-    var _s = 'download_.js?ver=' + defaultVersion + '&com=' + _com + '&file=';
+    var _s = 'download_.js?ver=' + defaultVersion + '&com=' + _com + '&express=' + pagePG.express.toString() + '&file=';
 
     _sort.forEach(function(item){
         if(pagePG.ModuleCheckList[item] === 1){
