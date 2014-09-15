@@ -2476,7 +2476,7 @@ cc.EGLView = cc.Class.extend({
             }
             if(cc.sys.isMobile)
                 viewportMetas["target-densitydpi"] = this._targetDensityDPI;
-            content = elems ? elems[0].content : "";
+            content = (elems && elems.length>0) ? elems[0].content : "";
             for (var key in viewportMetas) {
                 var pattern = new RegExp(key);
                 if (!pattern.test(content)) {
@@ -5563,6 +5563,7 @@ cc.Node = cc.Class.extend({
         this._running = false;
         this.pause();
         this._arrayMakeObjectsPerformSelector(this._children, cc.Node._StateCallbackType.onExit);
+        this.removeAllComponents();
     },
     runAction: function (action) {
         cc.assert(action, cc._LogInfos.Node_runAction);
@@ -5708,16 +5709,22 @@ cc.Node = cc.Class.extend({
     release: function () {
     },
     getComponent: function (name) {
-        return this._componentContainer.getComponent(name);
+        if(this._componentContainer)
+            return this._componentContainer.getComponent(name);
+        return null;
     },
     addComponent: function (component) {
-        this._componentContainer.add(component);
+        if(this._componentContainer)
+            this._componentContainer.add(component);
     },
     removeComponent: function (component) {
-        return this._componentContainer.remove(component);
+        if(this._componentContainer)
+            return this._componentContainer.remove(component);
+        return false;
     },
     removeAllComponents: function () {
-        this._componentContainer.removeAll();
+        if(this._componentContainer)
+            this._componentContainer.removeAll();
     },
     grid: null,
     ctor: null,
