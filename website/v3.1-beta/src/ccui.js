@@ -350,7 +350,6 @@ ccui.Node.extend = ccui.Node.extend || cc.Node.extend;
 ccui.ProtectedNode = ccui.ProtectedNode || cc.ProtectedNode;
 ccui.ProtectedNode.extend = ccui.ProtectedNode.extend || cc.ProtectedNode.extend;
 ccui.cocosGUIVersion = "CocosGUI v1.0.0.0";
-var __LAYOUT_COMPONENT_NAME = "__ui_layout";
 ccui.Widget = ccui.ProtectedNode.extend({
     _enabled: true,
     _bright: true,
@@ -375,6 +374,7 @@ ccui.Widget = ccui.ProtectedNode.extend({
     _sizePercent: null,
     _positionType: null,
     _positionPercent: null,
+    _reorderWidgetChildDirty: false,
     _hit: false,
     _nodes: null,
     _touchListener: null,
@@ -384,8 +384,6 @@ ccui.Widget = ccui.ProtectedNode.extend({
     _opacity: 255,
     _highlight: false,
     _touchEventCallback: null,
-    _propagateTouchEvents: true,
-    _unifySize: false,
     ctor: function () {
         cc.ProtectedNode.prototype.ctor.call(this);
         this._brightStyle = ccui.Widget.BRIGHT_STYLE_NONE;
@@ -428,15 +426,6 @@ ccui.Widget = ccui.ProtectedNode.extend({
         this.unscheduleUpdate();
         cc.ProtectedNode.prototype.onExit.call(this);
     },
-    getOrCreateLayoutComponent: function(){
-        var layoutComponent = this.getComponent(__LAYOUT_COMPONENT_NAME);
-        if (null == layoutComponent){
-            var component = new ccui.LayoutComponent();
-            this.addComponent(component);
-            layoutComponent = component;
-        }
-        return layoutComponent;
-    },
     visit: function (ctx) {
         if (this._visible) {
             this._adaptRenderers();
@@ -450,11 +439,6 @@ ccui.Widget = ccui.ProtectedNode.extend({
         return null;
     },
     _updateContentSizeWithTextureSize: function(size){
-        if (this._unifySize)
-        {
-            this.setContentSize(size);
-            return;
-        }
         this.setContentSize(this._ignoreSize ? size : this._customSize);
     },
     _isAncestorsEnabled: function(){
@@ -464,25 +448,6 @@ ccui.Widget = ccui.ProtectedNode.extend({
         if (parentWidget && !parentWidget.isEnabled())
             return false;
         return parentWidget._isAncestorsEnabled();
-    },
-    setPropagateTouchEvents: function(isPropagate){
-        this._propagateTouchEvents = isPropagate;
-    },
-    isPropagateTouchEvents: function(){
-        return this._propagateTouchEvents;
-    },
-    setSwallowTouches: function(swallow){
-        if (this._touchListener)
-        {
-            this._touchListener.setSwallowTouches(swallow);
-        }
-    },
-    isSwallowTouches: function(){
-        if (this._touchListener)
-        {
-            return true;
-        }
-        return false;
     },
     _getAncensterWidget: function(node){
         if (null == node)
@@ -519,9 +484,13 @@ ccui.Widget = ccui.ProtectedNode.extend({
         cc.Node.prototype.setContentSize.call(this, locWidth, locHeight);
         this._customSize.width = locWidth;
         this._customSize.height = locHeight;
-        if (this._unifySize){
-        }else if (this._ignoreSize){
+        if (this._ignoreSize)
             this._contentSize = this.getVirtualRendererSize();
+        if (this._running) {
+            var widgetParent = this.getWidgetParent();
+            var pSize = widgetParent ? widgetParent.getContentSize() : this._parent.getContentSize();
+            this._sizePercent.x = (pSize.width > 0.0) ? locWidth / pSize.width : 0.0;
+            this._sizePercent.y = (pSize.height > 0.0) ? locHeight / pSize.height : 0.0;
         }
         this._onSizeChanged();
     },
@@ -651,24 +620,12 @@ ccui.Widget = ccui.ProtectedNode.extend({
     },
     setSizeType: function (type) {
         this._sizeType = type;
-        var component = this.getOrCreateLayoutComponent();
-        if (this._sizeType == ccui.Widget.SIZE_PERCENT)
-        {
-            component.setUsingPercentContentSize(true);
-        }
-        else
-        {
-            component.setUsingPercentContentSize(false);
-        }
     },
     getSizeType: function () {
         return this._sizeType;
     },
     ignoreContentAdaptWithSize: function (ignore) {
-        if (this._unifySize){
-            this.setContentSize(this._customSize);
-            return;
-        }else if(this._ignoreSize == ignore)
+        if(this._ignoreSize == ignore)
             return;
         this._ignoreSize = ignore;
         this.setContentSize( ignore ? this.getVirtualRendererSize() : this._customSize );
@@ -684,8 +641,7 @@ ccui.Widget = ccui.ProtectedNode.extend({
         return cc.size(this._contentSize);
     },
     getSizePercent: function () {
-        var component = this.getOrCreateLayoutComponent();
-        return component.getPercentContentSize();
+        return cc.p(this._sizePercent);
     },
     _getWidthPercent: function () {
         return this._sizePercent.x;
@@ -844,10 +800,6 @@ ccui.Widget = ccui.ProtectedNode.extend({
     },
     _onPressStateChangedToDisabled: function () {
     },
-    _updateChildrenDisplayedRGBA: function(){
-        this.setColor(this.getColor());
-        this.setOpacity(this.getOpacity());
-    },
     didNotSelectSelf: function () {
     },
     onTouchBegan: function (touch, event) {
@@ -863,19 +815,11 @@ ccui.Widget = ccui.ProtectedNode.extend({
             return false;
         }
         this.setHighlighted(true);
-        if (this._propagateTouchEvents)
-        {
-            this.propagateTouchEvent(ccui.Widget.TOUCH_BEGAN, this, touch);
-        }
-        this._pushDownEvent();
-        return true;
-    },
-    propagateTouchEvent: function(event, sender, touch){
         var widgetParent = this.getWidgetParent();
         if (widgetParent)
-        {
-            widgetParent.interceptTouchEvent(event, sender, touch);
-        }
+            widgetParent.interceptTouchEvent(ccui.Widget.TOUCH_BEGAN, this, touch);
+        this._pushDownEvent();
+        return true;
     },
     onTouchMoved: function (touch, event) {
         var touchPoint = touch.getLocation();
@@ -925,9 +869,6 @@ ccui.Widget = ccui.ProtectedNode.extend({
             this._touchEventCallback(this, ccui.Widget.TOUCH_ENDED);
         if (this._touchEventListener && this._touchEventSelector)
             this._touchEventSelector.call(this._touchEventListener, this, ccui.Widget.TOUCH_ENDED);
-        if (this._clickEventListener) {
-            this._clickEventListener(this);
-        }
     },
     _cancelUpEvent: function () {
         if (this._touchEventCallback)
@@ -944,9 +885,6 @@ ccui.Widget = ccui.ProtectedNode.extend({
             this._touchEventSelector = selector;
             this._touchEventListener = target;
         }
-    },
-    addClickEventListener: function(callback){
-        this._clickEventListener = callback;
     },
     hitTest: function (pt) {
         var bb = cc.rect(0,0, this._contentSize.width, this._contentSize.height);
@@ -981,8 +919,25 @@ ccui.Widget = ccui.ProtectedNode.extend({
             widgetParent.checkChildInfo(handleState, sender, touchPoint);
     },
     setPosition: function (pos, posY) {
+        if (this._running) {
+            var widgetParent = this.getWidgetParent();
+            if (widgetParent) {
+                var pSize = widgetParent.getContentSize();
+                if (pSize.width <= 0 || pSize.height <= 0) {
+                    this._positionPercent.x = 0;
+                    this._positionPercent.y = 0;
+                } else {
+                    if (posY == undefined) {
+                        this._positionPercent.x = pos.x / pSize.width;
+                        this._positionPercent.y = pos.y / pSize.height;
+                    } else {
+                        this._positionPercent.x = pos / pSize.width;
+                        this._positionPercent.y = posY / pSize.height;
+                    }
+                }
+            }
+        }
         cc.Node.prototype.setPosition.call(this, pos, posY);
-        this._positionType = ccui.Widget.POSITION_ABSOLUTE;
     },
     setPositionX: function (x) {
         if (this._running) {
@@ -1037,7 +992,7 @@ ccui.Widget = ccui.ProtectedNode.extend({
         }
     },
     getPositionPercent: function () {
-        return cc.p(this.getNormalizedPosition());
+        return cc.p(this._positionPercent);
     },
     _getXPercent: function () {
         return this._positionPercent.x;
@@ -1047,15 +1002,6 @@ ccui.Widget = ccui.ProtectedNode.extend({
     },
     setPositionType: function (type) {
         this._positionType = type;
-        if (type == ccui.Widget.POSITION_ABSOLUTE)
-        {
-            var oldPosition = this.getPosition();
-            this.setPosition(this.getPosition() + cc.p(10,0));
-            this.setPosition(oldPosition);
-        }
-        else
-        {
-        }
     },
     getPositionType: function () {
         return this._positionType;
@@ -1176,10 +1122,8 @@ ccui.Widget = ccui.ProtectedNode.extend({
         this._touchEventCallback = widget._touchEventCallback;
         this._touchEventListener = widget._touchEventListener;
         this._touchEventSelector = widget._touchEventSelector;
-        this._clickEventListener = widget._clickEventListener;
         this._focused = widget._focused;
         this._focusEnabled = widget._focusEnabled;
-        this._propagateTouchEvents = widget._propagateTouchEvents;
         for (var key in widget._layoutParameterDictionary) {
             var parameter = widget._layoutParameterDictionary[key];
             if (parameter)
@@ -1281,11 +1225,9 @@ ccui.Widget = ccui.ProtectedNode.extend({
                 layout = layout._parent;
         }
     },
-    isUnifySizeEnabled: function(){
-        return this._unifySize;
-    },
-    setUnifySizeEnabled: function(enable){
-        this._unifySize = enable;
+    _updateChildrenDisplayedRGBA: function(){
+        this.setColor(this.getColor());
+        this.setOpacity(this.getOpacity());
     }
 });
 var _p = ccui.Widget.prototype;
@@ -2087,7 +2029,6 @@ ccui.Layout = ccui.Widget.extend({
     _loopFocus: false,
     __passFocusToChild: false,
     _isFocusPassing:false,
-    _isInterceptTouch: false,
     _beforeVisitCmdStencil: null,
     _afterDrawStencilCmd: null,
     _afterVisitCmdStencil: null,
@@ -2573,10 +2514,8 @@ ccui.Layout = ccui.Widget.extend({
         if (!fileName)
             return;
         texType = texType || ccui.Widget.LOCAL_TEXTURE;
-        if (this._backGroundImage == null){
+        if (this._backGroundImage == null)
             this._addBackGroundImage();
-            this.setBackGroundImageScale9Enabled(this._backGroundScale9Enabled);
-        }
         this._backGroundImageFileName = fileName;
         this._bgImageTexType = texType;
         var locBackgroundImage = this._backGroundImage;
@@ -3265,10 +3204,8 @@ ccui.Layout = ccui.Widget.extend({
                     return true;
                 else
                     return this._isWidgetAncestorSupportLoopFocus(parent, direction);
-            } else{
+            } else
                 cc.assert(0, "invalid layout type");
-                return false;
-            }
         } else
             return this._isWidgetAncestorSupportLoopFocus(parent, direction);
     },
@@ -3322,7 +3259,6 @@ ccui.Layout = ccui.Widget.extend({
         this.setClippingType(layout._clippingType);
         this._loopFocus = layout._loopFocus;
         this.__passFocusToChild = layout.__passFocusToChild;
-        this._isInterceptTouch = layout._isInterceptTouch;
     },
     _transformForRenderer: function(parentMatrix){
         if(cc._renderType === cc._RENDER_TYPE_WEBGL){
@@ -4127,7 +4063,6 @@ ccui.Button = ccui.Widget.extend({
     _normalTextureScaleYInSize: 1,
     _pressedTextureScaleXInSize: 1,
     _pressedTextureScaleYInSize: 1,
-    _zoomScale: 0.1,
     _normalTextureLoaded: false,
     _pressedTextureLoaded: false,
     _disabledTextureLoaded: false,
@@ -4210,26 +4145,12 @@ ccui.Button = ccui.Widget.extend({
         return this._scale9Enabled;
     },
     ignoreContentAdaptWithSize: function (ignore) {
-        if(this._unifySize){
-            if(this._scale9Enabled){
-                ccui.ProtectedNode.prototype.setContentSize.call(this, this._customSize);
-            }else{
-                var s = this.getVirtualRendererSize();
-                ccui.ProtectedNode.prototype.setContentSize.call(this, s);
-            }
-            this._onSizeChanged();
-            return;
-        }
         if (!this._scale9Enabled || (this._scale9Enabled && !ignore)) {
             ccui.Widget.prototype.ignoreContentAdaptWithSize.call(this, ignore);
             this._prevIgnoreSize = ignore;
         }
     },
     getVirtualRendererSize: function(){
-        var titleSize = this._titleRenderer.getContentSize();
-        if (!this._normalTextureLoaded && this._titleRenderer.getString().length > 0) {
-            return titleSize;
-        }
         return cc.size(this._normalTextureSize);
     },
     loadTextures: function (normal, selected, disabled, texType) {
@@ -4402,29 +4323,14 @@ ccui.Button = ccui.Widget.extend({
     setCapInsetsNormalRenderer: function (capInsets) {
         if(!capInsets)
             return;
-        var x = capInsets.x;
-        var y = capInsets.y;
-        var width = capInsets.width;
-        var height = capInsets.height;
-        if (this._normalTextureSize.width < width)
-        {
-            x = 0;
-            width = 0;
-        }
-        if (this._normalTextureSize.height < height)
-        {
-            y = 0;
-            height = 0;
-        }
-        var rect = cc.rect(x, y, width, height);
         var locInsets = this._capInsetsNormal;
-        locInsets.x = x;
-        locInsets.y = y;
-        locInsets.width = width;
-        locInsets.height = height;
+        locInsets.x = capInsets.x;
+        locInsets.y = capInsets.y;
+        locInsets.width = capInsets.width;
+        locInsets.height = capInsets.height;
         if (!this._scale9Enabled)
             return;
-        this._buttonNormalRenderer.setCapInsets(rect);
+        this._buttonNormalRenderer.setCapInsets(capInsets);
     },
     getCapInsetsNormalRenderer:function(){
         return cc.rect(this._capInsetsNormal);
@@ -4432,29 +4338,14 @@ ccui.Button = ccui.Widget.extend({
     setCapInsetsPressedRenderer: function (capInsets) {
         if(!capInsets)
             return;
-        var x = capInsets.x;
-        var y = capInsets.y;
-        var width = capInsets.width;
-        var height = capInsets.height;
-        if (this._normalTextureSize.width < width)
-        {
-            x = 0;
-            width = 0;
-        }
-        if (this._normalTextureSize.height < height)
-        {
-            y = 0;
-            height = 0;
-        }
-        var rect = cc.rect(x, y, width, height);
         var locInsets = this._capInsetsPressed;
-        locInsets.x = x;
-        locInsets.y = y;
-        locInsets.width = width;
-        locInsets.height = height;
+        locInsets.x = capInsets.x;
+        locInsets.y = capInsets.y;
+        locInsets.width = capInsets.width;
+        locInsets.height = capInsets.height;
         if (!this._scale9Enabled)
             return;
-        this._buttonClickedRenderer.setCapInsets(rect);
+        this._buttonClickedRenderer.setCapInsets(capInsets);
     },
     getCapInsetsPressedRenderer: function () {
         return cc.rect(this._capInsetsPressed);
@@ -4462,29 +4353,14 @@ ccui.Button = ccui.Widget.extend({
     setCapInsetsDisabledRenderer: function (capInsets) {
         if(!capInsets)
             return;
-        var x = capInsets.x;
-        var y = capInsets.y;
-        var width = capInsets.width;
-        var height = capInsets.height;
-        if (this._normalTextureSize.width < width)
-        {
-            x = 0;
-            width = 0;
-        }
-        if (this._normalTextureSize.height < height)
-        {
-            y = 0;
-            height = 0;
-        }
-        var rect = cc.rect(x, y, width, height);
         var locInsets = this._capInsetsDisabled;
-        locInsets.x = x;
-        locInsets.y = y;
-        locInsets.width = width;
-        locInsets.height = height;
+        locInsets.x = capInsets.x;
+        locInsets.y = capInsets.y;
+        locInsets.width = capInsets.width;
+        locInsets.height = capInsets.height;
         if (!this._scale9Enabled)
             return;
-        this._buttonDisableRenderer.setCapInsets(rect);
+        this._buttonDisableRenderer.setCapInsets(capInsets);
     },
     getCapInsetsDisabledRenderer: function () {
         return cc.rect(this._capInsetsDisabled);
@@ -4500,19 +4376,13 @@ ccui.Button = ccui.Widget.extend({
                 var zoomAction = cc.scaleTo(0.05, this._normalTextureScaleXInSize, this._normalTextureScaleYInSize);
                 this._buttonNormalRenderer.runAction(zoomAction);
                 this._buttonClickedRenderer.setScale(this._pressedTextureScaleXInSize, this._pressedTextureScaleYInSize);
-                this._titleRenderer.stopAllActions();
-                this._titleRenderer.runAction(zoomAction.clone());
             }
         } else {
-            if (this._scale9Enabled){
-                this._buttonNormalRenderer.setColor(cc.color.WHITE);
-            }
+            if (this._scale9Enabled)
+                this._updateTexturesRGBA();
             else {
                 this._buttonNormalRenderer.stopAllActions();
                 this._buttonNormalRenderer.setScale(this._normalTextureScaleXInSize, this._normalTextureScaleYInSize);
-                this._titleRenderer.stopAllActions();
-                this._titleRenderer.setScaleX(this._normalTextureScaleXInSize);
-                this._titleRenderer.setScaleY(this._normalTextureScaleYInSize);
             }
         }
     },
@@ -4528,8 +4398,6 @@ ccui.Button = ccui.Widget.extend({
                 var zoomAction = cc.scaleTo(0.05, this._pressedTextureScaleXInSize + 0.1,this._pressedTextureScaleYInSize + 0.1);
                 this._buttonClickedRenderer.runAction(zoomAction);
                 locNormalRenderer.setScale(this._pressedTextureScaleXInSize + 0.1, this._pressedTextureScaleYInSize + 0.1);
-                this._titleRenderer.stopAllActions();
-                this._titleRenderer.runAction(zoomAction.clone());
             }
         } else {
             locNormalRenderer.setVisible(true);
@@ -4540,9 +4408,6 @@ ccui.Button = ccui.Widget.extend({
             else {
                 locNormalRenderer.stopAllActions();
                 locNormalRenderer.setScale(this._normalTextureScaleXInSize + 0.1, this._normalTextureScaleYInSize + 0.1);
-                this._titleRenderer.stopAllActions();
-                this._titleRenderer.setScaleX(this._normalTextureScaleXInSize + this._zoomScale);
-                this._titleRenderer.setScaleY(this._normalTextureScaleYInSize + this._zoomScale);
             }
         }
     },
@@ -4608,10 +4473,7 @@ ccui.Button = ccui.Widget.extend({
             return this._buttonDisableRenderer;
     },
     _normalTextureScaleChangedWithSize: function () {
-        if(this._unifySize){
-            if (this._scale9Enabled)
-                this._buttonNormalRenderer.setPreferredSize(this._contentSize);
-        }else if (this._ignoreSize) {
+        if (this._ignoreSize) {
             if (!this._scale9Enabled) {
                 this._buttonNormalRenderer.setScale(1.0);
                 this._normalTextureScaleXInSize = this._normalTextureScaleYInSize = 1;
@@ -4663,10 +4525,7 @@ ccui.Button = ccui.Widget.extend({
         this._buttonClickedRenderer.setPosition(this._contentSize.width / 2.0, this._contentSize.height / 2.0);
     },
     _disabledTextureScaleChangedWithSize: function () {
-        if(this._unifySize){
-            if (this._scale9Enabled)
-                this._buttonNormalRenderer.setPreferredSize(this._contentSize);
-        }else if (this._ignoreSize) {
+        if (this._ignoreSize) {
             if (!this._scale9Enabled)
                 this._buttonDisableRenderer.setScale(1.0);
         } else {
@@ -4706,13 +4565,11 @@ ccui.Button = ccui.Widget.extend({
     setPressedActionEnabled: function (enabled) {
         this.pressedActionEnabled = enabled;
     },
+    getTitleRenderer: function(){
+        return this._titleRenderer;
+    },
     setTitleText: function (text) {
         this._titleRenderer.setString(text);
-        if (this._ignoreSize)
-        {
-            var s = this.getVirtualRendererSize();
-            this.setContentSize(s);
-        }
     },
     getTitleText: function () {
         return this._titleRenderer.getString();
@@ -4732,18 +4589,9 @@ ccui.Button = ccui.Widget.extend({
     getTitleFontSize: function () {
         return this._titleRenderer.getFontSize();
     },
-    setZoomScale: function(scale){
-        this._zoomScale = scale;
-    },
-    getZoomScale: function(){
-        return this._zoomScale;
-    },
     setTitleFontName: function (fontName) {
         this._titleRenderer.setFontName(fontName);
         this._fontName = fontName;
-    },
-    getTitleRenderer: function(){
-        return this._titleRenderer;
     },
     getTitleFontName: function () {
         return this._titleRenderer.getFontName();
@@ -4774,7 +4622,6 @@ ccui.Button = ccui.Widget.extend({
         this.setTitleFontSize(uiButton.getTitleFontSize());
         this.setTitleColor(uiButton.getTitleColor());
         this.setPressedActionEnabled(uiButton.pressedActionEnabled);
-        this.setZoomScale(uiButton._zoomScale);
     }
 });
 var _p = ccui.Button.prototype;
@@ -4831,7 +4678,7 @@ ccui.CheckBox = ccui.Widget.extend({
     init: function (backGround, backGroundSelected, cross, backGroundDisabled, frontCrossDisabled, texType) {
         if (ccui.Widget.prototype.init.call(this)) {
             this._isSelected = true;
-            this.setSelected(false);
+            this.setSelectedState(false);
             if(backGround === undefined)
                 this.loadTextures(backGround, backGroundSelected, cross, backGroundDisabled, frontCrossDisabled, texType);
             return true;
@@ -5026,9 +4873,6 @@ ccui.CheckBox = ccui.Widget.extend({
         this._backGroundSelectedBoxRenderer.setVisible(false);
         this._backGroundBoxDisabledRenderer.setVisible(false);
         this._frontCrossDisabledRenderer.setVisible(false);
-        if (this._isSelected){
-            this._frontCrossRenderer.setVisible(true);
-        }
     },
     _onPressStateChangedToPressed: function () {
         this._backGroundBoxRenderer.setVisible(false);
@@ -5045,19 +4889,13 @@ ccui.CheckBox = ccui.Widget.extend({
             this._frontCrossDisabledRenderer.setVisible(true);
         }
     },
-    setSelectedState: function(selected){
-        this.setSelected(selected);
-    },
-    setSelected: function (selected) {
+    setSelectedState: function (selected) {
         if (selected == this._isSelected)
             return;
         this._isSelected = selected;
         this._frontCrossRenderer.setVisible(this._isSelected);
     },
-    getSelectedState: function(){
-        this.isSelected();
-    },
-    isSelected: function () {
+    getSelectedState: function () {
         return this._isSelected;
     },
     _selectedEvent: function () {
@@ -5079,10 +4917,10 @@ ccui.CheckBox = ccui.Widget.extend({
     _releaseUpEvent: function(){
         ccui.Widget.prototype._releaseUpEvent.call(this);
         if (this._isSelected){
-            this.setSelected(false);
+            this.setSelectedState(false);
             this._unSelectedEvent();
         } else {
-            this.setSelected(true);
+            this.setSelectedState(true);
             this._selectedEvent();
         }
     },
@@ -5219,7 +5057,7 @@ ccui.CheckBox = ccui.Widget.extend({
             this.loadTextureFrontCross(uiCheckBox._frontCrossFileName, uiCheckBox._frontCrossTexType);
             this.loadTextureBackGroundDisabled(uiCheckBox._backGroundDisabledFileName, uiCheckBox._backGroundDisabledTexType);
             this.loadTextureFrontCrossDisabled(uiCheckBox._frontCrossDisabledFileName, uiCheckBox._frontCrossDisabledTexType);
-            this.setSelected(uiCheckBox._isSelected);
+            this.setSelectedState(uiCheckBox._isSelected);
             this._checkBoxEventListener = uiCheckBox._checkBoxEventListener;
             this._checkBoxEventSelector = uiCheckBox._checkBoxEventSelector;
         }
@@ -5249,7 +5087,7 @@ ccui.CheckBox = ccui.Widget.extend({
 });
 var _p = ccui.CheckBox.prototype;
 _p.selected;
-cc.defineGetterSetter(_p, "selected", _p.isSelected, _p.setSelected);
+cc.defineGetterSetter(_p, "selected", _p.getSelectedState, _p.setSelectedState);
 _p = null;
 ccui.CheckBox.create = function (backGround, backGroundSeleted, cross, backGroundDisabled, frontCrossDisabled, texType) {
     return new ccui.CheckBox(backGround, backGroundSeleted,cross,backGroundDisabled,frontCrossDisabled,texType);
@@ -5489,13 +5327,13 @@ ccui.LoadingBar = ccui.Widget.extend({
         switch (this._direction) {
             case ccui.LoadingBar.TYPE_LEFT:
                 this._barRenderer.setAnchorPoint(0.0, 0.5);
-                this._barRenderer.setPosition(0, this._contentSize.height*0.5);
+                this._barRenderer.setPosition(-this._totalLength * 0.5, 0.0);
                 if (!this._scale9Enabled)
                     this._barRenderer.setFlippedX(false);
                 break;
             case ccui.LoadingBar.TYPE_RIGHT:
                 this._barRenderer.setAnchorPoint(1.0, 0.5);
-                this._barRenderer.setPosition(this._totalLength,this._contentSize.height*0.5);
+                this._barRenderer.setPosition(this._totalLength * 0.5, 0.0);
                 if (!this._scale9Enabled)
                     this._barRenderer.setFlippedX(true);
                 break;
@@ -5522,12 +5360,12 @@ ccui.LoadingBar = ccui.Widget.extend({
                     case ccui.LoadingBar.TYPE_LEFT:
                         barRenderer.setAnchorPoint(0.0,0.5);
                         if (!self._scale9Enabled)
-                            barRenderer.getSprite().setFlippedX(false);
+                            barRenderer.setFlippedX(false);
                         break;
                     case ccui.LoadingBar.TYPE_RIGHT:
                         barRenderer.setAnchorPoint(1.0,0.5);
                         if (!self._scale9Enabled)
-                            barRenderer.getSprite().setFlippedX(true);
+                            barRenderer.setFlippedX(true);
                         break;
                 }
                 self._updateChildrenDisplayedRGBA();
@@ -5662,10 +5500,7 @@ ccui.LoadingBar = ccui.Widget.extend({
     },
     _barRendererScaleChangedWithSize: function () {
         var locBarRender = this._barRenderer, locContentSize = this._contentSize;
-        if(this._unifySize){
-            this._totalLength = this._contentSize.width;
-            this.setPercent(this._percent);
-        }else if (this._ignoreSize) {
+        if (this._ignoreSize) {
             if (!this._scale9Enabled) {
                 this._totalLength = this._barRendererTextureSize.width;
                 locBarRender.setScale(1.0);
@@ -5784,8 +5619,6 @@ ccui.Slider = ccui.Widget.extend({
         this._slidBallRenderer.addChild(this._slidBallNormalRenderer);
         this._slidBallRenderer.addChild(this._slidBallPressedRenderer);
         this._slidBallRenderer.addChild(this._slidBallDisabledRenderer);
-        this._slidBallRenderer.setCascadeColorEnabled(true);
-        this._slidBallRenderer.setCascadeOpacityEnabled(true);
         this.addProtectedChild(this._slidBallRenderer, ccui.Slider.BALL_RENDERER_ZORDER, -1);
     },
     loadBarTexture: function (fileName, texType) {
@@ -6016,7 +5849,7 @@ ccui.Slider = ccui.Widget.extend({
         this._percent = percent;
         var res = percent / 100.0;
         var dis = this._barLength * res;
-        this._slidBallRenderer.setPosition(dis, this._contentSize.height / 2);
+        this._slidBallRenderer.setPosition(cc.p(dis, this._contentSize.height / 2));
         if (this._scale9Enabled)
             this._progressBarRenderer.setPreferredSize(cc.size(dis, this._progressBarTextureSize.height));
         else {
@@ -6103,10 +5936,7 @@ ccui.Slider = ccui.Widget.extend({
         return this._barRenderer;
     },
     _barRendererScaleChangedWithSize: function () {
-        if(this._unifySize){
-            this._barLength = this._contentSize.width;
-            this._barRenderer.setPreferredSize(this._contentSize);
-        }else if (this._ignoreSize) {
+        if (this._ignoreSize) {
             this._barRenderer.setScale(1.0);
             this._barLength = this._contentSize.width;
         }
@@ -6131,10 +5961,7 @@ ccui.Slider = ccui.Widget.extend({
         this.setPercent(this._percent);
     },
     _progressBarRendererScaleChangedWithSize: function () {
-        if(this._unifySize){
-            this._barLength = this._contentSize.width;
-            this._barRenderer.setPreferredSize(this._contentSize);
-        }else if (this._ignoreSize) {
+        if (this._ignoreSize) {
             if (!this._scale9Enabled) {
                 var ptextureSize = this._progressBarTextureSize;
                 var pscaleX = this._contentSize.width / ptextureSize.width;
@@ -6370,7 +6197,6 @@ ccui.Text = ccui.Widget.extend({
     _labelScaleChangedWithSize: function () {
         var locContentSize = this._contentSize;
         if (this._ignoreSize) {
-            this._labelRenderer.setDimensions(0,0);
             this._labelRenderer.setScale(1.0);
             this._normalScaleValueX = this._normalScaleValueY = 1;
         } else {
@@ -7386,7 +7212,7 @@ ccui.RichText = ccui.Widget.extend({
             for (j = 0; j < row.length; j++) {
                 l = row[j];
                 l.setAnchorPoint(cc.p(0, 0));
-                l.setPosition(nextPosX, 0);
+                l.setPosition(cc.p(nextPosX, 0));
                 locRenderersContainer.addChild(l, 1, j);
                 var iSize = l.getContentSize();
                 newContentSizeWidth += iSize.width;
@@ -7558,10 +7384,6 @@ ccui.ScrollView = ccui.Layout.extend({
     _initRenderer: function () {
         ccui.Layout.prototype._initRenderer.call(this);
         this._innerContainer = ccui.Layout.create();
-        this._innerContainer.setColor(cc.color(255,255,255));
-        this._innerContainer.setOpacity(255);
-        this._innerContainer.setCascadeColorEnabled(true);
-        this._innerContainer.setCascadeOpacityEnabled(true);
         this.addProtectedChild(this._innerContainer, 1, 1);
     },
     _onSizeChanged: function () {
@@ -8576,28 +8398,20 @@ ccui.ScrollView = ccui.Layout.extend({
     },
     onTouchBegan: function (touch, event) {
         var pass = ccui.Layout.prototype.onTouchBegan.call(this, touch, event);
-        if(!this._isInterceptTouch){
-            if (this._hit)
-                this._handlePressLogic(touch);
-        }
+        if (this._hit)
+            this._handlePressLogic(touch);
         return pass;
     },
     onTouchMoved: function (touch, event) {
         ccui.Layout.prototype.onTouchMoved.call(this, touch, event);
-        if(!this._isInterceptTouch)
-            this._handleMoveLogic(touch);
+        this._handleMoveLogic(touch);
     },
     onTouchEnded: function (touch, event) {
         ccui.Layout.prototype.onTouchEnded.call(this, touch, event);
-        if(!this._isInterceptTouch)
-            this._handleReleaseLogic(touch);
-        this._isInterceptTouch = false;
+        this._handleReleaseLogic(touch);
     },
     onTouchCancelled: function (touch, event) {
         ccui.Layout.prototype.onTouchCancelled.call(this, touch, event);
-        if (!this._isInterceptTouch)
-            this.handleReleaseLogic(touch);
-        this._isInterceptTouch = false;
     },
     update: function (dt) {
         if (this._autoScroll)
@@ -8614,7 +8428,6 @@ ccui.ScrollView = ccui.Layout.extend({
         var touchPoint = touch.getLocation();
         switch (event) {
             case ccui.Widget.TOUCH_BEGAN:
-                this._isInterceptTouch = true;
                 this._touchBeganPosition.x = touchPoint.x;
                 this._touchBeganPosition.y = touchPoint.y;
                 this._handlePressLogic(touch);
@@ -8633,9 +8446,6 @@ ccui.ScrollView = ccui.Layout.extend({
                 this._touchEndPosition.x = touchPoint.x;
                 this._touchEndPosition.y = touchPoint.y;
                 this._handleReleaseLogic(touch);
-                if (sender.isSwallowTouches()){
-                    this._isInterceptTouch = false;
-                }
                 break;
         }
     },
@@ -9187,8 +8997,6 @@ ccui.PageView = ccui.Layout.extend({
     _pageViewEventListener: null,
     _pageViewEventSelector: null,
     _className:"PageView",
-    _customScrollThreshold: 0,
-    _usingCustomScrollThreshold: false,
     /**
      * Allocates and initializes a UIPageView.
      * Constructor of ccui.PageView. please do not call this function by yourself, you should pass the parameters to constructor to initialize it .
@@ -9375,27 +9183,19 @@ ccui.PageView = ccui.Layout.extend({
         }
     },
     onTouchMoved: function (touch, event) {
-        ccui.Layout.prototype.onTouchMoved.call(this, touch, event);
-        if (!this._isInterceptTouch)
-        {
-            this._handleMoveLogic(touch);
-        }
+        this._handleMoveLogic(touch);
+        var widgetParent = this.getWidgetParent();
+        if (widgetParent)
+            widgetParent.interceptTouchEvent(ccui.Widget.TOUCH_MOVED, this, touch);
+        this._moveEvent();
     },
     onTouchEnded: function (touch, event) {
         ccui.Layout.prototype.onTouchEnded.call(this, touch, event);
-        if (!this._isInterceptTouch)
-        {
-            this._handleReleaseLogic(touch);
-        }
-        this._isInterceptTouch = false;
+        this._handleReleaseLogic(touch);
     },
     onTouchCancelled: function (touch, event) {
         ccui.Layout.prototype.onTouchCancelled.call(this, touch, event);
-        if (!this._isInterceptTouch)
-        {
-            this.handleReleaseLogic(touch);
-        }
-        this._isInterceptTouch = false;
+        this._handleReleaseLogic(touch);
     },
     _doLayout: function(){
         if (!this._doLayoutDirty)
@@ -9450,20 +9250,6 @@ ccui.PageView = ccui.Layout.extend({
             this._touchMoveDirection = ccui.PageView.TOUCH_DIR_RIGHT;
         this._scrollPages(offset);
     },
-    setCustomScrollThreshold: function(threshold){
-        cc.assert(threshold>0, "Invalid threshold!");
-        this._customScrollThreshold = threshold;
-        this.setUsingCustomScrollThreshold(true);
-    },
-    getCustomScrollThreshold: function(){
-        return this._customScrollThreshold;
-    },
-    setUsingCustomScrollThreshold: function(flag){
-        this._usingCustomScrollThreshold = flag;
-    },
-    isUsingCustomScrollThreshold: function(){
-        return this._usingCustomScrollThreshold;
-    },
     _handleReleaseLogic: function (touchPoint) {
         if (this._pages.length <= 0)
             return;
@@ -9473,10 +9259,7 @@ ccui.PageView = ccui.Layout.extend({
             var pageCount = this._pages.length;
             var curPageLocation = curPagePos.x;
             var pageWidth = this.getSize().width;
-            if (!this._usingCustomScrollThreshold) {
-                this._customScrollThreshold = pageWidth / 2.0;
-            }
-            var boundary = this._customScrollThreshold;
+            var boundary = pageWidth / 2.0;
             if (curPageLocation <= -boundary) {
                 if (this._curPageIdx >= pageCount - 1)
                     this._scrollPages(-curPageLocation);
@@ -9497,7 +9280,6 @@ ccui.PageView = ccui.Layout.extend({
             case ccui.Widget.TOUCH_BEGAN:
                 this._touchBeganPosition.x = touchPoint.x;
                 this._touchBeganPosition.y = touchPoint.y;
-                this._isInterceptTouch = true;
                 break;
             case ccui.Widget.TOUCH_MOVED:
                 this._touchMovePosition.x = touchPoint.x;
@@ -9514,10 +9296,6 @@ ccui.PageView = ccui.Layout.extend({
                 this._touchEndPosition.x = touchPoint.x;
                 this._touchEndPosition.y = touchPoint.y;
                 this._handleReleaseLogic(touch);
-                if (sender.isSwallowTouches())
-                {
-                    this._isInterceptTouch = false;
-                }
                 break;
         }
     },
@@ -9564,8 +9342,6 @@ ccui.PageView = ccui.Layout.extend({
         ccui.Layout.prototype._copySpecialProperties.call(this, pageView);
         this._pageViewEventListener = pageView._pageViewEventListener;
         this._pageViewEventSelector = pageView._pageViewEventSelector;
-        this._usingCustomScrollThreshold = pageView._usingCustomScrollThreshold;
-        this._customScrollThreshold = pageView._customScrollThreshold;
     }
 });
 ccui.PageView.create = function () {

@@ -122,14 +122,14 @@ cc.AsyncPool = function(srcObj, limit, iterator, onEnd, target){
                 self._isErr = true;
                 if(self._onEnd)
                     self._onEnd.call(self._onEndTarget, err);
-                return
+                return;
             }
             var arr = Array.prototype.slice.call(arguments, 1);
             self._results[this.index] = arr[0];
             if(self.finishedSize == self.size) {
                 if(self._onEnd)
                     self._onEnd.call(self._onEndTarget, null, self._results);
-                return
+                return;
             }
             self._handleItem();
         }.bind(item), self);
@@ -217,7 +217,7 @@ cc.path = {
             if(idx !== -1)
                return fileName.substring(0,idx);
         }
-        return fileName
+        return fileName;
     },
     basename: function (pathStr, extname) {
         var index = pathStr.indexOf("?");
@@ -401,21 +401,6 @@ cc.loader = {
             var fs = require("fs");
             return fs.readFileSync(url).toString();
         }
-    },
-    loadCsb: function(url, cb){
-        var xhr = new XMLHttpRequest(),
-            errInfo = "load " + url + " failed!";
-        xhr.open("GET", url, true);
-        xhr.responseType = "arraybuffer";
-        xhr.onload = function () {
-            var arrayBuffer = xhr.response;
-            if (arrayBuffer) {
-                window.msg = arrayBuffer;
-            }
-            if(xhr.readyState == 4)
-                xhr.status == 200 ? cb(null, xhr.response) : cb(errInfo);
-        };
-        xhr.send(null);
     },
     loadJson: function (url, cb) {
         this.loadTxt(url, function (err, txt) {
@@ -1780,13 +1765,7 @@ cc._binaryLoader = {
         cc.loader.loadBinary(realUrl, cb);
     }
 };
-cc._csbLoader = {
-    load: function(realUrl, url, res, cb){
-        cc.loader.loadCsb(realUrl, cb);
-    }
-};
-cc.loader.register(["csb"], cc._csbLoader);
-window["CocosEngine"] = cc.ENGINE_VERSION = "Cocos2d-JS v3.0 Final";
+window["CocosEngine"] = cc.ENGINE_VERSION = "Cocos2d-JS v3.1 Beta";
 cc.FIX_ARTIFACTS_BY_STRECHING_TEXEL = 0;
 cc.DIRECTOR_STATS_POSITION = cc.p(0, 0);
 cc.DIRECTOR_FPS_INTERVAL = 0.5;
