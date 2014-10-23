@@ -191,6 +191,417 @@ null);null==this.result&&(this.result=this.ns.build());if(b){b=b.split(".");for(
 d,m)};g.protoFromString=g.loadProto;g.loadProtoFile=function(e,d,m){d&&"object"===typeof d?(m=d,d=null):d&&"function"===typeof d||(d=null);if(d)return g.Util.fetch("string"===typeof e?e:e.root+"/"+e.file,function(k){if(null===k)d(Error("Failed to fetch file"));else try{d(null,g.loadProto(k,m,e))}catch(b){d(b)}});var k=g.Util.fetch("object"===typeof e?e.root+"/"+e.file:e);return null===k?null:g.loadProto(k,m,e)};g.protoFromFile=g.loadProtoFile;g.newBuilder=function(e){e=e||{};"undefined"===typeof e.convertFieldsToCamelCase&&
 (e.convertFieldsToCamelCase=g.convertFieldsToCamelCase);"undefined"===typeof e.populateAccessors&&(e.populateAccessors=g.populateAccessors);return new g.Builder(e)};g.loadJson=function(e,d,m){if("string"===typeof d||d&&"string"===typeof d.file&&"string"===typeof d.root)m=d,d=null;d&&"object"===typeof d||(d=g.newBuilder());"string"===typeof e&&(e=JSON.parse(e));d["import"](e,m);d.resolveAll();d.build();return d};g.loadJsonFile=function(e,d,m){d&&"object"===typeof d?(m=d,d=null):d&&"function"===typeof d||
 (d=null);if(d)return g.Util.fetch("string"===typeof e?e:e.root+"/"+e.file,function(k){if(null===k)d(Error("Failed to fetch file"));else try{d(null,g.loadJson(JSON.parse(k),m,e))}catch(b){d(b)}});var k=g.Util.fetch("object"===typeof e?e.root+"/"+e.file:e);return null===k?null:g.loadJson(JSON.parse(k),m,e)};return g}"undefined"!==typeof module&&module.exports?module.exports=u(require("bytebuffer")):"function"===typeof define&&define.amd?define(["ByteBuffer"],u):(s.dcodeIO=s.dcodeIO||{}).ProtoBuf=u(s.dcodeIO.ByteBuffer)})(this);
+cc.Component = cc.Class.extend({
+    _owner: null,
+    _name: "",
+    _enabled: true,
+    ctor:function(){
+        this._owner = null;
+        this._name = "";
+        this._enabled = true;
+    },
+    init:function(){
+       return true;
+    },
+    onEnter:function(){
+    },
+    onExit:function(){
+    },
+    update:function(delta){
+    },
+    serialize:function( reader){
+    },
+    isEnabled:function(){
+        return this._enabled;
+    },
+    setEnabled:function(enable){
+        this._enabled = enable;
+    },
+    getName:function(){
+        return this._name;
+    } ,
+    setName:function(name){
+         this._name = name;
+    } ,
+    setOwner:function(owner){
+        this._owner = owner;
+    },
+    getOwner:function(){
+        return this._owner;
+    }
+});
+cc.Component.create = function(){
+    return new cc.Component();
+};
+ccui.LayoutComponent_ReferencePoint = {
+    BOTTOM_LEFT: 0,
+    TOP_LEFT: 1,
+    BOTTOM_RIGHT: 2,
+    TOP_RIGHT: 3
+};
+ccui.LayoutComponent_PositionType = {
+    Position: 0,
+    RelativePosition: 1,
+    PreRelativePosition: 2,
+    PreRelativePositionEnable: 3
+};
+ccui.LayoutComponent_SizeType = {
+    Size: 0,
+    PreSize: 1,
+    PreSizeEnable: 2
+};
+ccui.LayoutComponent = cc.Component.extend({
+    _percentContentSize: null,
+    _usingPercentContentSize: false,
+    _referencePoint: ccui.LayoutComponent_ReferencePoint.BOTTOM_LEFT,
+    _relativePosition: null,
+    _percentPosition: null,
+    _usingPercentPosition: false,
+    _actived: true,
+    init: function(){
+        var ret = true;
+        do
+        {
+            if (!cc.Component.prototype.init.call(this))
+            {
+                ret = false;
+                break;
+            }
+        } while (0);
+        return ret;
+    },
+    isUsingPercentPosition: function(){
+        return this._usingPercentPosition;
+    },
+    setUsingPercentPosition: function(flag){
+        this._usingPercentPosition = flag;
+        this.RefreshLayoutPosition(ccui.LayoutComponent_PositionType.PreRelativePositionEnable, cc.p(0,0));
+    },
+    getPercentPosition: function(){
+        return this._percentPosition;
+    },
+    setPercentPosition: function(percent){
+        this.RefreshLayoutPosition(ccui.LayoutComponent_PositionType.PreRelativePosition, percent);
+    },
+    getRelativePosition: function(){
+        return this._relativePosition;
+    },
+    setRelativePosition: function(position){
+        this.RefreshLayoutPosition(ccui.LayoutComponent_PositionType.RelativePosition, position);
+    },
+    setReferencePoint: function(point){
+        this._referencePoint = point;
+        this.RefreshLayoutPosition(ccui.LayoutComponent_PositionType.RelativePosition, this._relativePosition)
+    },
+    getReferencePoint: function(){
+        return this._referencePoint;
+    },
+    getOwnerPosition: function(){
+        return this.getOwner().getPosition();
+    },
+    setOwnerPosition: function(point){
+        this.RefreshLayoutPosition(ccui.LayoutComponent_PositionType.Position, point);
+    },
+    RefreshLayoutPosition: function(pType, point){
+        var parentNode = this.getOwner().getParent();
+        var basePoint = point;
+        if (parentNode != null && this._actived)
+        {
+            var parentSize = parentNode.getContentSize();
+            if ( pType == ccui.LayoutComponent_PositionType.PreRelativePosition)
+            {
+                this._percentPosition = point;
+                basePoint = cc.p(this._percentPosition.x * parentSize.width, this._percentPosition.y * parentSize.height);
+            }
+            else if(pType == ccui.LayoutComponent_PositionType.PreRelativePositionEnable)
+            {
+                if (this._usingPercentPosition)
+                {
+                    if (parentSize.width != 0)
+                    {
+                        this._percentPosition.x = this._relativePosition.x / parentSize.width;
+                    }
+                    else
+                    {
+                        this._percentPosition.x = 0;
+                        this._relativePosition.x = 0;
+                    }
+                    if (parentSize.height != 0)
+                    {
+                        this._percentPosition.y = this._relativePosition.y / parentSize.height;
+                    }
+                    else
+                    {
+                        this._percentPosition.y = 0;
+                        this._relativePosition.y = 0;
+                    }
+                }
+                basePoint = this._relativePosition;
+            }
+            var inversePoint = basePoint;
+            switch (this._referencePoint)
+            {
+            case ccui.LayoutComponent_ReferencePoint.TOP_LEFT:
+                inversePoint.y = parentSize.height - inversePoint.y;
+                break;
+            case ccui.LayoutComponent_ReferencePoint.BOTTOM_RIGHT:
+                inversePoint.x = parentSize.width - inversePoint.x;
+                break;
+            case ccui.LayoutComponent_ReferencePoint.TOP_RIGHT:
+                inversePoint.x = parentSize.width - inversePoint.x;
+                inversePoint.y = parentSize.height - inversePoint.y;
+                break;
+            default:
+                break;
+            }
+            switch (pType)
+            {
+            case ccui.LayoutComponent_PositionType.Position:
+                this.getOwner().setPosition(basePoint);
+                this._relativePosition = inversePoint;
+                if (parentSize.width != 0 && parentSize.height != 0)
+                {
+                    this._percentPosition = cc.p(this._relativePosition.x / parentSize.width, this._relativePosition.y / parentSize.height);
+                }
+                else
+                {
+                    this._percentPosition = cc.p(0,0);
+                }
+                break;
+            case ccui.LayoutComponent_PositionType.RelativePosition:
+                this.getOwner().setPosition(inversePoint);
+                this._relativePosition = basePoint;
+                if (parentSize.width != 0 && parentSize.height != 0)
+                {
+                    this._percentPosition = cc.p(this._relativePosition.x / parentSize.width, this._relativePosition.y / parentSize.height);
+                }
+                else
+                {
+                    this._percentPosition = cc.p(0,0);
+                }
+                break;
+            case ccui.LayoutComponent_PositionType.PreRelativePosition:
+                this.getOwner().setPosition(inversePoint);
+                this._relativePosition = basePoint;
+                break;
+            case ccui.LayoutComponent_PositionType.PreRelativePositionEnable:
+                this.getOwner().setPosition(inversePoint);
+                this._relativePosition = basePoint;
+                break;
+            default:
+                break;
+            }
+        }
+        else
+        {
+            switch (pType)
+            {
+            case ccui.LayoutComponent_PositionType.Position:
+                this.getOwner().setPosition(basePoint);
+                if (this._referencePoint == ccui.LayoutComponent_ReferencePoint.BOTTOM_LEFT)
+                {
+                    this._relativePosition = basePoint;
+                }
+                break;
+            case ccui.LayoutComponent_PositionType.RelativePosition:
+                this._relativePosition = basePoint;
+                break;
+            case ccui.LayoutComponent_PositionType.PreRelativePosition:
+                this._percentPosition = basePoint;
+                break;
+            default:
+                break;
+            }
+        }
+    },
+    getOwnerContentSize: function(){
+        return this.getOwner().getContentSize();
+    },
+    setOwnerContentSize: function(percent){
+        this.RefreshLayoutSize(ccui.LayoutComponent_SizeType.Size, percent);
+    },
+    getPercentContentSize: function(){
+        return this._percentContentSize;
+    },
+    setPercentContentSize: function(percent){
+        this.RefreshLayoutSize(ccui.LayoutComponent_SizeType.PreSize, percent);
+    },
+    isUsingPercentContentSize: function(){
+        return this._usingPercentContentSize;
+    },
+    setUsingPercentContentSize: function(flag){
+        this._usingPercentContentSize = flag;
+        this.RefreshLayoutSize(ccui.LayoutComponent_SizeType.PreSizeEnable, cc.p(0,0));
+    },
+    RefreshLayoutSize: function(sType, size){
+        var parentNode = this.getOwner().getParent();
+        if (parentNode != null && this._actived)
+        {
+            var parentSize = parentNode.getContentSize();
+            switch (sType)
+            {
+            case ccui.LayoutComponent_SizeType.Size:
+                if (parentSize.width != 0 && parentSize.height != 0)
+                {
+                    this._percentContentSize = cc.p(size.x/parentSize.width,size.y/parentSize.height);
+                }
+                else
+                {
+                    this._percentContentSize = cc.p(0,0);
+                }
+                this.getOwner().setContentSize(cc.size(size.x,size.y));
+                break;
+            case ccui.LayoutComponent_SizeType.PreSize:
+                cc.p_percentContentSize = size;
+                if (this._usingPercentContentSize)
+                {
+                    this.getOwner().setContentSize(cc.size(size.x*parentSize.width,size.y*parentSize.height));
+                }
+                break;
+            case ccui.LayoutComponent_SizeType.PreSizeEnable:
+                if (this._usingPercentContentSize)
+                {
+                    var baseSize = this.getOwner().getContentSize();
+                    if (parentSize.width != 0)
+                    {
+                        this._percentContentSize.x = baseSize.width/parentSize.width;
+                    }
+                    else
+                    {
+                        this._percentContentSize.x = 0;
+                        baseSize.width = 0;
+                    }
+                    if (parentSize.height != 0)
+                    {
+                        this._percentContentSize.y = baseSize.height/parentSize.height;
+                    }
+                    else
+                    {
+                        this._percentContentSize.y = 0;
+                        baseSize.height = 0;
+                    }
+                    this.getOwner().setContentSize(baseSize);
+                }
+                break;
+            default:
+                break;
+            }
+        }
+        else
+        {
+            switch (sType)
+            {
+            case ccui.LayoutComponent_SizeType.Size:
+                this.getOwner().setContentSize(cc.size(size.x,size.y));
+                break;
+            case ccui.LayoutComponent_SizeType.PreSize:
+                this._percentContentSize = size;
+                break;
+            default:
+                break;
+            }
+        }
+    },
+    SetActiveEnable: function(enable){
+        this._actived = enable;
+    }
+});
+cc.ComponentContainer = cc.Class.extend({
+    _components:null,
+    _owner:null,
+    ctor:function(node){
+        this._components = null;
+        this._owner = node;
+    },
+    getComponent:function(name){
+        if(!name)
+            throw "cc.ComponentContainer.getComponent(): name should be non-null";
+        name = name.trim();
+        if(!this._components){
+            this._components = {};
+        }
+        return this._components[name];
+    },
+    add:function(component){
+        if(!component)
+             throw "cc.ComponentContainer.add(): component should be non-null";
+        if(component.getOwner()){
+            cc.log("cc.ComponentContainer.add(): Component already added. It can't be added again");
+            return false;
+        }
+        if(this._components == null){
+            this._components = {};
+            this._owner.scheduleUpdate();
+        }
+        var oldComponent = this._components[component.getName()];
+        if(oldComponent){
+            cc.log("cc.ComponentContainer.add(): Component already added. It can't be added again");
+            return false;
+        }
+        component.setOwner(this._owner);
+        this._components[component.getName()] = component;
+        component.onEnter();
+        return true;
+    },
+    remove:function(name){
+        if(!name)
+            throw "cc.ComponentContainer.remove(): name should be non-null";
+        if(!this._components)
+            return false;
+        if(name instanceof cc.Component)
+            return this._removeByComponent(name);
+        else {
+            name = name.trim();
+            return this._removeByComponent(this._components[name]);
+        }
+    },
+    _removeByComponent:function(component){
+        if(!component)
+            return false;
+        component.onExit();
+        component.setOwner(null);
+        delete this._components[component.getName()];
+        return true;
+    },
+    removeAll:function(){
+        if(!this._components)
+            return;
+        var locComponents = this._components;
+        for(var selKey in locComponents){
+            var selComponent = locComponents[selKey];
+            selComponent.onExit();
+            selComponent.setOwner(null);
+            delete locComponents[selKey];
+        }
+        this._owner.unscheduleUpdate();
+        this._components = null;
+    },
+    _alloc:function(){
+        this._components = {};
+    },
+    visit:function(delta){
+        if(!this._components)
+            return;
+        var locComponents = this._components;
+        for(var selKey in locComponents)
+             locComponents[selKey].update(delta);
+    },
+    isEmpty: function () {
+        if (!this._components)
+            return true;
+        return this._components.length == 0;
+    }
+});
+var ccs = ccs || {};
+ccs.Class = ccs.Class || cc.Class;
+ccs.Class.extend = ccs.Class.extend || cc.Class.extend;
+ccs.Node = ccs.Node || cc.Node;
+ccs.Node.extend = ccs.Node.extend || cc.Node.extend;
+ccs.Sprite = ccs.Sprite || cc.Sprite;
+ccs.Sprite.extend = ccs.Sprite.extend || cc.Sprite.extend;
+ccs.Component = ccs.Component || cc.Component;
+ccs.Component.extend = ccs.Component.extend || cc.Component.extend;
+ccs.cocostudioVersion = "v1.3.0.0";
 var CSParseBinary = "\n\
 package protocolbuffers;\n\
 \n\
@@ -1738,417 +2149,6 @@ ccs.csLoader = {
     }
 };
 ccs.csLoader.init();
-ccui.LayoutComponent_ReferencePoint = {
-    BOTTOM_LEFT: 0,
-    TOP_LEFT: 1,
-    BOTTOM_RIGHT: 2,
-    TOP_RIGHT: 3
-};
-ccui.LayoutComponent_PositionType = {
-    Position: 0,
-    RelativePosition: 1,
-    PreRelativePosition: 2,
-    PreRelativePositionEnable: 3
-};
-ccui.LayoutComponent_SizeType = {
-    Size: 0,
-    PreSize: 1,
-    PreSizeEnable: 2
-};
-ccui.LayoutComponent = cc.Component.extend({
-    _percentContentSize: null,
-    _usingPercentContentSize: false,
-    _referencePoint: ccui.LayoutComponent_ReferencePoint.BOTTOM_LEFT,
-    _relativePosition: null,
-    _percentPosition: null,
-    _usingPercentPosition: false,
-    _actived: true,
-    init: function(){
-        var ret = true;
-        do
-        {
-            if (!cc.Component.prototype.init.call(this))
-            {
-                ret = false;
-                break;
-            }
-        } while (0);
-        return ret;
-    },
-    isUsingPercentPosition: function(){
-        return this._usingPercentPosition;
-    },
-    setUsingPercentPosition: function(flag){
-        this._usingPercentPosition = flag;
-        this.RefreshLayoutPosition(ccui.LayoutComponent_PositionType.PreRelativePositionEnable, cc.p(0,0));
-    },
-    getPercentPosition: function(){
-        return this._percentPosition;
-    },
-    setPercentPosition: function(percent){
-        this.RefreshLayoutPosition(ccui.LayoutComponent_PositionType.PreRelativePosition, percent);
-    },
-    getRelativePosition: function(){
-        return this._relativePosition;
-    },
-    setRelativePosition: function(position){
-        this.RefreshLayoutPosition(ccui.LayoutComponent_PositionType.RelativePosition, position);
-    },
-    setReferencePoint: function(point){
-        this._referencePoint = point;
-        this.RefreshLayoutPosition(ccui.LayoutComponent_PositionType.RelativePosition, this._relativePosition)
-    },
-    getReferencePoint: function(){
-        return this._referencePoint;
-    },
-    getOwnerPosition: function(){
-        return this.getOwner().getPosition();
-    },
-    setOwnerPosition: function(point){
-        this.RefreshLayoutPosition(ccui.LayoutComponent_PositionType.Position, point);
-    },
-    RefreshLayoutPosition: function(pType, point){
-        var parentNode = this.getOwner().getParent();
-        var basePoint = point;
-        if (parentNode != null && this._actived)
-        {
-            var parentSize = parentNode.getContentSize();
-            if ( pType == ccui.LayoutComponent_PositionType.PreRelativePosition)
-            {
-                this._percentPosition = point;
-                basePoint = cc.p(this._percentPosition.x * parentSize.width, this._percentPosition.y * parentSize.height);
-            }
-            else if(pType == ccui.LayoutComponent_PositionType.PreRelativePositionEnable)
-            {
-                if (this._usingPercentPosition)
-                {
-                    if (parentSize.width != 0)
-                    {
-                        this._percentPosition.x = this._relativePosition.x / parentSize.width;
-                    }
-                    else
-                    {
-                        this._percentPosition.x = 0;
-                        this._relativePosition.x = 0;
-                    }
-                    if (parentSize.height != 0)
-                    {
-                        this._percentPosition.y = this._relativePosition.y / parentSize.height;
-                    }
-                    else
-                    {
-                        this._percentPosition.y = 0;
-                        this._relativePosition.y = 0;
-                    }
-                }
-                basePoint = this._relativePosition;
-            }
-            var inversePoint = basePoint;
-            switch (this._referencePoint)
-            {
-            case ccui.LayoutComponent_ReferencePoint.TOP_LEFT:
-                inversePoint.y = parentSize.height - inversePoint.y;
-                break;
-            case ccui.LayoutComponent_ReferencePoint.BOTTOM_RIGHT:
-                inversePoint.x = parentSize.width - inversePoint.x;
-                break;
-            case ccui.LayoutComponent_ReferencePoint.TOP_RIGHT:
-                inversePoint.x = parentSize.width - inversePoint.x;
-                inversePoint.y = parentSize.height - inversePoint.y;
-                break;
-            default:
-                break;
-            }
-            switch (pType)
-            {
-            case ccui.LayoutComponent_PositionType.Position:
-                this.getOwner().setPosition(basePoint);
-                this._relativePosition = inversePoint;
-                if (parentSize.width != 0 && parentSize.height != 0)
-                {
-                    this._percentPosition = cc.p(this._relativePosition.x / parentSize.width, this._relativePosition.y / parentSize.height);
-                }
-                else
-                {
-                    this._percentPosition = cc.p(0,0);
-                }
-                break;
-            case ccui.LayoutComponent_PositionType.RelativePosition:
-                this.getOwner().setPosition(inversePoint);
-                this._relativePosition = basePoint;
-                if (parentSize.width != 0 && parentSize.height != 0)
-                {
-                    this._percentPosition = cc.p(this._relativePosition.x / parentSize.width, this._relativePosition.y / parentSize.height);
-                }
-                else
-                {
-                    this._percentPosition = cc.p(0,0);
-                }
-                break;
-            case ccui.LayoutComponent_PositionType.PreRelativePosition:
-                this.getOwner().setPosition(inversePoint);
-                this._relativePosition = basePoint;
-                break;
-            case ccui.LayoutComponent_PositionType.PreRelativePositionEnable:
-                this.getOwner().setPosition(inversePoint);
-                this._relativePosition = basePoint;
-                break;
-            default:
-                break;
-            }
-        }
-        else
-        {
-            switch (pType)
-            {
-            case ccui.LayoutComponent_PositionType.Position:
-                this.getOwner().setPosition(basePoint);
-                if (this._referencePoint == ccui.LayoutComponent_ReferencePoint.BOTTOM_LEFT)
-                {
-                    this._relativePosition = basePoint;
-                }
-                break;
-            case ccui.LayoutComponent_PositionType.RelativePosition:
-                this._relativePosition = basePoint;
-                break;
-            case ccui.LayoutComponent_PositionType.PreRelativePosition:
-                this._percentPosition = basePoint;
-                break;
-            default:
-                break;
-            }
-        }
-    },
-    getOwnerContentSize: function(){
-        return this.getOwner().getContentSize();
-    },
-    setOwnerContentSize: function(percent){
-        this.RefreshLayoutSize(ccui.LayoutComponent_SizeType.Size, percent);
-    },
-    getPercentContentSize: function(){
-        return this._percentContentSize;
-    },
-    setPercentContentSize: function(percent){
-        this.RefreshLayoutSize(ccui.LayoutComponent_SizeType.PreSize, percent);
-    },
-    isUsingPercentContentSize: function(){
-        return this._usingPercentContentSize;
-    },
-    setUsingPercentContentSize: function(flag){
-        this._usingPercentContentSize = flag;
-        this.RefreshLayoutSize(ccui.LayoutComponent_SizeType.PreSizeEnable, cc.p(0,0));
-    },
-    RefreshLayoutSize: function(sType, size){
-        var parentNode = this.getOwner().getParent();
-        if (parentNode != null && this._actived)
-        {
-            var parentSize = parentNode.getContentSize();
-            switch (sType)
-            {
-            case ccui.LayoutComponent_SizeType.Size:
-                if (parentSize.width != 0 && parentSize.height != 0)
-                {
-                    this._percentContentSize = cc.p(size.x/parentSize.width,size.y/parentSize.height);
-                }
-                else
-                {
-                    this._percentContentSize = cc.p(0,0);
-                }
-                this.getOwner().setContentSize(cc.size(size.x,size.y));
-                break;
-            case ccui.LayoutComponent_SizeType.PreSize:
-                cc.p_percentContentSize = size;
-                if (this._usingPercentContentSize)
-                {
-                    this.getOwner().setContentSize(cc.size(size.x*parentSize.width,size.y*parentSize.height));
-                }
-                break;
-            case ccui.LayoutComponent_SizeType.PreSizeEnable:
-                if (this._usingPercentContentSize)
-                {
-                    var baseSize = this.getOwner().getContentSize();
-                    if (parentSize.width != 0)
-                    {
-                        this._percentContentSize.x = baseSize.width/parentSize.width;
-                    }
-                    else
-                    {
-                        this._percentContentSize.x = 0;
-                        baseSize.width = 0;
-                    }
-                    if (parentSize.height != 0)
-                    {
-                        this._percentContentSize.y = baseSize.height/parentSize.height;
-                    }
-                    else
-                    {
-                        this._percentContentSize.y = 0;
-                        baseSize.height = 0;
-                    }
-                    this.getOwner().setContentSize(baseSize);
-                }
-                break;
-            default:
-                break;
-            }
-        }
-        else
-        {
-            switch (sType)
-            {
-            case ccui.LayoutComponent_SizeType.Size:
-                this.getOwner().setContentSize(cc.size(size.x,size.y));
-                break;
-            case ccui.LayoutComponent_SizeType.PreSize:
-                this._percentContentSize = size;
-                break;
-            default:
-                break;
-            }
-        }
-    },
-    SetActiveEnable: function(enable){
-        this._actived = enable;
-    }
-});
-cc.Component = cc.Class.extend({
-    _owner: null,
-    _name: "",
-    _enabled: true,
-    ctor:function(){
-        this._owner = null;
-        this._name = "";
-        this._enabled = true;
-    },
-    init:function(){
-       return true;
-    },
-    onEnter:function(){
-    },
-    onExit:function(){
-    },
-    update:function(delta){
-    },
-    serialize:function( reader){
-    },
-    isEnabled:function(){
-        return this._enabled;
-    },
-    setEnabled:function(enable){
-        this._enabled = enable;
-    },
-    getName:function(){
-        return this._name;
-    } ,
-    setName:function(name){
-         this._name = name;
-    } ,
-    setOwner:function(owner){
-        this._owner = owner;
-    },
-    getOwner:function(){
-        return this._owner;
-    }
-});
-cc.Component.create = function(){
-    return new cc.Component();
-};
-cc.ComponentContainer = cc.Class.extend({
-    _components:null,
-    _owner:null,
-    ctor:function(node){
-        this._components = null;
-        this._owner = node;
-    },
-    getComponent:function(name){
-        if(!name)
-            throw "cc.ComponentContainer.getComponent(): name should be non-null";
-        name = name.trim();
-        if(!this._components){
-            this._components = {};
-        }
-        return this._components[name];
-    },
-    add:function(component){
-        if(!component)
-             throw "cc.ComponentContainer.add(): component should be non-null";
-        if(component.getOwner()){
-            cc.log("cc.ComponentContainer.add(): Component already added. It can't be added again");
-            return false;
-        }
-        if(this._components == null){
-            this._components = {};
-            this._owner.scheduleUpdate();
-        }
-        var oldComponent = this._components[component.getName()];
-        if(oldComponent){
-            cc.log("cc.ComponentContainer.add(): Component already added. It can't be added again");
-            return false;
-        }
-        component.setOwner(this._owner);
-        this._components[component.getName()] = component;
-        component.onEnter();
-        return true;
-    },
-    remove:function(name){
-        if(!name)
-            throw "cc.ComponentContainer.remove(): name should be non-null";
-        if(!this._components)
-            return false;
-        if(name instanceof cc.Component)
-            return this._removeByComponent(name);
-        else {
-            name = name.trim();
-            return this._removeByComponent(this._components[name]);
-        }
-    },
-    _removeByComponent:function(component){
-        if(!component)
-            return false;
-        component.onExit();
-        component.setOwner(null);
-        delete this._components[component.getName()];
-        return true;
-    },
-    removeAll:function(){
-        if(!this._components)
-            return;
-        var locComponents = this._components;
-        for(var selKey in locComponents){
-            var selComponent = locComponents[selKey];
-            selComponent.onExit();
-            selComponent.setOwner(null);
-            delete locComponents[selKey];
-        }
-        this._owner.unscheduleUpdate();
-        this._components = null;
-    },
-    _alloc:function(){
-        this._components = {};
-    },
-    visit:function(delta){
-        if(!this._components)
-            return;
-        var locComponents = this._components;
-        for(var selKey in locComponents)
-             locComponents[selKey].update(delta);
-    },
-    isEmpty: function () {
-        if (!this._components)
-            return true;
-        return this._components.length == 0;
-    }
-});
-var ccs = ccs || {};
-ccs.Class = ccs.Class || cc.Class;
-ccs.Class.extend = ccs.Class.extend || cc.Class.extend;
-ccs.Node = ccs.Node || cc.Node;
-ccs.Node.extend = ccs.Node.extend || cc.Node.extend;
-ccs.Sprite = ccs.Sprite || cc.Sprite;
-ccs.Sprite.extend = ccs.Sprite.extend || cc.Sprite.extend;
-ccs.Component = ccs.Component || cc.Component;
-ccs.Component.extend = ccs.Component.extend || cc.Component.extend;
-ccs.cocostudioVersion = "v1.3.0.0";
 ccs.VERSION_COMBINED = 0.30;
 ccs.VERSION_CHANGE_ROTATION_RANGE = 1.0;
 ccs.VERSION_COLOR_READING = 1.1;
