@@ -2872,9 +2872,11 @@ cc.ContentStrategy = cc.Class.extend({
         apply: function (view, designedResolution) {
             var containerW = cc._canvas.width, containerH = cc._canvas.height,
                 designW = designedResolution.width, designH = designedResolution.height,
-                scaleX = containerW / designW, scaleY = containerH / designH, scale;
-            scaleX < scaleY ? ( scale = scaleY ): ( scale = scaleX );
-            return this._buildResult(containerW, containerH, containerW, containerH, scale, scale);
+                scaleX = containerW / designW, scaleY = containerH / designH, scale,
+                contentW, contentH;
+            scaleX < scaleY ? (scale = scaleY, contentW = designW * scale, contentH = containerH)
+                : (scale = scaleX, contentW = containerW, contentH = designH * scale);
+            return this._buildResult(containerW, containerH, contentW, contentH, scale, scale);
         }
     });
     var FixedHeight = cc.ContentStrategy.extend({
@@ -7970,7 +7972,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             return _t.initWithFile(arguments[0], arguments[1]);
         cc.Node.prototype.init.call(_t);
         _t.dirty = _t._recursiveDirty = false;
-        _t._opacityModifyRGB = true;
         _t._blendFunc.src = cc.BLEND_SRC;
         _t._blendFunc.dst = cc.BLEND_DST;
         _t.texture = null;
@@ -11085,9 +11086,9 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                 }
             } else {
                 contentSize = node._contentSize;
-                if(contentSize.width !== 0 && contentSize.height !== 0) {
+                if(locTextureCoord.validRect) {
                     curColor = node._displayedColor;
-                    context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + "," + (node._displayedOpacity/255).toFixed(4) + ")";
+                    context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + ",1)";
                     context.fillRect(locX * scaleX, locY * scaleY, contentSize.width * scaleX, contentSize.height * scaleY);
                 }
             }
@@ -11124,9 +11125,9 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                 }
             } else {
                 contentSize = node._contentSize;
-                if(contentSize.width !== 0 && contentSize.height !== 0) {
+                if(locTextureCoord.validRect) {
                     curColor = node._displayedColor;
-                    context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + "," + (node._displayedOpacity/255).toFixed(4) + ")";
+                    context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + ",1)";
                     context.fillRect((t.tx + locX) * scaleX, (-t.ty + locY) * scaleY, contentSize.width * scaleX, contentSize.height * scaleY);
                 }
             }

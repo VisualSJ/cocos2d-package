@@ -211,6 +211,12 @@ plugin.extend('facebook', {
             callback = permissions;
             permissions = [];
         }
+        if (permissions.every(function (item) {
+            if (item != 'public_profile')
+                return true;
+        })) {
+            permissions.push("public_profile");
+        }
         var permissionsStr = permissions.join(',');
         FB.login(function (response) {
             if (response['authResponse']) {
