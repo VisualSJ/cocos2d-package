@@ -17,7 +17,7 @@ var module = {"info": [
     {"name": "progress-timer", "checked": 0, "maxSize": "15.4KB", "minSize": "8.0KB", "rule": ["core", "actions"], "info": "ProgressTimer node which can transform a node into a progression bar"},
     {"name": "transitions", "checked": 0, "maxSize": "39.7KB", "minSize": "26.0KB", "rule": ["core", "actions", "render-texture", "progress-timer"], "info": "Scene transition effects"},
     {"name": "compression", "checked": 0, "maxSize": "41.6KB", "minSize": "31.6KB", "rule": ["core"], "info": "Compression of tilemap and particle"},
-    {"name": "particle", "checked": 0, "maxSize": "118.1KB", "minSize": "63.0KB", "rule": ["core", "compression"], "info": "ParticleSystem node and built in particle effects"},
+    {"name": "particle", "checked": 0, "maxSize": "118.1KB", "minSize": "63.0KB", "rule": ["core", "core-extensions", "compression"], "info": "ParticleSystem node and built in particle effects"},
     {"name": "text-input", "checked": 0, "maxSize": "17.0KB", "minSize": "10.0KB", "rule": ["core"], "info": "Nodes for simple text inputing"},
     {"name": "menus", "checked": 1, "maxSize": "38.6KB", "minSize": "19.6KB", "rule": ["core", "actions"], "info": "Menu and MenuItem nodes for creating game menu"},
     {"name": "tilemap", "checked": 0, "maxSize": "66.2KB", "minSize": "36.1KB", "rule": ["core", "compression", "sprite-batch-node"], "info": "TMX file parser for creating tile map layers"},
