@@ -1,4 +1,4 @@
-var defaultVersion = 'v3.1';
+var defaultVersion = 'v3.2';
 
 var removeClass = function(DOM, CLASS){
     DOM.className = DOM.className.replace(" " + CLASS, "");
@@ -217,9 +217,37 @@ pagePG.BindEvent = function(){
 
             pagePG.ChangeChecked(name, spanList, i);
 
+            pagePG.changeWebGL();
+
             pagePG.readSize();
         });
     });
+};
+
+/**
+ * change webgl
+ */
+pagePG.changeWebGL = function(){
+    var ml = pagePG.ModuleCheckList;
+
+    if(ml["webgl"] != null){
+        if(ml["webgl"]){
+            for(var p in ml){
+                if(ml[p + "-webgl"] !== undefined){
+                    if(ml[p])
+                        ml[p + "-webgl"] = 1;
+                    else
+                        ml[p + "-webgl"] = 0;
+                }
+
+            }
+        }else{
+            for(var p in ml){
+                if(ml[p + "-webgl"] !== undefined)
+                    ml[p + "-webgl"] = 0;
+            }
+        }
+    }
 };
 
 /**
@@ -260,15 +288,14 @@ pagePG.ChangeChecked = function(name, spanList, i){
         i = 0;
         spanList = [document.getElementById(name)];
     }
-    if(pagePG.ModuleCheckList[name] === 0){
-
+    var pml = pagePG.ModuleCheckList;
+    if(pml[name] === 0){
         addClass(spanList[i], "checked");
-        pagePG.ModuleCheckList[name] = 1;
+        pml[name] = 1;
         pagePG.checkRule(name, 1);
-    }else if(pagePG.ModuleCheckList[name] === 1){
-
+    }else if(pml[name] === 1){
         removeClass(spanList[i], "checked");
-        pagePG.ModuleCheckList[name] = 0;
+        pml[name] = 0;
         pagePG.checkRule(name, 0);
     }else{
         console.log(name + " is not exists.");
@@ -409,10 +436,10 @@ pagePG.Compressed();
 var Load = function(_a){
     var _com = /checked/.test(document.getElementById("Compressor").className);
 
-    var _s = 'download_.js?ver=' + defaultVersion + '&com=' + _com + '&express=' + pagePG.express.toString() + '&file=';
+    var _s = 'download?ver=' + defaultVersion + '&com=' + _com + '&express=' + pagePG.express.toString() + '&file=';
 
     _sort.forEach(function(item){
-        if(pagePG.ModuleCheckList[item] === 1){
+        if(item !== "webgl" && pagePG.ModuleCheckList[item] === 1){
             _s += item + ',';
         }
     });
