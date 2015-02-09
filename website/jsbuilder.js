@@ -1,4 +1,4 @@
-var defaultVersion = 'v3.2';
+var defaultVersion = 'v3.3';
 
 var removeClass = function(DOM, CLASS){
     DOM.className = DOM.className.replace(" " + CLASS, "");
@@ -234,17 +234,22 @@ pagePG.changeWebGL = function(){
         if(ml["webgl"]){
             for(var p in ml){
                 if(ml[p + "-webgl"] !== undefined){
-                    if(ml[p])
+                    if(ml[p]){
                         ml[p + "-webgl"] = 1;
-                    else
+                        pagePG.checkRule(p + "-webgl", 1);
+                    }else{
                         ml[p + "-webgl"] = 0;
+                        pagePG.checkRule(p + "-webgl", 0);
+                    }
                 }
 
             }
         }else{
             for(var p in ml){
-                if(ml[p + "-webgl"] !== undefined)
+                if(ml[p + "-webgl"] !== undefined){
                     ml[p + "-webgl"] = 0;
+                    pagePG.checkRule(p + "-webgl", 0);
+                }
             }
         }
     }
