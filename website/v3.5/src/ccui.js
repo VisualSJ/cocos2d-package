@@ -345,6 +345,8 @@ cc.ProtectedNode.create = function(){
     };
 })();
 (function(){
+    if(!cc.Node.WebGLRenderCmd)
+        return;
     cc.ProtectedNode.WebGLRenderCmd = function (renderable) {
         cc.Node.WebGLRenderCmd.call(this, renderable);
     };
@@ -716,7 +718,7 @@ ccui.Widget = ccui.ProtectedNode.extend({
             var component = this._getOrCreateLayoutComponent();
             component.setUsingPercentContentSize(true);
             component.setPercentContentSize(percent);
-            component.refreshLayout();            
+            component.refreshLayout();
             return;
         }
         this._sizePercent.x = percent.x;
@@ -2430,6 +2432,8 @@ ccui.Scale9Sprite.state = {NORMAL: 0, GRAY: 1};
     };
 })();
 (function() {
+    if(!cc.Node.WebGLRenderCmd)
+        return;
     ccui.Scale9Sprite.WebGLRenderCmd = function (renderable) {
         cc.Node.WebGLRenderCmd.call(this, renderable);
         this._cachedParent = null;
@@ -3683,6 +3687,8 @@ ccui.Layout.BACKGROUND_RENDERER_ZORDER = -2;
     };
 })();
 (function(){
+    if(!ccui.ProtectedNode.WebGLRenderCmd)
+        return;
     ccui.Layout.WebGLRenderCmd = function(renderable){
         ccui.ProtectedNode.WebGLRenderCmd.call(this, renderable);
         this._needDraw = false;

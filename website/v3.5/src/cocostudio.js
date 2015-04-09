@@ -4957,6 +4957,8 @@ ccs.Bone.RenderCmd = {
     proto.constructor = ccs.Bone.CanvasRenderCmd;
 })();
 (function(){
+    if(!cc.Node.WebGLRenderCmd)
+        return;
     ccs.Bone.WebGLRenderCmd = function(renderable){
         cc.Node.WebGLRenderCmd.call(this, renderable);
         this._needDraw = false;
