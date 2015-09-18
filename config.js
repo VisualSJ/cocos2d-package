@@ -6,8 +6,8 @@ exports.config = {
 };
 
 exports.default = {
-    dir: "/Users/visualSJ/project/cocos2d-package/website",//静态文件地址, 默认为运行文件夹下
-    controllerDir: "/Users/visualSJ/project/cocos2d-package/controller",//动态接口文件地址, 默认为运行文件夹下(和dir目录一样的话,文件会优先返回成静态文件!)
+    dir: "./website",//静态文件地址, 默认为运行文件夹下
+    controllerDir: "e:\\cocos2d-package\\controller",//动态接口文件地址, 默认为运行文件夹下(和dir目录一样的话,文件会优先返回成静态文件!)
     file: ["index.html"],//默认返回文件
     port: [4000],//端口
     ip: null,//绑定服务器的ip
