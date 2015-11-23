@@ -1628,7 +1628,7 @@ spine.AnimationState.prototype = {
     clearTracks: function () {
         for (var i = 0, n = this.tracks.length; i < n; i++)
             this.clearTrack(i);
-        this.tracks.length = 0; 
+        this.tracks.length = 0;
     },
     clearTrack: function (trackIndex) {
         if (trackIndex >= this.tracks.length) return;
@@ -1840,7 +1840,7 @@ spine.SkeletonJson.prototype = {
         } else if (type == spine.AttachmentType.mesh) {
             var mesh = this.attachmentLoader.newMeshAttachment(skin, name, path);
             if (!mesh) return null;
-            mesh.path = path; 
+            mesh.path = path;
             mesh.vertices = this.getFloatArray(map, "vertices", scale);
             mesh.triangles = this.getIntArray(map, "triangles");
             mesh.regionUVs = this.getFloatArray(map, "uvs", 1);
@@ -2138,7 +2138,7 @@ spine.SkeletonJson.prototype = {
     },
     readCurve: function (timeline, frameIndex, valueMap) {
         var curve = valueMap["curve"];
-        if (!curve) 
+        if (!curve)
             timeline.curves.setLinear(frameIndex);
         else if (curve == "stepped")
             timeline.curves.setStepped(frameIndex);

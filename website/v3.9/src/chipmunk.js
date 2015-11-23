@@ -2095,7 +2095,7 @@ var segValueOnAxis = function(seg, n, d)
 	var b = vdot(n, seg.tb) - seg.r;
 	return min(a, b) - d;
 };
-var findPointsBehindSeg = function(arr, seg, poly, pDist, coef) 
+var findPointsBehindSeg = function(arr, seg, poly, pDist, coef)
 {
 	var dta = vcross(seg.tn, seg.ta);
 	var dtb = vcross(seg.tn, seg.tb);
@@ -2656,7 +2656,7 @@ Space.prototype.processComponents = function(dt)
 	for(var i=0, count=arbiters.length; i<count; i++){
 		var arb = arbiters[i];
 		var a = arb.body_a, b = arb.body_b;
-		if(sleep){	
+		if(sleep){
 			if((b.isRogue() && !b.isStatic()) || a.isSleeping()) a.activate();
 			if((a.isRogue() && !a.isStatic()) || b.isSleeping()) b.activate();
 		}

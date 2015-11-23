@@ -279,7 +279,7 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
                 for (var i=0; i < verts.length; i++) {
                     vertsCopy.push(cc.p(verts[i].x, verts[i].y));
                 }
-                return this.drawPoly_(vertsCopy, fillColor, lineWidth, color);     
+                return this.drawPoly_(vertsCopy, fillColor, lineWidth, color);
             },
             clear: function () {
                 this._buffer.length = 0;

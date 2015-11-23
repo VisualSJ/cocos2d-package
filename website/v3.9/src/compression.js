@@ -325,16 +325,16 @@ cc.Codec.GZip.prototype.DeflateLoop = function () {
                 j = (cc.Codec.GZip.bitReverse[this.readBits(7)] >> 1);
                 if (j > 23) {
                     j = (j << 1) | this.readBit();
-                    if (j > 199) {              
+                    if (j > 199) {
                         j -= 128;
                         j = (j << 1) | this.readBit();
-                    } else {                    
+                    } else {
                         j -= 48;
                         if (j > 143) {
                             j = j + 136;
                         }
                     }
-                } else {                      
+                } else {
                     j += 256;
                 }
                 if (j < 256) {

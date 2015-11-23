@@ -951,9 +951,9 @@ function _determineRenderType(config) {
         config[CONFIG_KEY.renderMode] = 0;
     cc._renderType = cc.game.RENDER_TYPE_CANVAS;
     cc._supportRender = true;
-    if ( userRenderMode === 2 || 
-        (   userRenderMode === 0 && 
-            shieldOs.indexOf(cc.sys.os) === -1 && 
+    if ( userRenderMode === 2 ||
+        (   userRenderMode === 0 &&
+            shieldOs.indexOf(cc.sys.os) === -1 &&
             shieldBrowser.indexOf(cc.sys.browserType) === -1 )) {
         if (cc.sys.capabilities["opengl"]) {
             cc._renderType = cc.game.RENDER_TYPE_WEBGL;
@@ -1129,7 +1129,7 @@ cc.game = {
     },
     prepare: function (cb) {
         var self = this,
-            config = self.config, 
+            config = self.config,
             CONFIG_KEY = self.CONFIG_KEY;
         this._loadConfig();
         if (this._prepared) {
@@ -1173,7 +1173,12 @@ cc.game = {
         }
         else {
             if (config) {
-                cc.game.config = config;
+                if (typeof config === 'string') {
+                    if (!cc.game.config) cc.game.config = {};
+                    cc.game.config[cc.game.CONFIG_KEY.id] = config;
+                } else {
+                    cc.game.config = config;
+                }
             }
             if (typeof onStart === 'function') {
                 cc.game.onStart = onStart;
@@ -1445,6 +1450,80 @@ cc._urlRegExp = new RegExp(
         "(?:/\\S*)?" +
     "$", "i"
 );
+cc.EventHelper = function(){};
+cc.EventHelper.prototype = {
+    constructor: cc.EventHelper,
+    apply: function ( object ) {
+        object.addEventListener = cc.EventHelper.prototype.addEventListener;
+        object.hasEventListener = cc.EventHelper.prototype.hasEventListener;
+        object.removeEventListener = cc.EventHelper.prototype.removeEventListener;
+        object.dispatchEvent = cc.EventHelper.prototype.dispatchEvent;
+    },
+    addEventListener: function ( type, listener, target ) {
+        if(type === "load" && this._textureLoaded){
+            setTimeout(function(){
+                listener.call(target);
+            }, 0);
+            return;
+        }
+        if ( this._listeners === undefined )
+            this._listeners = {};
+        var listeners = this._listeners;
+        if ( listeners[ type ] === undefined )
+            listeners[ type ] = [];
+        if ( !this.hasEventListener(type, listener, target))
+            listeners[ type ].push( {callback:listener, eventTarget: target} );
+    },
+    hasEventListener: function ( type, listener, target ) {
+        if ( this._listeners === undefined )
+            return false;
+        var listeners = this._listeners;
+        if ( listeners[ type ] !== undefined ) {
+            for(var i = 0, len = listeners.length; i < len ; i++){
+                var selListener = listeners[i];
+                if(selListener.callback === listener && selListener.eventTarget === target)
+                    return true;
+            }
+        }
+        return false;
+    },
+    removeEventListener: function( type, target){
+        if ( this._listeners === undefined )
+            return;
+        var listeners = this._listeners;
+        var listenerArray = listeners[ type ];
+        if ( listenerArray !== undefined ) {
+            for(var i = 0; i < listenerArray.length ; ){
+                var selListener = listenerArray[i];
+                if(selListener.eventTarget === target)
+                    listenerArray.splice( i, 1 );
+                else
+                    i++
+            }
+        }
+    },
+    dispatchEvent: function ( event, clearAfterDispatch ) {
+        if ( this._listeners === undefined )
+            return;
+        if(clearAfterDispatch == null)
+            clearAfterDispatch = true;
+        var listeners = this._listeners;
+        var listenerArray = listeners[ event];
+        if ( listenerArray !== undefined ) {
+            var array = [];
+            var length = listenerArray.length;
+            for ( var i = 0; i < length; i ++ ) {
+                array[ i ] = listenerArray[ i ];
+            }
+            for ( i = 0; i < length; i ++ ) {
+                array[ i ].callback.call( array[i].eventTarget, this );
+            }
+            if(clearAfterDispatch)
+                listenerArray.length = 0;
+        }
+    }
+};
+cc.EventHelper.prototype.apply(cc.game);
 var cc = cc || {};
 cc._loadingImage = "data:image/gif;base64,R0lGODlhEAAQALMNAD8/P7+/vyoqKlVVVX9/fxUVFUBAQGBgYMDAwC8vL5CQkP///wAAAP///wAAAAAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQFAAANACwAAAAAEAAQAAAEO5DJSau9OOvNex0IMnDIsiCkiW6g6BmKYlBFkhSUEgQKlQCARG6nEBwOgl+QApMdCIRD7YZ5RjlGpCUCACH5BAUAAA0ALAAAAgAOAA4AAAQ6kLGB0JA4M7QW0hrngRllkYyhKAYqKUGguAws0ypLS8JxCLQDgXAIDg+FRKIA6v0SAECCBpXSkstMBAAh+QQFAAANACwAAAAACgAQAAAEOJDJORAac6K1kDSKYmydpASBUl0mqmRfaGTCcQgwcxDEke+9XO2WkxQSiUIuAQAkls0n7JgsWq8RACH5BAUAAA0ALAAAAAAOAA4AAAQ6kMlplDIzTxWC0oxwHALnDQgySAdBHNWFLAvCukc215JIZihVIZEogDIJACBxnCSXTcmwGK1ar1hrBAAh+QQFAAANACwAAAAAEAAKAAAEN5DJKc4RM+tDyNFTkSQF5xmKYmQJACTVpQSBwrpJNteZSGYoFWjIGCAQA2IGsVgglBOmEyoxIiMAIfkEBQAADQAsAgAAAA4ADgAABDmQSVZSKjPPBEDSGucJxyGA1XUQxAFma/tOpDlnhqIYN6MEAUXvF+zldrMBAjHoIRYLhBMqvSmZkggAIfkEBQAADQAsBgAAAAoAEAAABDeQyUmrnSWlYhMASfeFVbZdjHAcgnUQxOHCcqWylKEohqUEAYVkgEAMfkEJYrFA6HhKJsJCNFoiACH5BAUAAA0ALAIAAgAOAA4AAAQ3kMlJq704611SKloCAEk4lln3DQgyUMJxCBKyLAh1EMRR3wiDQmHY9SQslyIQUMRmlmVTIyRaIgA7";
 cc._fpsImage = "data:image/png;base64,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";
@@ -1545,133 +1624,6 @@ if (cc.loader.loadBinary._IEFilter) {
             }) + lastChr;
     };
 }
-cc.profiler = (function () {
-    var _inited = _showFPS = false;
-    var _frames = _frameRate = _lastSPF = _accumDt = 0;
-    var _afterProjection = _afterVisitListener = _FPSLabel = _SPFLabel = _drawsLabel = null;
-    var LEVEL_DET_FACTOR = 0.6, _levelDetCycle = 10;
-    var LEVELS = [0, 10, 20, 30];
-    var _fpsCount = [0, 0, 0, 0];
-    var _currLevel = 3, _analyseCount = 0, _totalFPS = 0;
-    var createStatsLabel = function () {
-        var fontSize = 0;
-        var w = cc.winSize.width, h = cc.winSize.height;
-        var locStatsPosition = cc.DIRECTOR_STATS_POSITION;
-        if (w > h)
-            fontSize = 0 | (h / 320 * 24);
-        else
-            fontSize = 0 | (w / 320 * 24);
-        _FPSLabel = new cc.LabelTTF("000.0", "Arial", fontSize);
-        _SPFLabel = new cc.LabelTTF("0.000", "Arial", fontSize);
-        _drawsLabel = new cc.LabelTTF("0000", "Arial", fontSize);
-        _drawsLabel.setPosition(_drawsLabel.width / 2 + locStatsPosition.x, _drawsLabel.height * 5 / 2 + locStatsPosition.y);
-        _SPFLabel.setPosition(_SPFLabel.width / 2 + locStatsPosition.x, _SPFLabel.height * 3 / 2 + locStatsPosition.y);
-        _FPSLabel.setPosition(_FPSLabel.width / 2 + locStatsPosition.x, _FPSLabel.height / 2 + locStatsPosition.y);
-    };
-    var analyseFPS = function (fps) {
-        var lastId = i = LEVELS.length - 1, ratio, average = 0;
-        _analyseCount++;
-        _totalFPS += fps;
-        for (; i >= 0; i--) {
-            if (fps >= LEVELS[i]) {
-                _fpsCount[i]++;
-                break;
-            }
-        }
-        if (_analyseCount >= _levelDetCycle) {
-            average = _totalFPS / _levelDetCycle;
-            for (i = lastId; i >0; i--) {
-                ratio = _fpsCount[i] / _levelDetCycle;
-                if (ratio >= LEVEL_DET_FACTOR && average >= LEVELS[i]) {
-                    if (i != _currLevel) {
-                        _currLevel = i;
-                        profiler.onFrameRateChange && profiler.onFrameRateChange(average.toFixed(2));
-                    }
-                    break;
-                }
-            }
-            _changeCount = 0;
-            _analyseCount = 0;
-            _totalFPS = 0;
-            for (i = lastId; i > 0; i--) {
-                _fpsCount[i] = 0;
-            }
-        }
-    };
-    var afterVisit = function () {
-        _lastSPF = cc.director.getSecondsPerFrame();
-        _frames++;
-        _accumDt += cc.director.getDeltaTime();
-        if (_accumDt > cc.DIRECTOR_FPS_INTERVAL) {
-            _frameRate = _frames / _accumDt;
-            _frames = 0;
-            _accumDt = 0;
-            if (profiler.onFrameRateChange) {
-                analyseFPS(_frameRate);
-            }
-            if (_showFPS) {
-                _SPFLabel.string = _lastSPF.toFixed(3);
-                _FPSLabel.string = _frameRate.toFixed(1);
-                _drawsLabel.string = (0 | cc.g_NumberOfDraws).toString();
-            }
-        }
-        if (_showFPS) {
-            _FPSLabel.visit();
-            _SPFLabel.visit();
-            _drawsLabel.visit();
-        }
-    };
-    var afterProjection = function(){
-        _FPSLabel._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
-        _SPFLabel._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
-        _drawsLabel._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
-    };
-    var profiler = {
-        onFrameRateChange: null,
-        getSecondsPerFrame: function () {
-            return _lastSPF;
-        },
-        getFrameRate: function () {
-            return _frameRate;
-        },
-        setProfileDuration: function (duration) {
-            if (!isNaN(duration) && duration > 0) {
-                _levelDetCycle = duration / cc.DIRECTOR_FPS_INTERVAL;
-            }
-        },
-        resumeProfiling: function () {
-            cc.eventManager.addListener(_afterVisitListener, 1);
-        },
-        stopProfiling: function () {
-            cc.eventManager.removeListener(_afterVisitListener);
-        },
-        isShowingStats: function () {
-            return _showFPS;
-        },
-        showStats: function () {
-            if (!_inited) {
-                this.init();
-            }
-            if (cc.LabelTTF && !_FPSLabel) {
-                createStatsLabel();
-            }
-            if (_FPSLabel) {
-                _showFPS = true;
-            }
-        },
-        hideStats: function () {
-            _showFPS = false;
-        },
-        init: function () {
-            if (!_inited) {
-                _afterVisitListener = cc.eventManager.addCustomListener(cc.Director.EVENT_AFTER_VISIT, afterVisit);
-                _afterProjection = cc.eventManager.addCustomListener(cc.Director.EVENT_PROJECTION_CHANGED, afterProjection);
-                _inited = true;
-            }
-        }
-    };
-    return profiler;
-})();
 var cc = cc || {};
 var ClassManager = {
     id : (0|(Math.random()*998)),
@@ -3482,7 +3434,7 @@ cc.EGLView = cc.Class.extend({
         return cc.p(this._visibleRect.x,this._visibleRect.y);
     },
     getVisibleOriginInPixel: function () {
-        return cc.p(this._visibleRect.x * this._scaleX, 
+        return cc.p(this._visibleRect.x * this._scaleX,
                     this._visibleRect.y * this._scaleY);
     },
     canSetContentScaleFactor: function () {
@@ -5867,80 +5819,6 @@ cc.eventManager = {
         this.dispatchEvent(ev);
     }
 };
-cc.EventHelper = function(){};
-cc.EventHelper.prototype = {
-    constructor: cc.EventHelper,
-    apply: function ( object ) {
-        object.addEventListener = cc.EventHelper.prototype.addEventListener;
-        object.hasEventListener = cc.EventHelper.prototype.hasEventListener;
-        object.removeEventListener = cc.EventHelper.prototype.removeEventListener;
-        object.dispatchEvent = cc.EventHelper.prototype.dispatchEvent;
-    },
-    addEventListener: function ( type, listener, target ) {
-        if(type === "load" && this._textureLoaded){
-            setTimeout(function(){
-                listener.call(target);
-            }, 0);
-            return;
-        }
-        if ( this._listeners === undefined )
-            this._listeners = {};
-        var listeners = this._listeners;
-        if ( listeners[ type ] === undefined )
-            listeners[ type ] = [];
-        if ( !this.hasEventListener(type, listener, target))
-            listeners[ type ].push( {callback:listener, eventTarget: target} );
-    },
-    hasEventListener: function ( type, listener, target ) {
-        if ( this._listeners === undefined )
-            return false;
-        var listeners = this._listeners;
-        if ( listeners[ type ] !== undefined ) {
-            for(var i = 0, len = listeners.length; i < len ; i++){
-                var selListener = listeners[i];
-                if(selListener.callback === listener && selListener.eventTarget === target)
-                    return true;
-            }
-        }
-        return false;
-    },
-    removeEventListener: function( type, target){
-        if ( this._listeners === undefined )
-            return;
-        var listeners = this._listeners;
-        var listenerArray = listeners[ type ];
-        if ( listenerArray !== undefined ) {
-            for(var i = 0; i < listenerArray.length ; ){
-                var selListener = listenerArray[i];
-                if(selListener.eventTarget === target)
-                    listenerArray.splice( i, 1 );
-                else
-                    i++
-            }
-        }
-    },
-    dispatchEvent: function ( event, clearAfterDispatch ) {
-        if ( this._listeners === undefined )
-            return;
-        if(clearAfterDispatch == null)
-            clearAfterDispatch = true;
-        var listeners = this._listeners;
-        var listenerArray = listeners[ event];
-        if ( listenerArray !== undefined ) {
-            var array = [];
-            var length = listenerArray.length;
-            for ( var i = 0; i < length; i ++ ) {
-                array[ i ] = listenerArray[ i ];
-            }
-            for ( i = 0; i < length; i ++ ) {
-                array[ i ].callback.call( array[i].eventTarget, this );
-            }
-            if(clearAfterDispatch)
-                listenerArray.length = 0;
-        }
-    }
-};
-cc.EventHelper.prototype.apply(cc.game);
 cc._tmp.PrototypeCCNode = function () {
     var _p = cc.Node.prototype;
     cc.defineGetterSetter(_p, "x", _p.getPositionX, _p.setPositionX);
@@ -7693,9 +7571,9 @@ cc._tmp.WebGLTexture2D = function () {
                 self.maxS, self.maxT,
                 0.0, 0.0,
                 self.maxS, 0.0];
-            var vertices = [    rect.x, rect.y, 
-                rect.x + rect.width, rect.y, 
-                rect.x, rect.y + rect.height, 
+            var vertices = [    rect.x, rect.y,
+                rect.x + rect.width, rect.y,
+                rect.x, rect.y + rect.height,
                 rect.x + rect.width, rect.y + rect.height         ];
             cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_TEX_COORDS);
             self._shaderProgram.use();
@@ -12615,7 +12493,7 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
             OffsetYArray.push(yOffset);
         }
         var tmpStatus = {
-            contextTransform:cc.v2f(dx,dy),
+            contextTransform:cc.p(dx,dy),
             xOffset:xOffset,
             OffsetYArray:OffsetYArray
         };
@@ -13134,7 +13012,7 @@ cc.rendererCanvas = {
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.clearRect(0, 0, viewport.width, viewport.height);
         if (this._clearColor.r !== 0 ||
-            this._clearColor.g !== 0 || 
+            this._clearColor.g !== 0 ||
             this._clearColor.b !== 0) {
             wrapper.setFillStyle(this._clearFillStyle);
             wrapper.setGlobalAlpha(this._clearColor.a);
@@ -13264,4 +13142,131 @@ cc.rendererCanvas = {
             this.restore();
         }
     };
+})();
+cc.profiler = (function () {
+    var _inited = _showFPS = false;
+    var _frames = _frameRate = _lastSPF = _accumDt = 0;
+    var _afterProjection = _afterVisitListener = _FPSLabel = _SPFLabel = _drawsLabel = null;
+    var LEVEL_DET_FACTOR = 0.6, _levelDetCycle = 10;
+    var LEVELS = [0, 10, 20, 30];
+    var _fpsCount = [0, 0, 0, 0];
+    var _currLevel = 3, _analyseCount = 0, _totalFPS = 0;
+    var createStatsLabel = function () {
+        var fontSize = 0;
+        var w = cc.winSize.width, h = cc.winSize.height;
+        var locStatsPosition = cc.DIRECTOR_STATS_POSITION;
+        if (w > h)
+            fontSize = 0 | (h / 320 * 24);
+        else
+            fontSize = 0 | (w / 320 * 24);
+        _FPSLabel = new cc.LabelTTF("000.0", "Arial", fontSize);
+        _SPFLabel = new cc.LabelTTF("0.000", "Arial", fontSize);
+        _drawsLabel = new cc.LabelTTF("0000", "Arial", fontSize);
+        _drawsLabel.setPosition(_drawsLabel.width / 2 + locStatsPosition.x, _drawsLabel.height * 5 / 2 + locStatsPosition.y);
+        _SPFLabel.setPosition(_SPFLabel.width / 2 + locStatsPosition.x, _SPFLabel.height * 3 / 2 + locStatsPosition.y);
+        _FPSLabel.setPosition(_FPSLabel.width / 2 + locStatsPosition.x, _FPSLabel.height / 2 + locStatsPosition.y);
+    };
+    var analyseFPS = function (fps) {
+        var lastId = i = LEVELS.length - 1, ratio, average = 0;
+        _analyseCount++;
+        _totalFPS += fps;
+        for (; i >= 0; i--) {
+            if (fps >= LEVELS[i]) {
+                _fpsCount[i]++;
+                break;
+            }
+        }
+        if (_analyseCount >= _levelDetCycle) {
+            average = _totalFPS / _levelDetCycle;
+            for (i = lastId; i >0; i--) {
+                ratio = _fpsCount[i] / _levelDetCycle;
+                if (ratio >= LEVEL_DET_FACTOR && average >= LEVELS[i]) {
+                    if (i != _currLevel) {
+                        _currLevel = i;
+                        profiler.onFrameRateChange && profiler.onFrameRateChange(average.toFixed(2));
+                    }
+                    break;
+                }
+            }
+            _changeCount = 0;
+            _analyseCount = 0;
+            _totalFPS = 0;
+            for (i = lastId; i > 0; i--) {
+                _fpsCount[i] = 0;
+            }
+        }
+    };
+    var afterVisit = function () {
+        _lastSPF = cc.director.getSecondsPerFrame();
+        _frames++;
+        _accumDt += cc.director.getDeltaTime();
+        if (_accumDt > cc.DIRECTOR_FPS_INTERVAL) {
+            _frameRate = _frames / _accumDt;
+            _frames = 0;
+            _accumDt = 0;
+            if (profiler.onFrameRateChange) {
+                analyseFPS(_frameRate);
+            }
+            if (_showFPS) {
+                _SPFLabel.string = _lastSPF.toFixed(3);
+                _FPSLabel.string = _frameRate.toFixed(1);
+                _drawsLabel.string = (0 | cc.g_NumberOfDraws).toString();
+            }
+        }
+        if (_showFPS) {
+            _FPSLabel.visit();
+            _SPFLabel.visit();
+            _drawsLabel.visit();
+        }
+    };
+    var afterProjection = function(){
+        _FPSLabel._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
+        _SPFLabel._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
+        _drawsLabel._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
+    };
+    var profiler = {
+        onFrameRateChange: null,
+        getSecondsPerFrame: function () {
+            return _lastSPF;
+        },
+        getFrameRate: function () {
+            return _frameRate;
+        },
+        setProfileDuration: function (duration) {
+            if (!isNaN(duration) && duration > 0) {
+                _levelDetCycle = duration / cc.DIRECTOR_FPS_INTERVAL;
+            }
+        },
+        resumeProfiling: function () {
+            cc.eventManager.addListener(_afterVisitListener, 1);
+        },
+        stopProfiling: function () {
+            cc.eventManager.removeListener(_afterVisitListener);
+        },
+        isShowingStats: function () {
+            return _showFPS;
+        },
+        showStats: function () {
+            if (!_inited) {
+                this.init();
+            }
+            if (cc.LabelTTF && !_FPSLabel) {
+                createStatsLabel();
+            }
+            if (_FPSLabel) {
+                _showFPS = true;
+            }
+        },
+        hideStats: function () {
+            _showFPS = false;
+        },
+        init: function () {
+            if (!_inited) {
+                _afterVisitListener = cc.eventManager.addCustomListener(cc.Director.EVENT_AFTER_VISIT, afterVisit);
+                _afterProjection = cc.eventManager.addCustomListener(cc.Director.EVENT_PROJECTION_CHANGED, afterProjection);
+                _inited = true;
+            }
+        }
+    };
+    return profiler;
 })();

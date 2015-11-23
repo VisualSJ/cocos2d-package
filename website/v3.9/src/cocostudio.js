@@ -5331,6 +5331,8 @@ ccs.ActionNode = ccs.Class.extend({
     initWithDictionary: function (dic, root) {
         this.setActionTag(dic["ActionTag"]);
         var actionFrameList = dic["actionframelist"];
+        var node = ccui.helper.seekActionWidgetByActionTag(root, dic["ActionTag"]);
+        var positionOffset = node instanceof ccui.Widget && !(node instanceof ccui.Layout);
         for (var i = 0; i < actionFrameList.length; i++) {
             var actionFrameDic = actionFrameList[i];
             var frameIndex = actionFrameDic["frameid"];
@@ -5347,6 +5349,11 @@ ccs.ActionNode = ccs.Class.extend({
             if (actionFrameDic["positionx"] !== undefined) {
                 var positionX = actionFrameDic["positionx"];
                 var positionY = actionFrameDic["positiony"];
+                if(positionOffset && node.parent){
+                    var AnchorPointIn = node.parent.getAnchorPointInPoints();
+                    positionX += AnchorPointIn.x;
+                    positionY += AnchorPointIn.y;
+                }
                 actionFrame = new ccs.ActionMoveFrame();
                 actionFrame.frameIndex = frameIndex;
                 actionFrame.setEasingType(frameTweenType);

@@ -718,7 +718,7 @@ ccui.Widget = ccui.ProtectedNode.extend({
             var component = this._getOrCreateLayoutComponent();
             component.setUsingPercentContentSize(true);
             component.setPercentContentSize(percent);
-            component.refreshLayout();            
+            component.refreshLayout();
             return;
         }
         this._sizePercent.x = percent.x;
@@ -8478,7 +8478,7 @@ ccui.ScrollView = ccui.Layout.extend({
         return this._innerContainer.height;
     },
     _isInContainer: function (widget) {
-       if(!this._clippingEnabled) 
+       if(!this._clippingEnabled)
             return true;
         var wPos = widget._position,
             wSize = widget._contentSize,
