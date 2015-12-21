@@ -6555,7 +6555,7 @@ ccs.ActionTimeline = cc.Action.extend({
         this._time += delta * this._timeSpeed;
         var endoffset = this._time - this._endFrame * this._frameInternal;
         if(endoffset < this._frameInternal){
-            this._currentFrame = this._time / this._frameInternal;
+            this._currentFrame = Math.floor(this._time / this._frameInternal);
             this._stepToFrame(this._currentFrame);
             if(endoffset >= 0 && this._lastFrameListener)
                 this._lastFrameListener();
@@ -8565,7 +8565,8 @@ cc.loader.register(["json"], {
             return timeline;
         });
     });
-    load.registerParser("action", "*", parser);
+    load.registerParser("action", "0.*", parser);
+    load.registerParser("action", "1.*", parser);
 })(ccs._load, ccs._parser);
 (function(load, baseParser){
     var Parser = baseParser.extend({
@@ -8826,7 +8827,7 @@ cc.loader.register(["json"], {
             return timeline;
         });
     });
-    load.registerParser("action", "2.*", parser);
+    load.registerParser("action", "*", parser);
 })(ccs._load, ccs._parser);
 (function(load, baseParser){
     var Parser = baseParser.extend({
@@ -9280,6 +9281,7 @@ cc.loader.register(["json"], {
             return node;
         });
     });
+    load.registerParser("timeline", "0.*", parser);
     load.registerParser("timeline", "1.*", parser);
 })(ccs._load, ccs._parser);
 (function(load, baseParser){

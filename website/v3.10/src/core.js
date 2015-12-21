@@ -1008,7 +1008,7 @@ function _getJsListOfModule(moduleMap, moduleName, dir) {
     return jsList;
 }
 function _afterEngineLoaded(config) {
-    cc._initDebugSetting && cc._initDebugSetting(config[cc.game.CONFIG_KEY.debugMode]);
+    cc._initDebugSetting(config[cc.game.CONFIG_KEY.debugMode]);
     cc._engineLoaded = true;
     cc.log(cc.ENGINE_VERSION);
     if (_engineLoadedCallback) _engineLoadedCallback();
@@ -8903,7 +8903,7 @@ cc.LayerMultiplex.create = function () {
         }
         cc.Node.RenderCmd.prototype.updateStatus.call(this);
     };
-    proto._syncStatus = function () {
+    proto._syncStatus = function (parentCmd) {
         var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
         if (locFlag & flags.orderDirty) {
             this._cacheDirty = true;
@@ -8911,7 +8911,7 @@ cc.LayerMultiplex.create = function () {
                 this._updateCache = 2;
             this._dirtyFlag = this._dirtyFlag & flags.orderDirty ^ this._dirtyFlag;
         }
-        cc.Node.RenderCmd.prototype._syncStatus.call(this);
+        cc.Node.RenderCmd.prototype._syncStatus.call(this, parentCmd);
     };
     proto.transform = function (parentCmd, recursive) {
         var wt = this._worldTransform;

@@ -114,10 +114,13 @@ cc.GridBase = cc.Class.extend({
     },
     beforeDraw:function () {
         this._directorProjection = cc.director.getProjection();
+        var size = cc.director.getWinSizeInPixels();
+        gl.viewport(0, 0, size.width , size.height);
         this._grabber.beforeRender(this._texture);
     },
     afterDraw:function (target) {
         this._grabber.afterRender(this._texture);
+        cc.director.setViewport();
         if (target && target.getCamera().isDirty()) {
             var offset = target.getAnchorPointInPoints();
             var stackMatrix = target._renderCmd._stackMatrix;
