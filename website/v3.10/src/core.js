@@ -1008,7 +1008,8 @@ function _getJsListOfModule(moduleMap, moduleName, dir) {
     return jsList;
 }
 function _afterEngineLoaded(config) {
-    cc._initDebugSetting(config[cc.game.CONFIG_KEY.debugMode]);
+    if (cc._initDebugSetting)
+        cc._initDebugSetting(config[cc.game.CONFIG_KEY.debugMode]);
     cc._engineLoaded = true;
     cc.log(cc.ENGINE_VERSION);
     if (_engineLoadedCallback) _engineLoadedCallback();
