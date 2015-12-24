@@ -2661,7 +2661,7 @@ ccui.Scale9Sprite.state = {NORMAL: 0, GRAY: 1};
     };
     proto.setDirtyFlag = function (dirtyFlag, child) {
         if (dirtyFlag === cc.Node._dirtyFlags.cacheDirty)
-            return;
+            dirtyFlag = cc.Node._dirtyFlags.transformDirty;
         cc.Node.RenderCmd.prototype.setDirtyFlag.call(this, dirtyFlag, child);
     };
     proto._syncStatus = function (parentCmd){
