@@ -4,19 +4,15 @@ var path = require('path');
 var prevTime = new Date(0);
 var htmlCache = "";
 
-exports.plug = [
-    {name: "param", handle: ["GET"]}
-];
-
-exports.handle = function (request, response, method) {
+module.exports = function (request, response) {
 
     var currentTime = new Date();
 
     if(currentTime - 1000 > prevTime){
 
-        var files = method.param.GET("file"),
-            version = method.param.GET("ver"),
-            compressed = method.param.GET("com");
+        var files = request.query["file"],
+            version = request.query["ver"],
+            compressed = request.query["com"];
 
         if(files)
             files = files.split(",");

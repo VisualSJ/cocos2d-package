@@ -1,4 +1,4 @@
-var defaultVersion = 'v3.10';
+var defaultVersion = 'v3.11';
 
 var removeClass = function(DOM, CLASS){
     DOM.className = DOM.className.replace(" " + CLASS, "");
