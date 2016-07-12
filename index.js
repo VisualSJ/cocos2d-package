@@ -8,7 +8,7 @@ App.get('/download', require('./controller/download'));
 
 App.use(Express.static('./website'));
 
-var server = App.listen(4000, function () {
+var server = App.listen(3010, function () {
     var host = server.address().address;
     var port = server.address().port;
 
